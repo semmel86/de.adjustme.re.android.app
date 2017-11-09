@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter mAdapter = null;
     private ListView lv;
     private TextView tv;
-
+ private String testChange;
     private String[] permissionsToRequest =
             {
                     Manifest.permission.BLUETOOTH_ADMIN,
