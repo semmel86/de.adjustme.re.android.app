@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 
+import android.bluetooth.BluetoothHeadset;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
@@ -13,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -47,13 +49,15 @@ import static android.Manifest.*;
 
 public class MainActivity extends AppCompatActivity {
     Button bluttoothButton, b2;
+    BluetoothService mBluetoothService;
     private BluetoothAdapter BA;
     private Set<BluetoothDevice> pairedDevices;
     private ArrayList<String> arrayOfFoundBTDevices = new ArrayList<String>();
-    private ArrayAdapter mAdapter = null;
+//    private ArrayAdapter mAdapter = null;
     private ListView lv;
     private TextView tv;
- private String testChange;
+    private String testChange;
+    private StringBuilder sb;
     private String[] permissionsToRequest =
             {
                     Manifest.permission.BLUETOOTH_ADMIN,
@@ -93,10 +97,38 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
+    private Handler mHandler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            tv.setText(msg.what);
+            switch (msg.what) {
+                case Configuration.MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    String strIncom = new String(readBuf, 0, msg.arg1);
+                    sb.append(strIncom);
+                    int endOfLineIndex = sb.indexOf("\r\n");
+                    if (endOfLineIndex > 0) {
+                        String sbprint = sb.substring(0, endOfLineIndex);
+                        sb.delete(0, sb.length());
+                        tv.setText("Data from Arduino: " + sbprint);
+
+                    }
+                    break;
+            }
+        }
+
+        ;
+    };
+
+    // handler that gets info from Bluetooth service
+
+
     private void connectToDevice(BluetoothDevice device) {
-        // init connection and listen
-        AcceptThread a = new AcceptThread(device.getName(), UUID.randomUUID());
-        a.start();
+        // let the Bluetooth service make his work
+
+        this.mBluetoothService=new BluetoothService(device,mHandler,BA);
+        mBluetoothService.start();
+        //
+
     }
 
     // Create Navigation Menu Listener
@@ -235,163 +267,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void manageMyConnectedSocket(BluetoothSocket socket) {
-        Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_SHORT).show();
-        ConnectedThread conn = new ConnectedThread(socket);
-
-
-    }
-
-
-    private class AcceptThread extends Thread {
-        private final BluetoothServerSocket mmServerSocket;
-
-        public AcceptThread(String name, UUID uuid) {
-            Log.i("info", "Init AcceptThread");
-            // Use a temporary object that is later assigned to mmServerSocket
-            // because mmServerSocket is final.
-            BluetoothServerSocket tmp = null;
-            try {
-                // MY_UUID is the app's UUID string, also used by the client code.
-                tmp = BA.listenUsingRfcommWithServiceRecord(name, uuid);
-            } catch (IOException e) {
-                Log.i("info", "Socket's listen() method failed", e);
-            }
-            mmServerSocket = tmp;
-        }
-
-        @Override
-        public void run() {
-            BluetoothSocket socket = null;
-            // Keep listening until exception occurs or a socket is returned.
-            while (true) {
-                try {
-                    socket = mmServerSocket.accept();
-                } catch (IOException e) {
-                    Log.e("info", "Socket's accept() method failed", e);
-                    break;
-                }
-
-                if (socket != null) {
-                    // A connection was accepted. Perform work associated with
-                    // the connection in a separate thread.
-                    try {
-                        manageMyConnectedSocket(socket);
-                        mmServerSocket.close();
-                        Log.i("info", "Close Thread after connection.");
-                        break;
-                    } catch (IOException e) {
-                        Log.e("info", " Failure on close", e);
-                        break;
-                    }
-                }
-                Log.i("info", " Socket is unexpectedly NULL");
-            }
-        }
-
-        // Closes the connect socket and causes the thread to finish.
-        public void cancel() {
-            try {
-                mmServerSocket.close();
-            } catch (IOException e) {
-                Log.e("info", "Could not close the connect socket", e);
-            }
-        }
-    }
-
-    private Handler mHandler; // handler that gets info from Bluetooth service
-
-    // Defines several constants used when transmitting messages between the
-    // service and the UI.
-    private interface MessageConstants {
-        public static final int MESSAGE_READ = 0;
-        public static final int MESSAGE_WRITE = 1;
-        public static final int MESSAGE_TOAST = 2;
-
-        // ... (Add other message types here as needed.)
-    }
-
-    private class ConnectedThread extends Thread {
-        private final BluetoothSocket mmSocket;
-        private final InputStream mmInStream;
-        private final OutputStream mmOutStream;
-        private byte[] mmBuffer; // mmBuffer store for the stream
-
-        public ConnectedThread(BluetoothSocket socket) {
-            Log.i("info", "Init ConnectThread");
-            mmSocket = socket;
-            InputStream tmpIn = null;
-            OutputStream tmpOut = null;
-
-            // Get the input and output streams; using temp objects because
-            // member streams are final.
-            try {
-                tmpIn = socket.getInputStream();
-            } catch (IOException e) {
-                Log.e("info", "Error occurred when creating input stream", e);
-            }
-            try {
-                tmpOut = socket.getOutputStream();
-            } catch (IOException e) {
-                Log.e("info", "Error occurred when creating output stream", e);
-            }
-
-            mmInStream = tmpIn;
-            mmOutStream = tmpOut;
-        }
-
-        public void run() {
-            mmBuffer = new byte[1024];
-            int numBytes; // bytes returned from read()
-
-            // Keep listening to the InputStream until an exception occurs.
-            while (true) {
-                try {
-                    // Read from the InputStream.
-                    numBytes = mmInStream.read(mmBuffer);
-                    // Send the obtained bytes to the UI activity.
-                    Message readMsg = mHandler.obtainMessage(
-                            MessageConstants.MESSAGE_READ, numBytes, -1,
-                            mmBuffer);
-                    Log.i("info", "Read Message " + readMsg.toString());
-                    readMsg.sendToTarget();
-                } catch (IOException e) {
-                    Log.d("info", "Input stream was disconnected", e);
-                    break;
-                }
-            }
-        }
-
-        // Call this from the main activity to send data to the remote device.
-        public void write(byte[] bytes) {
-            try {
-                mmOutStream.write(bytes);
-
-                // Share the sent message with the UI activity.
-                Message writtenMsg = mHandler.obtainMessage(
-                        MessageConstants.MESSAGE_WRITE, -1, -1, mmBuffer);
-                writtenMsg.sendToTarget();
-            } catch (IOException e) {
-                Log.e("info", "Error occurred when sending data", e);
-
-                // Send a failure message back to the activity.
-                Message writeErrorMsg =
-                        mHandler.obtainMessage(MessageConstants.MESSAGE_TOAST);
-                Bundle bundle = new Bundle();
-                bundle.putString("toast",
-                        "Couldn't send data to the other device");
-                writeErrorMsg.setData(bundle);
-                mHandler.sendMessage(writeErrorMsg);
-            }
-        }
-
-        // Call this method from the main activity to shut down the connection.
-        public void cancel() {
-            try {
-                mmSocket.close();
-            } catch (IOException e) {
-                Log.e("info", "Could not close the connect socket", e);
-            }
-        }
-    }
 }
