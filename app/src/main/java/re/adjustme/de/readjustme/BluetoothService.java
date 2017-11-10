@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.nfc.Tag;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,6 +14,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 /**
@@ -22,22 +25,47 @@ public class BluetoothService {
 
     private Handler mHandler; // handler that gets info from Bluetooth service
     private BluetoothAdapter mBluetoothAdapter;
-    private String deviceName="";
+    private BluetoothDevice device;
 
 
     public BluetoothService(BluetoothDevice device, Handler handler, BluetoothAdapter bluetoothAdapter){
-        this.deviceName = device.getAddress();
+        this.device = device;
         this.mHandler=handler;
         this.mBluetoothAdapter=bluetoothAdapter;
     }
 
     public void start(){
-        AcceptThread a = new AcceptThread(deviceName, Configuration.BT_DEVICE_UUID);
-        a.run();
+//        AcceptThread a = new AcceptThread(deviceName, Configuration.BT_DEVICE_UUID);
+//        a.run();
+        try {
+            listenOnConnectedSocket(createBluetoothSocket(this.device));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
     private void listenOnConnectedSocket(BluetoothSocket socket) {
-        ConnectedThread conn = new ConnectedThread(socket);
+        ConnectedThread conn=null;
+        try {
+            socket.connect();
+         conn = new ConnectedThread(socket);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         conn.run();
+    }
+
+
+    private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
+        if(
+                Build.VERSION.SDK_INT >= 10){
+            try {
+                final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", new Class[] { UUID.class });
+                return (BluetoothSocket) m.invoke(device, Configuration.BT_DEVICE_UUID);
+            } catch (Exception e) {
+                Log.e("INFO", "Could not create Insecure RFComm Connection",e);
+            }
+        }
+        return  device.createRfcommSocketToServiceRecord(Configuration.BT_DEVICE_UUID);
     }
 
     // This Class is used for a single tread to get a connection
