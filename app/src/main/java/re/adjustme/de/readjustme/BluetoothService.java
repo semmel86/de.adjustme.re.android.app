@@ -28,27 +28,28 @@ public class BluetoothService {
     private BluetoothDevice device;
 
 
-    public BluetoothService(BluetoothDevice device, Handler handler, BluetoothAdapter bluetoothAdapter){
+    public BluetoothService(BluetoothDevice device, Handler handler, BluetoothAdapter bluetoothAdapter) {
         this.device = device;
-        this.mHandler=handler;
-        this.mBluetoothAdapter=bluetoothAdapter;
+        this.mHandler = handler;
+        this.mBluetoothAdapter = bluetoothAdapter;
     }
 
-    public void start(){
+    public void start() {
 //        AcceptThread a = new AcceptThread(deviceName, Configuration.BT_DEVICE_UUID);
 //        a.run();
         try {
             listenOnConnectedSocket(createBluetoothSocket(this.device));
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     private void listenOnConnectedSocket(BluetoothSocket socket) {
-        ConnectedThread conn=null;
+        ConnectedThread conn = null;
         try {
             socket.connect();
-         conn = new ConnectedThread(socket);
-        }catch (Exception e){
+            conn = new ConnectedThread(socket);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         conn.run();
@@ -56,16 +57,16 @@ public class BluetoothService {
 
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
-        if(
-                Build.VERSION.SDK_INT >= 10){
+        if (
+                Build.VERSION.SDK_INT >= 10) {
             try {
-                final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", new Class[] { UUID.class });
+                final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", new Class[]{UUID.class});
                 return (BluetoothSocket) m.invoke(device, Configuration.BT_DEVICE_UUID);
             } catch (Exception e) {
-                Log.e("INFO", "Could not create Insecure RFComm Connection",e);
+                Log.e("INFO", "Could not create Insecure RFComm Connection", e);
             }
         }
-        return  device.createRfcommSocketToServiceRecord(Configuration.BT_DEVICE_UUID);
+        return device.createRfcommSocketToServiceRecord(Configuration.BT_DEVICE_UUID);
     }
 
     // This Class is used for a single tread to get a connection
@@ -159,19 +160,32 @@ public class BluetoothService {
 
         public void run() {
             mmBuffer = new byte[1024];
-            int numBytes; // bytes returned from read()
+            int cbyte; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
                 try {
                     // Read from the InputStream.
-                    numBytes = mmInStream.read(mmBuffer);
-                    // Send the obtained bytes to the UI activity.
-                    Message readMsg = mHandler.obtainMessage(
-                            Configuration.MESSAGE_READ, numBytes, -1,
-                            mmBuffer);
-                    Log.i("info", "Read Message " + readMsg.toString());
-                    readMsg.sendToTarget();
+                    //TODO Status check
+                    StringBuilder sb = new StringBuilder();
+                    while ((cbyte = mmInStream.read(mmBuffer)) != -1) {
+                        sb.append((char) cbyte);
+                    }
+                    // split into single packages
+                    String fullData=sb.toString();
+                    do{
+                        // Send the obtained bytes to the UI activity.
+                        String singleData=fullData.substring(0,fullData.indexOf(Configuration.MESSAGE_SEPERATOR));
+                        Bundle data= new Bundle();
+                        data.putString(Configuration.SENSOR_DATA,singleData);
+                        Message m=new Message();
+                        m.setData(data);
+                        mHandler.sendMessage(m);
+                        Log.i("info", "Read Data " + singleData);
+                        //  readMsg.sendToTarget();
+                        mHandler.sendMessage(m);
+                    }while(fullData.indexOf(Configuration.MESSAGE_SEPERATOR)!=fullData.lastIndexOf(Configuration.MESSAGE_SEPERATOR));
+
                 } catch (IOException e) {
                     Log.d("info", "Input stream was disconnected", e);
                     break;

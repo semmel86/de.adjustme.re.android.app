@@ -127,7 +127,8 @@ public class MainActivity extends AppCompatActivity {
 
         this.mBluetoothService=new BluetoothService(device,mHandler,BA);
         mBluetoothService.start();
-        //
+        // switch to BT pageS
+
 
     }
 
