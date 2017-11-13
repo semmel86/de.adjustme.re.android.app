@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -19,11 +20,18 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Created by Semmel on 12.11.2017.
  */
 
-public class BluetoothActivity extends AppCompatActivity {
+public class BluetoothActivity extends MyNavigationActivity {
     private TextView tvDevice;
     private TextView tvStatus;
     private TextView tvSensor;
@@ -41,6 +49,7 @@ public class BluetoothActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         // set fields
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_bluetooth_data);
         tvDevice=(TextView) findViewById(R.id.tvDevice);
         tvStatus=(TextView) findViewById(R.id.tvStatus);
         tvSensor=(TextView) findViewById(R.id.tvSensor);
@@ -48,16 +57,48 @@ public class BluetoothActivity extends AppCompatActivity {
         tvY=(TextView) findViewById(R.id.tvSensor);
         tvZ=(TextView) findViewById(R.id.tvSensor);
         outStream=(TextView) findViewById(R.id.textView);
+
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+
+        tvDevice.setText("none");
+        tvSensor.setText("none");
+        tvStatus.setText("none");
+        tvX.setText("x");
+        tvY.setText("y");
+        tvZ.setText("z");
+
+        // set std output to view
+        System.setOut(new PrintStream(new OutputStream() {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            @Override public void write(int oneByte) throws IOException {
+                outputStream.write(oneByte);
+                outStream.setText(new String(outputStream.toByteArray()));
+            }
+        }));
+
         // check permissions
         checkPermissions();
-        checkBluethoothActive();
 
         // set up specific classes
         this.mBluetoothAdapter=BluetoothAdapter.getDefaultAdapter();
+
+        // could be used for debugging, to ensure a connection to only this specific known device
+//        Set<BluetoothDevice> devices=mBluetoothAdapter.getBondedDevices();
+//        for(BluetoothDevice d:devices){
+//            if(d.getName().equals(Configuration.BT_DEVICE_NAME)){
+//                this.connectToDevice(d);
+//            }
+//        }
+
         this.setHandler();
         this.setReceiver();
 
+        checkBluethoothActive();
         discoverDevice();
+
+
     }
 // start discovery Mode
 private void discoverDevice(){
@@ -72,6 +113,8 @@ private void discoverDevice(){
 }
     private void connectToDevice(BluetoothDevice device) {
         // let the Bluetooth service make his work
+        Log.i("info","Try to Connect to: " + device.getAddress());
+        System.out.println("Start BluetoothService");
         this.mBluetoothService = new BluetoothService(device, mHandler, mBluetoothAdapter);
         mBluetoothService.start();
     }
@@ -80,15 +123,17 @@ private void discoverDevice(){
         mReceiver = new BroadcastReceiver() {
             public void onReceive(final Context context, Intent intent) {
                 String action = intent.getAction();
-
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                     // Discovery has found a device. Get the BluetoothDevice
                     // object and its info from the Intent.
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     String deviceName = device.getName();
+                    Log.i("info","BT-Device found: " + deviceName + " "+device.getAddress());
+                    System.out.println("BT-Device found: " + deviceName + " - "+device.getAddress());
                         // if it is our Shirt device, try to connect
-                        if (deviceName.equals(Configuration.BT_DEVICE_NAME)) {
+                        if (!(deviceName ==null) && deviceName.equals(Configuration.BT_DEVICE_NAME)) {
                             Toast.makeText(context, "Try Connection to" + deviceName, Toast.LENGTH_SHORT).show();
+                            tvDevice.setText(deviceName);
                             connectToDevice(device);
                             // stop discovering
                             mBluetoothAdapter.cancelDiscovery();

@@ -4,6 +4,7 @@ import android.Manifest;
 
 import java.util.UUID;
 
+
 /**
  * Contains the local configuration
  *
@@ -16,7 +17,8 @@ public class Configuration {
         The UUID needed to connect to the hc-05/06 divece
     */
     public static final UUID BT_DEVICE_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    public static final String BT_DEVICE_NAME=""; //TODO
+//   public static final UUID BT_DEVICE_UUID = UUID.fromString("446118f0-8b1e-11e2-9e96-0800200c9a66");
+    public static final String BT_DEVICE_NAME="DESKTOP-NH8QD8N"; //TODO
     public static final String BT_DEVICE_PIN="1234";
     /*
      Final BT Message values.

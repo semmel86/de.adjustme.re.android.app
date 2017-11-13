@@ -47,7 +47,7 @@ import java.util.UUID;
 
 import static android.Manifest.*;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends MyNavigationActivity {
     Button bluttoothButton, b2;
     BluetoothService mBluetoothService;
     private BluetoothAdapter BA;
@@ -132,24 +132,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    // Create Navigation Menu Listener
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    return true;
-                case R.id.navigation_dashboard:
-                    Intent intent = new Intent(getApplicationContext(), DashboardDayActivity.class);
-                    startActivity(intent);
-                    return true;
-            }
-            return false;
-        }
-    };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,11 +143,8 @@ public class MainActivity extends AppCompatActivity {
         BA = BluetoothAdapter.getDefaultAdapter();
         checkPermissions();
         lv = (ListView) findViewById(R.id.listView);
-
-
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
     }
 
 
