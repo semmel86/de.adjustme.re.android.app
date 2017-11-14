@@ -24,6 +24,10 @@
         <activity
             android:name=".DashboardDayActivity"
             android:label="@string/title_activity_dashboard_day"></activity>
-    </application>
+
+    <activity
+        android:name=".BluetoothActivity"
+        android:label="BluetoothActivity"></activity>
+</application>
 
 </manifest>
