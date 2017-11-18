@@ -10,7 +10,7 @@ import re.adjustme.de.readjustme.Persistance.internal.MotionDataTextFilePersisto
 public class PersistorFactory {
 
 
-    public MotionDataPersistenceInterface getPersistor(PersistenceType type) {
+    static public MotionDataPersistenceInterface getPersistor(PersistenceType type) {
         switch (type) {
             case OBJECT:
                 return null;

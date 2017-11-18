@@ -3,28 +3,22 @@ package re.adjustme.de.readjustme.Persistance.internal;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
-import re.adjustme.de.readjustme.Configuration.PersitenceConfiguration;
+import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 
 /**
  * Created by Semmel on 18.11.2017.
  */
 
 public class TextFilePersistor {
-    private final File persistenceDir = PersitenceConfiguration.getPersitanceDirectory();
+    private final String persistenceDir = PersistenceConfiguration.getPersitenceDirectory();
 
     /**
      * Save Object information ( referring to toString()) to a named File, returns true on success, otherwise false
@@ -36,14 +30,14 @@ public class TextFilePersistor {
      */
     protected boolean save(final Object object, final String fileName) {
 
-        try(FileWriter fw = new FileWriter(persistenceDir.getAbsolutePath() + fileName, true);
+        try(FileWriter fw = new FileWriter(persistenceDir + fileName, true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw))
         {
             out.println(object.toString());
 
         } catch (IOException e) {
-            //exception handling left as an exercise for the reader
+            e.printStackTrace();
         }
         return true;
     }
@@ -52,7 +46,7 @@ public class TextFilePersistor {
      * Returns the last saved Line of the given File
      */
     protected String loadLine(String fileName) {
-        File file = new File(persistenceDir.getAbsolutePath() + fileName);
+        File file = new File(persistenceDir + fileName);
         RandomAccessFile fileHandler = null;
         try {
             fileHandler = new RandomAccessFile(file, "r");
@@ -97,7 +91,7 @@ public class TextFilePersistor {
      * Returns the all saved Lines of the given File
      */
     protected List<String> loadLines(String fileName) {
-        File file = new File(persistenceDir.getAbsolutePath() + fileName);
+        File file = new File(persistenceDir + fileName);
         List<String> result = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
@@ -105,7 +99,7 @@ public class TextFilePersistor {
                 result.add(line);
             }
         } catch (IOException e) {
-
+            e.printStackTrace();
         }
         return result;
     }

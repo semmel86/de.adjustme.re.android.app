@@ -7,14 +7,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import re.adjustme.de.readjustme.Configuration.PersitenceConfiguration;
+import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 
 /**
  * @author selmkes
  */
 public class ObjectPersistor {
 
-    private final File persistanceDir = PersitenceConfiguration.getPersitanceDirectory();
+    private final File persistanceDir = new File(PersistenceConfiguration.getPersitenceDirectory());
 
     /**
      * Constructor

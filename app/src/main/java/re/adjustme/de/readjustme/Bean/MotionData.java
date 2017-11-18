@@ -1,8 +1,9 @@
 package re.adjustme.de.readjustme.Bean;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
-import re.adjustme.de.readjustme.Configuration.PersitenceConfiguration;
+import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Configuration.Sensor;
 
 /**
@@ -11,16 +12,20 @@ import re.adjustme.de.readjustme.Configuration.Sensor;
 
 public class MotionData {
 
-    private Sensor sensor;
+    private Sensor sensor =Sensor.SENSOR_FRONT;
     private int x;
     private int y;
     private int z;
-    private Timestamp begin;
-    private long duration;
+    private Timestamp begin =new Timestamp(new Date().getTime());
+    private long duration =0;
 
 
     public Sensor getSensor() {
         return this.sensor;
+    }
+
+    public MotionData(){
+        super();
     }
 
     public void setSensor(Sensor sensor) {
@@ -71,13 +76,22 @@ public class MotionData {
         this.duration = duration;
     }
 
+//    public MotionData(Sensor sensor, Timestamp begin, Long duration, int x, int y, int z){
+//        this.sensor=sensor;
+//        this.begin=begin;
+//        this.duration=duration;
+//        this.x=x;
+//        this.y=y;
+//        this.z=z;
+//    }
     // 1 ; 20171118123325634213 ; 25632 ; 10 ; 90 ; 155
+    @Override
     public String toString() {
-        return sensor.getSensorNumber() + PersitenceConfiguration.CSV_SEPARATOR +
-                begin + PersitenceConfiguration.CSV_SEPARATOR +
-                duration + PersitenceConfiguration.CSV_SEPARATOR +
-                x + PersitenceConfiguration.CSV_SEPARATOR +
-                y + PersitenceConfiguration.CSV_SEPARATOR
+        return sensor.getSensorNumber() + PersistenceConfiguration.CSV_SEPARATOR +
+                begin + PersistenceConfiguration.CSV_SEPARATOR +
+                duration + PersistenceConfiguration.CSV_SEPARATOR +
+                x + PersistenceConfiguration.CSV_SEPARATOR +
+                y + PersistenceConfiguration.CSV_SEPARATOR
                 + z;
     }
 
