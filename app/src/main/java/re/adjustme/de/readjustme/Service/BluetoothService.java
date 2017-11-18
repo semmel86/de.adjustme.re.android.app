@@ -1,11 +1,9 @@
-package re.adjustme.de.readjustme;
+package re.adjustme.de.readjustme.Service;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.nfc.Tag;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,8 +12,9 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.util.UUID;
+
+import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
 
 /**
  * Created by Semmel on 31.10.2017.
@@ -35,7 +34,7 @@ public class BluetoothService {
     }
 
     public void start() {
-        AcceptThread a = new AcceptThread(device.getName(), Configuration.BT_DEVICE_UUID);
+        AcceptThread a = new AcceptThread(device.getName(), BluetoothConfiguration.BT_DEVICE_UUID);
        a.start();
 //       try {
 //            BluetoothSocket socket=createBluetoothSocket(this.device);
@@ -65,13 +64,13 @@ public class BluetoothService {
 //                Build.VERSION.SDK_INT >= 10) {
 //            try {
 ////                final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", new Class[]{UUID.class});
-////                return (BluetoothSocket) m.invoke(device, Configuration.BT_DEVICE_UUID);
+////                return (BluetoothSocket) m.invoke(device, BluetoothConfiguration.BT_DEVICE_UUID);
 //            } catch (Exception e) {
 //                Log.e("INFO", "Could not create Insecure RFComm Connection", e);
 //            }
 //        }
-        BluetoothSocket bts= device.createRfcommSocketToServiceRecord(Configuration.BT_DEVICE_UUID);
-        if(bts==null) bts=device.createInsecureRfcommSocketToServiceRecord(Configuration.BT_DEVICE_UUID);
+        BluetoothSocket bts= device.createRfcommSocketToServiceRecord(BluetoothConfiguration.BT_DEVICE_UUID);
+        if(bts==null) bts=device.createInsecureRfcommSocketToServiceRecord(BluetoothConfiguration.BT_DEVICE_UUID);
         Log.i("INFO", "Tryed to create Socket"+ bts.toString());
         return bts;
     }
@@ -184,16 +183,16 @@ public class BluetoothService {
                     String fullData=sb.toString();
                     do{
                         // Send the obtained bytes to the UI activity.
-                        String singleData=fullData.substring(0,fullData.indexOf(Configuration.MESSAGE_SEPERATOR));
+                        String singleData=fullData.substring(0,fullData.indexOf(BluetoothConfiguration.MESSAGE_SEPERATOR));
                         Bundle data= new Bundle();
-                        data.putString(Configuration.SENSOR_DATA,singleData);
+                        data.putString(BluetoothConfiguration.SENSOR_DATA,singleData);
                         Message m=new Message();
                         m.setData(data);
                         mHandler.sendMessage(m);
                         Log.i("info", "Read Data " + singleData);
                         //  readMsg.sendToTarget();
                         mHandler.sendMessage(m);
-                    }while(fullData.indexOf(Configuration.MESSAGE_SEPERATOR)!=fullData.lastIndexOf(Configuration.MESSAGE_SEPERATOR));
+                    }while(fullData.indexOf(BluetoothConfiguration.MESSAGE_SEPERATOR)!=fullData.lastIndexOf(BluetoothConfiguration.MESSAGE_SEPERATOR));
 
                 } catch (IOException e) {
                     Log.d("info", "Input stream was disconnected", e);
@@ -209,14 +208,14 @@ public class BluetoothService {
 
                 // Share the sent message with the UI activity.
                 Message writtenMsg = mHandler.obtainMessage(
-                        Configuration.MESSAGE_WRITE, -1, -1, mmBuffer);
+                        BluetoothConfiguration.MESSAGE_WRITE, -1, -1, mmBuffer);
                 writtenMsg.sendToTarget();
             } catch (IOException e) {
                 Log.e("info", "Error occurred when sending data", e);
 
                 // Send a failure message back to the activity.
                 Message writeErrorMsg =
-                        mHandler.obtainMessage(Configuration.MESSAGE_TOAST);
+                        mHandler.obtainMessage(BluetoothConfiguration.MESSAGE_TOAST);
                 Bundle bundle = new Bundle();
                 bundle.putString("toast",
                         "Couldn't send data to the other device");

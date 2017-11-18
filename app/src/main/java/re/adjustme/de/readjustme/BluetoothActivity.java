@@ -12,11 +12,7 @@ import android.os.Handler;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,8 +20,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.List;
-import java.util.Set;
+
+import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
+import re.adjustme.de.readjustme.Service.BluetoothService;
 
 /**
  * Created by Semmel on 12.11.2017.
@@ -87,7 +84,7 @@ public class BluetoothActivity extends MyNavigationActivity {
         // could be used for debugging, to ensure a connection to only this specific known device
 //        Set<BluetoothDevice> devices=mBluetoothAdapter.getBondedDevices();
 //        for(BluetoothDevice d:devices){
-//            if(d.getName().equals(Configuration.BT_DEVICE_NAME)){
+//            if(d.getName().equals(BluetoothConfiguration.BT_DEVICE_NAME)){
 //                this.connectToDevice(d);
 //            }
 //        }
@@ -131,7 +128,7 @@ private void discoverDevice(){
                     Log.i("info","BT-Device found: " + deviceName + " "+device.getAddress());
                     System.out.println("BT-Device found: " + deviceName + " - "+device.getAddress());
                         // if it is our Shirt device, try to connect
-                        if (!(deviceName ==null) && deviceName.equals(Configuration.BT_DEVICE_NAME)) {
+                        if (!(deviceName ==null) && deviceName.equals(BluetoothConfiguration.BT_DEVICE_NAME)) {
                             Toast.makeText(context, "Try Connection to" + deviceName, Toast.LENGTH_SHORT).show();
                             tvDevice.setText(deviceName);
                             connectToDevice(device);
@@ -149,8 +146,8 @@ private void discoverDevice(){
        this.mHandler  = new Handler() {
             public void handleMessage(android.os.Message msg) {
                 switch (msg.what) {
-                    case Configuration.MESSAGE_READ:
-                        String singleData=msg.getData().getString(Configuration.SENSOR_DATA);
+                    case BluetoothConfiguration.MESSAGE_READ:
+                        String singleData=msg.getData().getString(BluetoothConfiguration.SENSOR_DATA);
                         int endOfLineIndex = singleData.indexOf("\r\n");
                         String[] data=new String[5];
                         // write on debug console Textfield
@@ -177,7 +174,7 @@ private void discoverDevice(){
     }
     // check App permissions
     private void checkPermissions() {
-        for (String currentPerm : Configuration.permissionsToRequest) {
+        for (String currentPerm : BluetoothConfiguration.permissionsToRequest) {
             if (ContextCompat.checkSelfPermission(this,
                     currentPerm)
                     != PackageManager.PERMISSION_GRANTED) {

@@ -1,32 +1,22 @@
 package re.adjustme.de.readjustme;
 
 import android.Manifest;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 
-import android.bluetooth.BluetoothHeadset;
-import android.bluetooth.BluetoothServerSocket;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.provider.Telephony;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.AdapterView;
@@ -37,15 +27,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Set;
-import java.util.UUID;
 
 
-import static android.Manifest.*;
+import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
+import re.adjustme.de.readjustme.Service.BluetoothService;
 
 public class MainActivity extends MyNavigationActivity {
     Button bluttoothButton, b2;
@@ -101,7 +88,7 @@ public class MainActivity extends MyNavigationActivity {
         public void handleMessage(android.os.Message msg) {
             tv.setText(msg.what);
             switch (msg.what) {
-                case Configuration.MESSAGE_READ:
+                case BluetoothConfiguration.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     String strIncom = new String(readBuf, 0, msg.arg1);
                     sb.append(strIncom);
