@@ -4,7 +4,7 @@ package re.adjustme.de.readjustme.Configuration;
  * Created by Semmel on 18.11.2017.
  */
 
-public enum PersitanceType {
+public enum PersistenceType {
 
     FILE("File"),
     OBJECT("Object"),
@@ -13,7 +13,7 @@ public enum PersitanceType {
 
     private String persitanceType;
 
-    PersitanceType(String persistanceType){
+    PersistenceType(String persistanceType){
         this.persitanceType=persitanceType;
     }
 }
