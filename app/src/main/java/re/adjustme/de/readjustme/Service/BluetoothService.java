@@ -36,12 +36,7 @@ public class BluetoothService {
     public void start() {
         AcceptThread a = new AcceptThread(device.getName(), BluetoothConfiguration.BT_DEVICE_UUID);
         a.start();
-//       try {
-//            BluetoothSocket socket=createBluetoothSocket(this.device);
-//            listenOnConnectedSocket(socket);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+
     }
 
     private void listenOnConnectedSocket(BluetoothSocket socket) {
