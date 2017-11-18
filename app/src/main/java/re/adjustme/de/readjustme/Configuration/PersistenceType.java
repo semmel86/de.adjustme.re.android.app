@@ -13,7 +13,7 @@ public enum PersistenceType {
 
     private String persitanceType;
 
-    PersistenceType(String persistanceType){
-        this.persitanceType=persitanceType;
+    PersistenceType(String persistanceType) {
+        this.persitanceType = persitanceType;
     }
 }

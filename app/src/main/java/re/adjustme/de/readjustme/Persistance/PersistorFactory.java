@@ -1,6 +1,7 @@
 package re.adjustme.de.readjustme.Persistance;
 
 import re.adjustme.de.readjustme.Configuration.PersistenceType;
+import re.adjustme.de.readjustme.Persistance.internal.MotionDataTextFilePersistor;
 
 /**
  * Created by Semmel on 18.11.2017.
@@ -9,20 +10,19 @@ import re.adjustme.de.readjustme.Configuration.PersistenceType;
 public class PersistorFactory {
 
 
-    public MotionDataPersistenceInterface getPersistor(PersistenceType type){
-        switch(type) {
+    public MotionDataPersistenceInterface getPersistor(PersistenceType type) {
+        switch (type) {
             case OBJECT:
                 return null;
             case DB:
                 return null;
             case FILE:
-                return null;
+                return new MotionDataTextFilePersistor();
             case BACKEND:
                 return null;
             default:
                 return null;
         }
-
 
 
     }

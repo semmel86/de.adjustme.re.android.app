@@ -18,7 +18,16 @@ public enum Sensor {
         return sensorNumber;
     }
 
-    Sensor(int Sensor){
-        this.sensorNumber=Sensor;
+    Sensor(int Sensor) {
+        this.sensorNumber = Sensor;
+    }
+
+    public static Sensor getSensor(int i) {
+        for (Sensor s : Sensor.values()) {
+            if (s.getSensorNumber() == i) {
+                return s;
+            }
+        }
+        return null;
     }
 }

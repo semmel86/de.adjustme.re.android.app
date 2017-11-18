@@ -11,11 +11,12 @@ public class PersitenceConfiguration {
     private static final File PERSITANCE_DIRECTORY = new File(System.getProperty("user.dir") + "persistance/");
     public static final String CSV_SEPARATOR = " ; ";
 
-    public static File getPersitanceDirectory(){
+    public static File getPersitanceDirectory() {
         // create if missing
-        if(!PERSITANCE_DIRECTORY.exists() || !PERSITANCE_DIRECTORY.isDirectory()){
+        if (!PERSITANCE_DIRECTORY.exists() || !PERSITANCE_DIRECTORY.isDirectory()) {
             PERSITANCE_DIRECTORY.mkdirs();
-        }return
+        }
+        return
                 PERSITANCE_DIRECTORY;
     }
 }

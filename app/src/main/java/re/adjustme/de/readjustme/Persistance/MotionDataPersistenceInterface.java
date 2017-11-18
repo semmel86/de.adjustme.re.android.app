@@ -20,6 +20,7 @@ public interface MotionDataPersistenceInterface {
      * Get the whole data for the given Sensor
      */
     public List<MotionData> getMotionDataForSensor(Sensor sensor);
+
     /**
      * Get the last saved MotionData entry
      */

@@ -47,13 +47,13 @@ public class BluetoothActivity extends MyNavigationActivity {
         // set fields
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_data);
-        tvDevice=(TextView) findViewById(R.id.tvDevice);
-        tvStatus=(TextView) findViewById(R.id.tvStatus);
-        tvSensor=(TextView) findViewById(R.id.tvSensor);
-        tvX=(TextView) findViewById(R.id.tvSensor);
-        tvY=(TextView) findViewById(R.id.tvSensor);
-        tvZ=(TextView) findViewById(R.id.tvSensor);
-        outStream=(TextView) findViewById(R.id.textView);
+        tvDevice = (TextView) findViewById(R.id.tvDevice);
+        tvStatus = (TextView) findViewById(R.id.tvStatus);
+        tvSensor = (TextView) findViewById(R.id.tvSensor);
+        tvX = (TextView) findViewById(R.id.tvSensor);
+        tvY = (TextView) findViewById(R.id.tvSensor);
+        tvZ = (TextView) findViewById(R.id.tvSensor);
+        outStream = (TextView) findViewById(R.id.textView);
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -69,7 +69,9 @@ public class BluetoothActivity extends MyNavigationActivity {
         // set std output to view
         System.setOut(new PrintStream(new OutputStream() {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            @Override public void write(int oneByte) throws IOException {
+
+            @Override
+            public void write(int oneByte) throws IOException {
                 outputStream.write(oneByte);
                 outStream.setText(new String(outputStream.toByteArray()));
             }
@@ -79,7 +81,7 @@ public class BluetoothActivity extends MyNavigationActivity {
         checkPermissions();
 
         // set up specific classes
-        this.mBluetoothAdapter=BluetoothAdapter.getDefaultAdapter();
+        this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         // could be used for debugging, to ensure a connection to only this specific known device
 //        Set<BluetoothDevice> devices=mBluetoothAdapter.getBondedDevices();
@@ -97,24 +99,27 @@ public class BluetoothActivity extends MyNavigationActivity {
 
 
     }
-// start discovery Mode
-private void discoverDevice(){
-    // start looking for bluetooth devices C:\Users\Semmel\
-    IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-    registerReceiver(mReceiver, filter);
-    if (mBluetoothAdapter.startDiscovery()) {
-        Log.i("info", "Start Discovery.");
-    } else {
-        Log.i("info", "Cannot start Discovery.");
+
+    // start discovery Mode
+    private void discoverDevice() {
+        // start looking for bluetooth devices C:\Users\Semmel\
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver, filter);
+        if (mBluetoothAdapter.startDiscovery()) {
+            Log.i("info", "Start Discovery.");
+        } else {
+            Log.i("info", "Cannot start Discovery.");
+        }
     }
-}
+
     private void connectToDevice(BluetoothDevice device) {
         // let the Bluetooth service make his work
-        Log.i("info","Try to Connect to: " + device.getAddress());
+        Log.i("info", "Try to Connect to: " + device.getAddress());
         System.out.println("Start BluetoothService");
         this.mBluetoothService = new BluetoothService(device, mHandler, mBluetoothAdapter);
         mBluetoothService.start();
     }
+
     // Create a BroadcastReceiver for ACTION_FOUND.
     private void setReceiver() {
         mReceiver = new BroadcastReceiver() {
@@ -125,37 +130,38 @@ private void discoverDevice(){
                     // object and its info from the Intent.
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     String deviceName = device.getName();
-                    Log.i("info","BT-Device found: " + deviceName + " "+device.getAddress());
-                    System.out.println("BT-Device found: " + deviceName + " - "+device.getAddress());
-                        // if it is our Shirt device, try to connect
-                        if (!(deviceName ==null) && deviceName.equals(BluetoothConfiguration.BT_DEVICE_NAME)) {
-                            Toast.makeText(context, "Try Connection to" + deviceName, Toast.LENGTH_SHORT).show();
-                            tvDevice.setText(deviceName);
-                            connectToDevice(device);
-                            // stop discovering
-                            mBluetoothAdapter.cancelDiscovery();
-                        }
+                    Log.i("info", "BT-Device found: " + deviceName + " " + device.getAddress());
+                    System.out.println("BT-Device found: " + deviceName + " - " + device.getAddress());
+                    // if it is our Shirt device, try to connect
+                    if (!(deviceName == null) && deviceName.equals(BluetoothConfiguration.BT_DEVICE_NAME)) {
+                        Toast.makeText(context, "Try Connection to" + deviceName, Toast.LENGTH_SHORT).show();
+                        tvDevice.setText(deviceName);
+                        connectToDevice(device);
+                        // stop discovering
+                        mBluetoothAdapter.cancelDiscovery();
                     }
+                }
 
             }
 
         };
     }
+
     // Create the specifc Handler to handle BT data
-    private void setHandler(){
-       this.mHandler  = new Handler() {
+    private void setHandler() {
+        this.mHandler = new Handler() {
             public void handleMessage(android.os.Message msg) {
                 switch (msg.what) {
                     case BluetoothConfiguration.MESSAGE_READ:
-                        String singleData=msg.getData().getString(BluetoothConfiguration.SENSOR_DATA);
+                        String singleData = msg.getData().getString(BluetoothConfiguration.SENSOR_DATA);
                         int endOfLineIndex = singleData.indexOf("\r\n");
-                        String[] data=new String[5];
+                        String[] data = new String[5];
                         // write on debug console Textfield
                         outStream.setText(singleData);
                         // split the single String into its data
-                        for(int i=0;i<5;i++){
-                            data[i]=singleData.substring(0,singleData.indexOf(" "));
-                            singleData=singleData.substring(singleData.indexOf(" "),singleData.length());
+                        for (int i = 0; i < 5; i++) {
+                            data[i] = singleData.substring(0, singleData.indexOf(" "));
+                            singleData = singleData.substring(singleData.indexOf(" "), singleData.length());
                         }
                         // write data to GUI
                         if (endOfLineIndex > 0) {
@@ -172,6 +178,7 @@ private void discoverDevice(){
             ;
         };
     }
+
     // check App permissions
     private void checkPermissions() {
         for (String currentPerm : BluetoothConfiguration.permissionsToRequest) {
@@ -192,6 +199,7 @@ private void discoverDevice(){
             }
         }
     }
+
     // enable BT if disabled
     private void checkBluethoothActive() {
         // Check and Log BT

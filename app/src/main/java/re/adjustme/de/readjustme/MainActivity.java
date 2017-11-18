@@ -40,7 +40,7 @@ public class MainActivity extends MyNavigationActivity {
     private BluetoothAdapter BA;
     private Set<BluetoothDevice> pairedDevices;
     private ArrayList<String> arrayOfFoundBTDevices = new ArrayList<String>();
-//    private ArrayAdapter mAdapter = null;
+    //    private ArrayAdapter mAdapter = null;
     private ListView lv;
     private TextView tv;
     private String testChange;
@@ -112,7 +112,7 @@ public class MainActivity extends MyNavigationActivity {
     private void connectToDevice(BluetoothDevice device) {
         // let the Bluetooth service make his work
 
-        this.mBluetoothService=new BluetoothService(device,mHandler,BA);
+        this.mBluetoothService = new BluetoothService(device, mHandler, BA);
         mBluetoothService.start();
         // switch to BT pageS
 

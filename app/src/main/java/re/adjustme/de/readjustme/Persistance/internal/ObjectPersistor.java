@@ -12,14 +12,14 @@ import re.adjustme.de.readjustme.Configuration.PersitenceConfiguration;
 /**
  * @author selmkes
  */
-public class ObjectPersistor{
+public class ObjectPersistor {
 
     private final File persistanceDir = PersitenceConfiguration.getPersitanceDirectory();
 
     /**
      * Constructor
      */
-    public ObjectPersistor(){
+    public ObjectPersistor() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -32,15 +32,14 @@ public class ObjectPersistor{
      * @param fileName
      * @return Boolean
      */
-    public boolean save(final Object object, final String fileName){
-        try{
+    public boolean save(final Object object, final String fileName) {
+        try {
             final FileOutputStream fos = new FileOutputStream(new File(persistanceDir + fileName));
             final ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(object);
             oos.close();
             return true;
-        }
-        catch(final IOException e){
+        } catch (final IOException e) {
             e.printStackTrace();
             return false;
         }
@@ -52,21 +51,20 @@ public class ObjectPersistor{
      * @param fileName
      * @return Object o
      */
-    public Object load(final String fileName){
-        if(new File(persistanceDir + fileName).exists()){
-            try{
+    public Object load(final String fileName) {
+        if (new File(persistanceDir + fileName).exists()) {
+            try {
                 final FileInputStream fis = new FileInputStream(new File(persistanceDir + fileName));
                 final ObjectInputStream ois = new ObjectInputStream(fis);
                 final Object object = ois.readObject();
                 ois.close();
                 return object;
-            }
-            catch(final IOException | ClassNotFoundException e){
+            } catch (final IOException | ClassNotFoundException e) {
                 e.printStackTrace();
                 return null;
             }
 
-        }else{
+        } else {
             System.err.println("Persistance File does not exist.");
             return null;
         }

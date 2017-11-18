@@ -35,7 +35,7 @@ public class BluetoothService {
 
     public void start() {
         AcceptThread a = new AcceptThread(device.getName(), BluetoothConfiguration.BT_DEVICE_UUID);
-       a.start();
+        a.start();
 //       try {
 //            BluetoothSocket socket=createBluetoothSocket(this.device);
 //            listenOnConnectedSocket(socket);
@@ -48,7 +48,7 @@ public class BluetoothService {
         Log.i("INFO", "Start listening");
         ConnectedThread conn = null;
         try {
-            if(!socket.isConnected()) {
+            if (!socket.isConnected()) {
                 socket.connect();
             }
             conn = new ConnectedThread(socket);
@@ -60,7 +60,7 @@ public class BluetoothService {
 
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
-       // if (
+        // if (
 //                Build.VERSION.SDK_INT >= 10) {
 //            try {
 ////                final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", new Class[]{UUID.class});
@@ -69,9 +69,10 @@ public class BluetoothService {
 //                Log.e("INFO", "Could not create Insecure RFComm Connection", e);
 //            }
 //        }
-        BluetoothSocket bts= device.createRfcommSocketToServiceRecord(BluetoothConfiguration.BT_DEVICE_UUID);
-        if(bts==null) bts=device.createInsecureRfcommSocketToServiceRecord(BluetoothConfiguration.BT_DEVICE_UUID);
-        Log.i("INFO", "Tryed to create Socket"+ bts.toString());
+        BluetoothSocket bts = device.createRfcommSocketToServiceRecord(BluetoothConfiguration.BT_DEVICE_UUID);
+        if (bts == null)
+            bts = device.createInsecureRfcommSocketToServiceRecord(BluetoothConfiguration.BT_DEVICE_UUID);
+        Log.i("INFO", "Tryed to create Socket" + bts.toString());
         return bts;
     }
 
@@ -180,19 +181,20 @@ public class BluetoothService {
                         sb.append((char) cbyte);
                     }
                     // split into single packages
-                    String fullData=sb.toString();
-                    do{
+                    String fullData = sb.toString();
+                    do {
                         // Send the obtained bytes to the UI activity.
-                        String singleData=fullData.substring(0,fullData.indexOf(BluetoothConfiguration.MESSAGE_SEPERATOR));
-                        Bundle data= new Bundle();
-                        data.putString(BluetoothConfiguration.SENSOR_DATA,singleData);
-                        Message m=new Message();
+                        String singleData = fullData.substring(0, fullData.indexOf(BluetoothConfiguration.MESSAGE_SEPERATOR));
+                        Bundle data = new Bundle();
+                        data.putString(BluetoothConfiguration.SENSOR_DATA, singleData);
+                        Message m = new Message();
                         m.setData(data);
                         mHandler.sendMessage(m);
                         Log.i("info", "Read Data " + singleData);
                         //  readMsg.sendToTarget();
                         mHandler.sendMessage(m);
-                    }while(fullData.indexOf(BluetoothConfiguration.MESSAGE_SEPERATOR)!=fullData.lastIndexOf(BluetoothConfiguration.MESSAGE_SEPERATOR));
+                    }
+                    while (fullData.indexOf(BluetoothConfiguration.MESSAGE_SEPERATOR) != fullData.lastIndexOf(BluetoothConfiguration.MESSAGE_SEPERATOR));
 
                 } catch (IOException e) {
                     Log.d("info", "Input stream was disconnected", e);

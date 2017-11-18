@@ -24,19 +24,19 @@ public abstract class MyNavigationActivity extends AppCompatActivity {
             switch (item.getItemId()) {
 
                 case R.id.navigation_home:
-                    if(!this.getClass().equals(MainActivity.class)){
-                    intent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
-                }
+                    if (!this.getClass().equals(MainActivity.class)) {
+                        intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                    }
                     return true;
                 case R.id.navigation_dashboard:
-                    if(!this.getClass().equals(DashboardDayActivity.class)) {
+                    if (!this.getClass().equals(DashboardDayActivity.class)) {
                         intent = new Intent(getApplicationContext(), DashboardDayActivity.class);
                         startActivity(intent);
                     }
                     return true;
                 case R.id.navigation_bluetooth:
-                    if(!this.getClass().equals(BluetoothActivity.class)) {
+                    if (!this.getClass().equals(BluetoothActivity.class)) {
                         intent = new Intent(getApplicationContext(), BluetoothActivity.class);
                         startActivity(intent);
                     }

@@ -19,12 +19,16 @@ public class MotionData {
     private long duration;
 
 
-    public Sensor getSensor(){
+    public Sensor getSensor() {
         return this.sensor;
     }
 
-    public void setSensor(Sensor sensor){
-        this.sensor=sensor;
+    public void setSensor(Sensor sensor) {
+        this.sensor = sensor;
+    }
+
+    public void setSensor(int i) {
+        this.sensor = Sensor.getSensor(i);
     }
 
     public int getX() {
@@ -67,8 +71,9 @@ public class MotionData {
         this.duration = duration;
     }
 
-    public String toString(){
-        return sensor.getSensorNumber()+ PersitenceConfiguration.CSV_SEPARATOR +
+    // 1 ; 20171118123325634213 ; 25632 ; 10 ; 90 ; 155
+    public String toString() {
+        return sensor.getSensorNumber() + PersitenceConfiguration.CSV_SEPARATOR +
                 begin + PersitenceConfiguration.CSV_SEPARATOR +
                 duration + PersitenceConfiguration.CSV_SEPARATOR +
                 x + PersitenceConfiguration.CSV_SEPARATOR +
