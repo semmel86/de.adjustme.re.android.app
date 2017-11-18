@@ -1,5 +1,12 @@
-package re.adjustme.de.readjustme.Bean;
+package re.adjustme.de.readjustme.Entity;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Embedded;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.PrimaryKey;
+
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -9,14 +16,26 @@ import re.adjustme.de.readjustme.Configuration.Sensor;
 /**
  * Created by Semmel on 18.11.2017.
  */
+@Entity(tableName ="motion_data")
+public class MotionData implements Serializable{
 
-public class MotionData {
+    final long serialVersionUID = 41234500967890L;
 
+    @PrimaryKey(autoGenerate = true)
+    private Integer id;
+
+    @Embedded
+    @ColumnInfo(name="sensor")
     private Sensor sensor =Sensor.SENSOR_FRONT;
+    @ColumnInfo(name="x_axis")
     private int x;
+    @ColumnInfo(name="y_axis")
     private int y;
+    @ColumnInfo(name="z_axis")
     private int z;
+    @ColumnInfo(name="begin")
     private Timestamp begin =new Timestamp(new Date().getTime());
+    @ColumnInfo(name="duration")
     private long duration =0;
 
 

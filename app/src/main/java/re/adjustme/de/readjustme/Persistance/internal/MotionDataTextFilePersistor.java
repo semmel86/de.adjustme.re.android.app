@@ -4,16 +4,16 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import re.adjustme.de.readjustme.Bean.MotionData;
+import re.adjustme.de.readjustme.Entity.MotionData;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Configuration.Sensor;
-import re.adjustme.de.readjustme.Persistance.MotionDataPersistenceInterface;
+import re.adjustme.de.readjustme.Persistance.MotionDataPersistor;
 
 /**
  * Created by Semmel on 18.11.2017.
  */
 
-public class MotionDataTextFilePersistor extends TextFilePersistor implements MotionDataPersistenceInterface {
+public class MotionDataTextFilePersistor extends TextFilePersistor implements MotionDataPersistor {
 
     @Override
     public boolean saveMotion(MotionData data) {

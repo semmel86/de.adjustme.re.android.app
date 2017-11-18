@@ -8,17 +8,16 @@ import org.junit.Test;
 import java.sql.Timestamp;
 import java.util.List;
 
-import re.adjustme.de.readjustme.Bean.MotionData;
+import re.adjustme.de.readjustme.Entity.MotionData;
 import re.adjustme.de.readjustme.Configuration.PersistenceType;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Configuration.Sensor;
-import re.adjustme.de.readjustme.Persistance.MotionDataPersistenceInterface;
+import re.adjustme.de.readjustme.Persistance.MotionDataPersistor;
 import re.adjustme.de.readjustme.Persistance.PersistorFactory;
 
 /**
  * Created by Semmel on 18.11.2017.
  */
-
 public class PersistenceTest {
    static private final Timestamp t = new Timestamp(System.currentTimeMillis());
    static Sensor r = Sensor.SENSOR_FRONT;
@@ -30,8 +29,6 @@ public class PersistenceTest {
    static MotionData data3 = new MotionData();
    static MotionData data4 = new MotionData();
    static MotionData data5 = new MotionData();
-
-
 
     @BeforeClass
     public static void init() {
@@ -77,12 +74,10 @@ public class PersistenceTest {
         System.out.println(data3);
         System.out.println(data4);
         System.out.println(data5);
-
     }
-
     @Test
     public void testFilePersistor(){
-        MotionDataPersistenceInterface myPersistor= PersistorFactory.getPersistor(PersistenceType.FILE);
+        MotionDataPersistor myPersistor= PersistorFactory.getMotionDataPersistor(PersistenceType.FILE);
         myPersistor.saveMotion(data1);
         MotionData load1=myPersistor.getLastMotionData(Sensor.SENSOR_FRONT);
         System.out.println(load1);
@@ -101,4 +96,22 @@ public class PersistenceTest {
         System.out.println(loadedList.size());
     }
 
+    @Test
+    public void testObjectPersistor(){
+        MotionDataPersistor myPersistor= PersistorFactory.getMotionDataPersistor(PersistenceType.OBJECT);
+        myPersistor.saveMotion(data1);
+        MotionData load1=myPersistor.getLastMotionData(Sensor.SENSOR_FRONT);
+        System.out.println(load1);
+
+        myPersistor.saveMotion(data2);
+        MotionData load2=myPersistor.getLastMotionData(Sensor.SENSOR_FRONT);
+        System.out.println(load1);
+
+        myPersistor.saveMotion(data3);
+        myPersistor.saveMotion(data4);
+        myPersistor.saveMotion(data5);
+
+        List<MotionData> loadedList=myPersistor.getMotionDataForSensor(Sensor.SENSOR_LEFT_SHOULDER);
+        System.out.println(loadedList.size());
+    }
 }

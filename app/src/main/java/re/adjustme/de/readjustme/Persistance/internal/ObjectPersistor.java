@@ -15,7 +15,7 @@ import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 public class ObjectPersistor {
 
     private final File persistanceDir = new File(PersistenceConfiguration.getPersitenceDirectory());
-
+    private final static String objSuffix=".md";
     /**
      * Constructor
      */
@@ -34,7 +34,7 @@ public class ObjectPersistor {
      */
     public boolean save(final Object object, final String fileName) {
         try {
-            final FileOutputStream fos = new FileOutputStream(new File(persistanceDir + fileName));
+            final FileOutputStream fos = new FileOutputStream(new File(persistanceDir +"/"+ fileName+objSuffix));
             final ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(object);
             oos.close();
@@ -52,9 +52,9 @@ public class ObjectPersistor {
      * @return Object o
      */
     public Object load(final String fileName) {
-        if (new File(persistanceDir + fileName).exists()) {
+        if (new File(persistanceDir +"/"+ fileName+objSuffix).exists()) {
             try {
-                final FileInputStream fis = new FileInputStream(new File(persistanceDir + fileName));
+                final FileInputStream fis = new FileInputStream(new File(persistanceDir +"/"+ fileName+objSuffix));
                 final ObjectInputStream ois = new ObjectInputStream(fis);
                 final Object object = ois.readObject();
                 ois.close();
@@ -65,7 +65,7 @@ public class ObjectPersistor {
             }
 
         } else {
-            System.err.println("Persistance File does not exist.");
+            System.err.println("Persistence File does not exist.");
             return null;
         }
     }
