@@ -40,7 +40,6 @@ public class MainActivity extends MyNavigationActivity {
     private BluetoothAdapter BA;
     private Set<BluetoothDevice> pairedDevices;
     private ArrayList<String> arrayOfFoundBTDevices = new ArrayList<String>();
-    //    private ArrayAdapter mAdapter = null;
     private ListView lv;
     private TextView tv;
     private String testChange;
@@ -77,6 +76,7 @@ public class MainActivity extends MyNavigationActivity {
                     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                         // info on item
                         Toast.makeText(context, lv.getAdapter().getItem(arg2).toString(), Toast.LENGTH_SHORT).show();
+
                     }
                 });
             }

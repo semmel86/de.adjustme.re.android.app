@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.SyncStatusObserver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -50,26 +51,9 @@ public class BluetoothService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        conn.run();
+        conn.start();
     }
 
-
-    private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
-        // if (
-//                Build.VERSION.SDK_INT >= 10) {
-//            try {
-////                final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", new Class[]{UUID.class});
-////                return (BluetoothSocket) m.invoke(device, BluetoothConfiguration.BT_DEVICE_UUID);
-//            } catch (Exception e) {
-//                Log.e("INFO", "Could not create Insecure RFComm Connection", e);
-//            }
-//        }
-        BluetoothSocket bts = device.createRfcommSocketToServiceRecord(BluetoothConfiguration.BT_DEVICE_UUID);
-        if (bts == null)
-            bts = device.createInsecureRfcommSocketToServiceRecord(BluetoothConfiguration.BT_DEVICE_UUID);
-        Log.i("INFO", "Tryed to create Socket" + bts.toString());
-        return bts;
-    }
 
     // This Class is used for a single tread to get a connection
     // returns a connected Socket on success
@@ -86,7 +70,7 @@ public class BluetoothService {
             BluetoothServerSocket tmp = null;
             try {
                 // MY_UUID is the app's UUID string, also used by the client code.
-                tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord(name, uuid);
+               tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord(name, uuid);
             } catch (IOException e) {
                 Log.i("info", "Socket's listen() method failed", e);
             }
@@ -95,6 +79,7 @@ public class BluetoothService {
 
         @Override
         public void run() {
+            System.out.println("Accept Thread Runs !");
             BluetoothSocket socket = null;
             // Keep listening until exception occurs or a socket is returned.
             while (true) {
@@ -102,6 +87,8 @@ public class BluetoothService {
                     socket = mmServerSocket.accept();
                 } catch (IOException e) {
                     Log.e("info", "Socket's accept() method failed", e);
+                    System.out.println("Socket's accept() method failed");
+
                     break;
                 }
 
@@ -112,9 +99,11 @@ public class BluetoothService {
                         listenOnConnectedSocket(socket);
                         mmServerSocket.close();
                         Log.i("info", "Close Thread after connection.");
+                        System.out.println("Close Thread after connection.");
                         break;
                     } catch (IOException e) {
-                        Log.e("info", " Failure on close", e);
+                        Log.e("info", " Failure on close", e);  System.out.println(" Failure on close");
+
                         break;
                     }
                 }

@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Set;
 
 import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
 import re.adjustme.de.readjustme.Service.BluetoothService;
@@ -95,10 +96,34 @@ public class BluetoothActivity extends MyNavigationActivity {
         this.setReceiver();
 
         checkBluethoothActive();
-        discoverDevice();
+
+       connectToBondedDevice();
+       // discoverDevice();
 
 
     }
+
+    private void connectToBondedDevice() {
+
+        // Query paired devices
+        Set<BluetoothDevice> pairedDevices = this.mBluetoothAdapter.getBondedDevices();
+        // If there are any paired devices
+        if (pairedDevices.size() > 0) {
+
+            // Loop through paired devices
+            for (BluetoothDevice device : pairedDevices) {
+                if (!(device.getName() == null) && device.getName().equals(BluetoothConfiguration.BT_DEVICE_NAME)) {
+                    Toast.makeText(this.getApplicationContext(), "Try Connection to" + device.getName(), Toast.LENGTH_SHORT).show();
+                    tvDevice.setText(device.getName());
+                    connectToDevice(device);
+                }
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "No paired devices", Toast.LENGTH_SHORT).show();
+        }
+
+
+}
 
     // start discovery Mode
     private void discoverDevice() {
