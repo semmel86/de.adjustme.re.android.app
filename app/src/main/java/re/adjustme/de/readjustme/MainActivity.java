@@ -84,27 +84,27 @@ public class MainActivity extends MyNavigationActivity {
 
     };
 
-    private Handler mHandler = new Handler() {
-        public void handleMessage(android.os.Message msg) {
-            tv.setText(msg.what);
-            switch (msg.what) {
-                case BluetoothConfiguration.MESSAGE_READ:
-                    byte[] readBuf = (byte[]) msg.obj;
-                    String strIncom = new String(readBuf, 0, msg.arg1);
-                    sb.append(strIncom);
-                    int endOfLineIndex = sb.indexOf("\r\n");
-                    if (endOfLineIndex > 0) {
-                        String sbprint = sb.substring(0, endOfLineIndex);
-                        sb.delete(0, sb.length());
-                        tv.setText("Data from Arduino: " + sbprint);
-
-                    }
-                    break;
-            }
-        }
+//    private Handler mHandler = new Handler() {
+//        public void handleMessage(android.os.Message msg) {
+//            tv.setText(msg.what);
+//            switch (msg.what) {
+//                case BluetoothConfiguration.MESSAGE_READ:
+//                    byte[] readBuf = (byte[]) msg.obj;
+//                    String strIncom = new String(readBuf, 0, msg.arg1);
+//                    sb.append(strIncom);
+//                    int endOfLineIndex = sb.indexOf("\r\n");
+//                    if (endOfLineIndex > 0) {
+//                        String sbprint = sb.substring(0, endOfLineIndex);
+//                        sb.delete(0, sb.length());
+//                        tv.setText("Data from Arduino: " + sbprint);
+//
+//                    }
+//                    break;
+//            }
+//        }
 
         ;
-    };
+//    };
 
     // handler that gets info from Bluetooth service
 
@@ -112,8 +112,8 @@ public class MainActivity extends MyNavigationActivity {
     private void connectToDevice(BluetoothDevice device) {
         // let the Bluetooth service make his work
 
-        this.mBluetoothService = new BluetoothService(device, mHandler, BA);
-        mBluetoothService.start();
+//        this.mBluetoothService = new BluetoothService(device, mHandler, BA);
+//        mBluetoothService.start();
         // switch to BT pageS
 
 

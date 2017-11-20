@@ -20,8 +20,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
 import re.adjustme.de.readjustme.Service.BluetoothService;
 
@@ -67,7 +71,7 @@ public class BluetoothActivity extends MyNavigationActivity {
         tvY.setText("y");
         tvZ.setText("z");
 
-        // set std output to view
+        // set std output to view to use System.out.print ;)
         System.setOut(new PrintStream(new OutputStream() {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -84,21 +88,11 @@ public class BluetoothActivity extends MyNavigationActivity {
         // set up specific classes
         this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        // could be used for debugging, to ensure a connection to only this specific known device
-//        Set<BluetoothDevice> devices=mBluetoothAdapter.getBondedDevices();
-//        for(BluetoothDevice d:devices){
-//            if(d.getName().equals(BluetoothConfiguration.BT_DEVICE_NAME)){
-//                this.connectToDevice(d);
-//            }
-//        }
-
         this.setHandler();
-        this.setReceiver();
 
         checkBluethoothActive();
 
-       connectToBondedDevice();
-       // discoverDevice();
+        connectToBondedDevice();
 
 
     }
@@ -123,7 +117,7 @@ public class BluetoothActivity extends MyNavigationActivity {
         }
 
 
-}
+    }
 
     // start discovery Mode
     private void discoverDevice() {
@@ -145,62 +139,66 @@ public class BluetoothActivity extends MyNavigationActivity {
         mBluetoothService.start();
     }
 
-    // Create a BroadcastReceiver for ACTION_FOUND.
-    private void setReceiver() {
-        mReceiver = new BroadcastReceiver() {
-            public void onReceive(final Context context, Intent intent) {
-                String action = intent.getAction();
-                if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                    // Discovery has found a device. Get the BluetoothDevice
-                    // object and its info from the Intent.
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    String deviceName = device.getName();
-                    Log.i("info", "BT-Device found: " + deviceName + " " + device.getAddress());
-                    System.out.println("BT-Device found: " + deviceName + " - " + device.getAddress());
-                    // if it is our Shirt device, try to connect
-                    if (!(deviceName == null) && deviceName.equals(BluetoothConfiguration.BT_DEVICE_NAME)) {
-                        Toast.makeText(context, "Try Connection to" + deviceName, Toast.LENGTH_SHORT).show();
-                        tvDevice.setText(deviceName);
-                        connectToDevice(device);
-                        // stop discovering
-                        mBluetoothAdapter.cancelDiscovery();
-                    }
-                }
 
-            }
-
-        };
-    }
-
-    // Create the specifc Handler to handle BT data
+    // Create the specific Handler to handle BT data received by BT service
     private void setHandler() {
         this.mHandler = new Handler() {
             public void handleMessage(android.os.Message msg) {
                 switch (msg.what) {
                     case BluetoothConfiguration.MESSAGE_READ:
-                        String singleData = msg.getData().getString(BluetoothConfiguration.SENSOR_DATA);
-                        int endOfLineIndex = singleData.indexOf("\r\n");
-                        String[] data = new String[5];
-                        // write on debug console Textfield
-                        outStream.setText(singleData);
-                        // split the single String into its data
-                        for (int i = 0; i < 5; i++) {
-                            data[i] = singleData.substring(0, singleData.indexOf(" "));
-                            singleData = singleData.substring(singleData.indexOf(" "), singleData.length());
+
+                        byte[] bytes = (byte[]) msg.obj;
+                        StringBuilder s = new StringBuilder();
+                        for (Byte b : bytes) {
+                            if (b < 0 || b > 64 || b == null) {
+                                break;
+                            }
+                            s.append((char) b.intValue());
                         }
-                        // write data to GUI
-                        if (endOfLineIndex > 0) {
-                            tvStatus.setText(data[0]);
-                            tvSensor.setText(data[1]);
-                            tvX.setText(data[2]);
-                            tvY.setText(data[3]);
-                            tvZ.setText(data[4]);
+                        String fullData = s.toString();
+                        List<MotionData> data = new ArrayList<>();
+                        while (fullData.length() > 0 && fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) > 0) {
+                            // Send the obtained bytes to the UI activity.
+                            String singleData = fullData.substring(0, fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR));
+                            if (singleData.length() > 0) {
+                                data.add(getMotionDataObjectFromString(singleData));
+                            }
+                            fullData = fullData.substring(fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) + BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length());
                         }
-                        break;
+                        for (MotionData m : data) {
+                            System.out.println(m.toString());
+                        }
                 }
             }
 
-            ;
+            private MotionData getMotionDataObjectFromString(String input) {
+                String[] data = new String[5];
+                // split the single String into its data
+                for (int i = 0; i < 5; i++) {
+                    if (input.indexOf(BluetoothConfiguration.MESSAGE_SEPARATOR) > 0) {
+                        data[i] = input.substring(0, input.indexOf(BluetoothConfiguration.MESSAGE_SEPARATOR));
+                        input = input.substring(input.indexOf(BluetoothConfiguration.MESSAGE_SEPARATOR) + BluetoothConfiguration.MESSAGE_SEPARATOR.length());
+                    } else {
+                        data[i] = input;
+                    }
+                }
+                // init Object
+                MotionData md = new MotionData();
+                try {
+                    if (data[1].equals(BluetoothConfiguration.SENSOR_STATUS_OK))
+                        md.setBegin(new Timestamp(System.currentTimeMillis()));
+                    md.setSensor(Integer.valueOf(data[1]));
+                    md.setX(Integer.valueOf(data[2]));
+                    md.setY(Integer.valueOf(data[3]));
+                    md.setZ(Integer.valueOf(data[4]));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return md;
+            }
+
+
         };
     }
 

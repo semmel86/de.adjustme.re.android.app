@@ -14,15 +14,17 @@ import java.util.UUID;
 public class BluetoothConfiguration {
 
     /*
-        The UUID needed to connect to the hc-05/06 device
+        The UUID for SPP Service needed to connect to the hc-05/06 device
     */
-    //UUID MY_UUID = UUID.fromString("446118f0-8b1e-11e2-9e96-0800200c9a66")
-   // public static final UUID BT_DEVICE_UUID = UUID.fromString("446118f0-8b1e-11e2-9e96-0800200c9a66");
     public static final UUID BT_DEVICE_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    // Semmel test & debug Settings
+    // public static final String BT_DEVICE_NAME = "P023"; // Semmels Tablet
+    // public static boolean SERVER_MODE = true;
 
-    public static final String BT_DEVICE_NAME = "DESKTOP-NH8QD8N"; //TODO
 
-    public static final String BT_DEVICE_PIN = "1234";
+    // switch, for HC-06 server-mode=false is required
+    public static boolean SERVER_MODE = false;
+    public static final String BT_DEVICE_NAME = "HC-06"; // Unser Bluetooth Modul
 
     /*
      Final BT Message values.
@@ -31,8 +33,9 @@ public class BluetoothConfiguration {
     public static final int MESSAGE_WRITE = 1;
     public static final int MESSAGE_TOAST = 2;
 
-    public static final String MESSAGE_SEPERATOR = "\\r\\n";
-    public static final String SENSOR_DATA = "sensor_data";
+    public static final String MESSAGE_LINE_SEPERATOR = "\r\n";
+    public static final String MESSAGE_SEPARATOR = " ";
+    public static final String SENSOR_STATUS_OK = "100";
 
 
     // global App permissions
