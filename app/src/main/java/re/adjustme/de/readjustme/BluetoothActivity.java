@@ -3,7 +3,6 @@ package re.adjustme.de.readjustme;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -12,6 +11,7 @@ import android.os.Handler;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,8 +20,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Set;
 
@@ -41,11 +43,11 @@ public class BluetoothActivity extends MyNavigationActivity {
     private TextView tvY;
     private TextView tvZ;
     private TextView outStream;
-
+    private StringBuilder mReceivedData;
     private BroadcastReceiver mReceiver;
     private BluetoothService mBluetoothService;
     private BluetoothAdapter mBluetoothAdapter;
-    private Handler mHandler;
+    private static Handler mHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +61,7 @@ public class BluetoothActivity extends MyNavigationActivity {
         tvY = (TextView) findViewById(R.id.tvSensor);
         tvZ = (TextView) findViewById(R.id.tvSensor);
         outStream = (TextView) findViewById(R.id.textView);
-
+        mReceivedData= new StringBuilder();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -71,16 +73,6 @@ public class BluetoothActivity extends MyNavigationActivity {
         tvY.setText("y");
         tvZ.setText("z");
 
-        // set std output to view to use System.out.print ;)
-        System.setOut(new PrintStream(new OutputStream() {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-            @Override
-            public void write(int oneByte) throws IOException {
-                outputStream.write(oneByte);
-                outStream.setText(new String(outputStream.toByteArray()));
-            }
-        }));
 
         // check permissions
         checkPermissions();
@@ -149,15 +141,26 @@ public class BluetoothActivity extends MyNavigationActivity {
 
                         byte[] bytes = (byte[]) msg.obj;
                         StringBuilder s = new StringBuilder();
+
                         for (Byte b : bytes) {
-                            if (b < 0 || b > 64 || b == null) {
+                            if (b < 1 || b == null) {
                                 break;
                             }
                             s.append((char) b.intValue());
                         }
-                        String fullData = s.toString();
+
+                        // aggregate BT-Snippets
+                        if(s.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR)>0) {
+                            mReceivedData.append(s.substring(0, s.lastIndexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR)+BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length()));
+                        }
+                        if(mReceivedData.length()>200){
+
+                        String fullData = mReceivedData.toString();
+                        Log.i("INfo",fullData);
+                        mReceivedData= new StringBuilder();
+
                         if(fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR)>0){
-                        fullData = fullData.substring(fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR+BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length()));
+                        fullData = fullData.substring(fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR)+BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length());
                         List<MotionData> data = new ArrayList<>();
                         while (fullData.length() > 0 && fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) > 0) {
                             // Send the obtained bytes to the UI activity.
@@ -170,12 +173,18 @@ public class BluetoothActivity extends MyNavigationActivity {
 
                             }
                             fullData = fullData.substring(fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) + BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length());
-                        }
 
-                        for (MotionData m : data) {
-                            System.out.println(m.toString());
                         }
-                }}
+                            outStream.setText("");
+//                        for (MotionData m : data) {
+//                            tvSensor.setText(m.getSensor().name());
+//                            tvStatus.setText("OK");
+//                            tvX.setText(m.getX());
+//                            tvY.setText(m.getY());
+//                            tvZ.setText(m.getZ());
+//                            outStream.setText(outStream.getText()+m.toString()+"\n");
+//                        }
+                }}}
             }
 
             private MotionData getMotionDataObjectFromString(String input) {
@@ -194,12 +203,15 @@ public class BluetoothActivity extends MyNavigationActivity {
                     // init Object
 
                     try {
-                        if (data[1].equals(BluetoothConfiguration.SENSOR_STATUS_OK))
+                        if (data[0].equalsIgnoreCase(BluetoothConfiguration.SENSOR_STATUS_OK)) {
                             md.setBegin(new Timestamp(System.currentTimeMillis()));
-                        md.setSensor(Integer.valueOf(data[1]));
-                        md.setX(Integer.valueOf(data[2]));
-                        md.setY(Integer.valueOf(data[3]));
-                        md.setZ(Integer.valueOf(data[4]));
+                            md.setSensor(Integer.valueOf(data[1]));
+                            md.setX(Integer.valueOf(data[2]));
+                            md.setY(Integer.valueOf(data[3]));
+                            md.setZ(Integer.valueOf(data[4]));
+                        }else{
+                            md=null;
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

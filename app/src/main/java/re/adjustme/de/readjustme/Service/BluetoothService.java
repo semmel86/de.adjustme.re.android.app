@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -165,13 +166,15 @@ public class BluetoothService {
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
                 try {
-                    // Read from the InputStream.
-                    numBytes = mmInStream.read(mmBuffer);
-                    // Send the obtained bytes to the UI activity.
-                    Message readMsg = mHandler.obtainMessage(
-                            BluetoothConfiguration.MESSAGE_READ, numBytes, -1,
-                            mmBuffer);
-                    readMsg.sendToTarget();
+    if(mmInStream.available()>0) {
+        // Read from the InputStream.
+        numBytes = mmInStream.read(mmBuffer);
+        // Send the obtained bytes to the UI activity.
+        Message readMsg = mHandler.obtainMessage(
+                BluetoothConfiguration.MESSAGE_READ, numBytes, -1,
+                mmBuffer);
+        readMsg.sendToTarget();
+    }
                 } catch (IOException e) {
                     Log.d("Info", "Input stream was disconnected", e);
                     break;
