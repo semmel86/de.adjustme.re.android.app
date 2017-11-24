@@ -156,45 +156,56 @@ public class BluetoothActivity extends MyNavigationActivity {
                             s.append((char) b.intValue());
                         }
                         String fullData = s.toString();
+                        if(fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR)>0){
+                        fullData = fullData.substring(fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR+BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length()));
                         List<MotionData> data = new ArrayList<>();
                         while (fullData.length() > 0 && fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) > 0) {
                             // Send the obtained bytes to the UI activity.
                             String singleData = fullData.substring(0, fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR));
                             if (singleData.length() > 0) {
-                                data.add(getMotionDataObjectFromString(singleData));
+                                MotionData md=getMotionDataObjectFromString(singleData);
+                                if(md!=null){
+                                    data.add(md);
+                                }
+
                             }
                             fullData = fullData.substring(fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) + BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length());
                         }
+
                         for (MotionData m : data) {
                             System.out.println(m.toString());
                         }
-                }
+                }}
             }
 
             private MotionData getMotionDataObjectFromString(String input) {
                 String[] data = new String[5];
-                // split the single String into its data
-                for (int i = 0; i < 5; i++) {
-                    if (input.indexOf(BluetoothConfiguration.MESSAGE_SEPARATOR) > 0) {
-                        data[i] = input.substring(0, input.indexOf(BluetoothConfiguration.MESSAGE_SEPARATOR));
-                        input = input.substring(input.indexOf(BluetoothConfiguration.MESSAGE_SEPARATOR) + BluetoothConfiguration.MESSAGE_SEPARATOR.length());
-                    } else {
-                        data[i] = input;
-                    }
-                }
-                // init Object
                 MotionData md = new MotionData();
+                // split the single String into its data
                 try {
-                    if (data[1].equals(BluetoothConfiguration.SENSOR_STATUS_OK))
-                        md.setBegin(new Timestamp(System.currentTimeMillis()));
-                    md.setSensor(Integer.valueOf(data[1]));
-                    md.setX(Integer.valueOf(data[2]));
-                    md.setY(Integer.valueOf(data[3]));
-                    md.setZ(Integer.valueOf(data[4]));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    for (int i = 0; i < 5; i++) {
+                        if (input.indexOf(BluetoothConfiguration.MESSAGE_SEPARATOR) > 0) {
+                            data[i] = input.substring(0, input.indexOf(BluetoothConfiguration.MESSAGE_SEPARATOR));
+                            input = input.substring(input.indexOf(BluetoothConfiguration.MESSAGE_SEPARATOR) + BluetoothConfiguration.MESSAGE_SEPARATOR.length());
+                        } else {
+                            data[i] = input;
+                        }
+                    }
+                    // init Object
 
+                    try {
+                        if (data[1].equals(BluetoothConfiguration.SENSOR_STATUS_OK))
+                            md.setBegin(new Timestamp(System.currentTimeMillis()));
+                        md.setSensor(Integer.valueOf(data[1]));
+                        md.setX(Integer.valueOf(data[2]));
+                        md.setY(Integer.valueOf(data[3]));
+                        md.setZ(Integer.valueOf(data[4]));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }catch(Exception e){
+                   md=null; //ignore Exceptions on Parsing
+                }
                 return md;
             }
 
