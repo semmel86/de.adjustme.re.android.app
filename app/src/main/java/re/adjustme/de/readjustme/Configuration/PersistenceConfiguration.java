@@ -8,11 +8,12 @@ import java.io.File;
 
 public class PersistenceConfiguration {
 
-    private static final String PERSITANCE_DIRECTORY = System.getProperty("user.dir") + "/persistence/";
     public static final String CSV_SEPARATOR = ";";
+    public static final PersistenceType DEFAULT_PERSISTOR = PersistenceType.FILE;
+    private static final String PERSITANCE_DIRECTORY = System.getProperty("user.dir") + "/persistence/";
 
     public static String getPersitenceDirectory() {
-        File file=new File(PERSITANCE_DIRECTORY);
+        File file = new File(PERSITANCE_DIRECTORY);
         // create if missing
         if (!file.exists() || !file.isDirectory()) {
             file.mkdirs();

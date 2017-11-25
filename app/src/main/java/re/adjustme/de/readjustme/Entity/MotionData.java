@@ -1,11 +1,5 @@
 package re.adjustme.de.readjustme.Entity;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Embedded;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.ForeignKey;
-import android.arch.persistence.room.PrimaryKey;
-
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -16,15 +10,15 @@ import re.adjustme.de.readjustme.Configuration.Sensor;
 /**
  * Created by Semmel on 18.11.2017.
  */
-
-public class MotionData implements Serializable{
+@Deprecated
+public class MotionData implements Serializable {
 
     final long serialVersionUID = 41234500967890L;
 
     private Integer id;
 
 
-    private Sensor sensor =Sensor.SENSOR_FRONT;
+    private Sensor sensor = Sensor.SENSOR_FRONT;
 
     private int x;
 
@@ -32,25 +26,25 @@ public class MotionData implements Serializable{
 
     private int z;
 
-    private Timestamp begin =new Timestamp(new Date().getTime());
+    private Timestamp begin = new Timestamp(new Date().getTime());
 
-    private long duration =0;
+    private long duration = 0;
 
+
+    public MotionData() {
+        super();
+    }
 
     public Sensor getSensor() {
         return this.sensor;
     }
 
-    public MotionData(){
-        super();
+    public void setSensor(int i) {
+        this.sensor = Sensor.getSensor(i);
     }
 
     public void setSensor(Sensor sensor) {
         this.sensor = sensor;
-    }
-
-    public void setSensor(int i) {
-        this.sensor = Sensor.getSensor(i);
     }
 
     public int getX() {
@@ -93,7 +87,7 @@ public class MotionData implements Serializable{
         this.duration = duration;
     }
 
-//    public MotionData(Sensor sensor, Timestamp begin, Long duration, int x, int y, int z){
+    //    public MotionData(Sensor sensor, Timestamp begin, Long duration, int x, int y, int z){
 //        this.sensor=sensor;
 //        this.begin=begin;
 //        this.duration=duration;

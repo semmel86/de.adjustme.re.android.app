@@ -3,35 +3,27 @@ package re.adjustme.de.readjustme;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-
 import android.view.View;
-
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Set;
 
-
-import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
 import re.adjustme.de.readjustme.Service.BluetoothService;
 
 public class MainActivity extends MyNavigationActivity {
@@ -41,16 +33,6 @@ public class MainActivity extends MyNavigationActivity {
     private Set<BluetoothDevice> pairedDevices;
     private ArrayList<String> arrayOfFoundBTDevices = new ArrayList<String>();
     private ListView lv;
-    private TextView tv;
-    private String testChange;
-    private StringBuilder sb;
-    private String[] permissionsToRequest =
-            {
-                    Manifest.permission.BLUETOOTH_ADMIN,
-                    Manifest.permission.BLUETOOTH,
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-            };
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(final Context context, Intent intent) {
@@ -83,6 +65,16 @@ public class MainActivity extends MyNavigationActivity {
         }
 
     };
+    private TextView tv;
+    private String testChange;
+    private StringBuilder sb;
+    private String[] permissionsToRequest =
+            {
+                    Manifest.permission.BLUETOOTH_ADMIN,
+                    Manifest.permission.BLUETOOTH,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+            };
 
 //    private Handler mHandler = new Handler() {
 //        public void handleMessage(android.os.Message msg) {
@@ -103,11 +95,10 @@ public class MainActivity extends MyNavigationActivity {
 //            }
 //        }
 
-        ;
+    ;
 //    };
 
     // handler that gets info from Bluetooth service
-
 
     private void connectToDevice(BluetoothDevice device) {
         // let the Bluetooth service make his work

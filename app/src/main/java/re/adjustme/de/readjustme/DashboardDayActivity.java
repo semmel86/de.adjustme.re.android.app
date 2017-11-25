@@ -1,12 +1,7 @@
 package re.adjustme.de.readjustme;
 
-import android.content.Intent;
-import android.graphics.drawable.RotateDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 

@@ -2,7 +2,7 @@ package re.adjustme.de.readjustme.Persistance;
 
 import java.util.List;
 
-import re.adjustme.de.readjustme.Entity.MotionData;
+import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Configuration.Sensor;
 
 /**
