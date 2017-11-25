@@ -16,7 +16,7 @@ import re.adjustme.de.readjustme.Persistance.PersistorFactory;
 
 public class BluetoothBackgroundIntent extends IntentService {
 
-    private MotionDataPersistor myPersistor= PersistorFactory.getMotionDataPersistor(PersistenceType.FILE);
+    private MotionDataPersistor myPersistor = PersistorFactory.getMotionDataPersistor(PersistenceType.FILE);
 
 
     public BluetoothBackgroundIntent(String name) {
@@ -25,7 +25,7 @@ public class BluetoothBackgroundIntent extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-    // start Bluetooth listener
+        // start Bluetooth listener
     }
 
 

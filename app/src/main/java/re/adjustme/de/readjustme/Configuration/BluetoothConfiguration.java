@@ -20,24 +20,16 @@ public class BluetoothConfiguration {
     // Semmel test & debug Settings
     // public static final String BT_DEVICE_NAME = "P023"; // Semmels Tablet
     // public static boolean SERVER_MODE = true;
-
-
-    // switch, for HC-06 server-mode=false is required
-    public static boolean SERVER_MODE = false;
     public static final String BT_DEVICE_NAME = "HC-06"; // Unser Bluetooth Modul
-
     /*
      Final BT Message values.
      */
     public static final int MESSAGE_READ = 0;
     public static final int MESSAGE_WRITE = 1;
     public static final int MESSAGE_TOAST = 2;
-
     public static final String MESSAGE_LINE_SEPERATOR = "\r\n";
     public static final String MESSAGE_SEPARATOR = " ";
     public static final String SENSOR_STATUS_OK = "100";
-
-
     // global App permissions
     public static final String[] permissionsToRequest =
             {
@@ -46,4 +38,6 @@ public class BluetoothConfiguration {
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
             };
+    // switch, for HC-06 server-mode=false is required
+    public static boolean SERVER_MODE = false;
 }

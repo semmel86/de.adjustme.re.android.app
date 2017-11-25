@@ -4,26 +4,17 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.SyncStatusObserver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.format.Time;
 import android.util.Log;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
-import re.adjustme.de.readjustme.Bean.MotionData;
 
 import static android.content.ContentValues.TAG;
 
@@ -45,13 +36,13 @@ public class BluetoothService {
     }
 
     public void start() {
-    if(BluetoothConfiguration.SERVER_MODE) {
-        AcceptThread a = new AcceptThread(device.getName(), BluetoothConfiguration.BT_DEVICE_UUID);
-        a.start();
-    }else{
-        ThreadConnectBTdevice b =new ThreadConnectBTdevice(device);
-        b.start();
-    }
+        if (BluetoothConfiguration.SERVER_MODE) {
+            AcceptThread a = new AcceptThread(device.getName(), BluetoothConfiguration.BT_DEVICE_UUID);
+            a.start();
+        } else {
+            ThreadConnectBTdevice b = new ThreadConnectBTdevice(device);
+            b.start();
+        }
     }
 
     private void listenOnConnectedSocket(BluetoothSocket socket) {
@@ -85,7 +76,7 @@ public class BluetoothService {
             BluetoothServerSocket tmp = null;
             try {
                 // MY_UUID is the app's UUID string, also used by the client code.
-               tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord(name, uuid);
+                tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord(name, uuid);
 
             } catch (IOException e) {
                 Log.i("info", "Socket's listen() method failed", e);
@@ -159,22 +150,22 @@ public class BluetoothService {
         }
 
         public void run() {
-            Log.i("Info","Connection status:"+mmSocket.isConnected());
+            Log.i("Info", "Connection status:" + mmSocket.isConnected());
             mmBuffer = new byte[1024];
-            int  numBytes; // bytes returned from read()
+            int numBytes; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
                 try {
-    if(mmInStream.available()>0) {
-        // Read from the InputStream.
-        numBytes = mmInStream.read(mmBuffer);
-        // Send the obtained bytes to the UI activity.
-        Message readMsg = mHandler.obtainMessage(
-                BluetoothConfiguration.MESSAGE_READ, numBytes, -1,
-                mmBuffer);
-        readMsg.sendToTarget();
-    }
+                    if (mmInStream.available() > 0) {
+                        // Read from the InputStream.
+                        numBytes = mmInStream.read(mmBuffer);
+                        // Send the obtained bytes to the UI activity.
+                        Message readMsg = mHandler.obtainMessage(
+                                BluetoothConfiguration.MESSAGE_READ, numBytes, -1,
+                                mmBuffer);
+                        readMsg.sendToTarget();
+                    }
                 } catch (IOException e) {
                     Log.d("Info", "Input stream was disconnected", e);
                     break;
@@ -216,6 +207,7 @@ public class BluetoothService {
             }
         }
     }
+
     // CLIENT MODE
     /*
         ThreadConnectBTdevice:
@@ -272,5 +264,5 @@ public class BluetoothService {
                 Log.e(TAG, "Could not close the client socket", e);
             }
         }
-}
+    }
 }

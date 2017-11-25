@@ -14,10 +14,6 @@ public enum Sensor {
 
     private int sensorNumber;
 
-    public int getSensorNumber() {
-        return sensorNumber;
-    }
-
     Sensor(int Sensor) {
         this.sensorNumber = Sensor;
     }
@@ -29,5 +25,9 @@ public enum Sensor {
             }
         }
         return null;
+    }
+
+    public int getSensorNumber() {
+        return sensorNumber;
     }
 }

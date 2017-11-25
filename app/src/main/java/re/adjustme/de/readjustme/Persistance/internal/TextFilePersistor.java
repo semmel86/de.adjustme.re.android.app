@@ -30,10 +30,9 @@ public class TextFilePersistor {
      */
     protected boolean save(final Object object, final String fileName) {
 
-        try(FileWriter fw = new FileWriter(persistenceDir + fileName, true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            PrintWriter out = new PrintWriter(bw))
-        {
+        try (FileWriter fw = new FileWriter(persistenceDir + fileName, true);
+             BufferedWriter bw = new BufferedWriter(fw);
+             PrintWriter out = new PrintWriter(bw)) {
             out.println(object.toString());
 
         } catch (IOException e) {
