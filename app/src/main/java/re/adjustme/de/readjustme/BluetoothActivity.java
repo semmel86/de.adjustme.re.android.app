@@ -3,11 +3,15 @@ package re.adjustme.de.readjustme;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -42,6 +46,29 @@ public class BluetoothActivity extends MyNavigationActivity {
     private BluetoothService mBluetoothService;
     private BluetoothAdapter mBluetoothAdapter;
 
+
+    private PersistenceService mPersistenceService=null;
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            PersistenceService.PersistenceServiceBinder b= (PersistenceService.PersistenceServiceBinder) iBinder;
+            mPersistenceService=b.getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mPersistenceService=null;
+        }
+    };
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        // get Persistence Service Connection
+        Intent intent=new Intent(this,PersistenceService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // set fields
@@ -104,15 +131,15 @@ public class BluetoothActivity extends MyNavigationActivity {
 
     }
 
-    // start discovery Mode
+    // startConnection discovery Mode
     private void discoverDevice() {
-        // start looking for bluetooth devices C:\Users\Semmel\
+        // startConnection looking for bluetooth devices C:\Users\Semmel\
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mReceiver, filter);
         if (mBluetoothAdapter.startDiscovery()) {
             Log.i("info", "Start Discovery.");
         } else {
-            Log.i("info", "Cannot start Discovery.");
+            Log.i("info", "Cannot startConnection Discovery.");
         }
     }
 
@@ -141,12 +168,12 @@ public class BluetoothActivity extends MyNavigationActivity {
                             }
                             s.append((char) b.intValue());
                         }
-
+                        String s2=new String(bytes,0,msg.arg1);
                         // aggregate BT-Snippets
                         if (s.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) > 0) {
                             mReceivedData.append(s.substring(0, s.lastIndexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) + BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length()));
                         }
-                        if (mReceivedData.length() > 200) {
+                        if (mReceivedData.length() > 30) {
 
                             String fullData = mReceivedData.toString();
                             Log.i("INfo", fullData);
@@ -161,14 +188,15 @@ public class BluetoothActivity extends MyNavigationActivity {
                                     if (singleData.length() > 0) {
                                         MotionData md = getMotionDataObjectFromString(singleData);
                                         if (md != null) {
-                                            data.add(md);
+//                                            data.add(md);
+                                            mPersistenceService.save(md);
                                         }
 
                                     }
                                     fullData = fullData.substring(fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) + BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length());
 
                                 }
-                                outStream.setText("");
+                            //    outStream.setText("");
 //                        for (MotionData m : data) {
 //                            tvSensor.setText(m.getSensor().name());
 //                            tvStatus.setText("OK");

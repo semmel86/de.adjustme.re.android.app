@@ -1,5 +1,7 @@
 package re.adjustme.de.readjustme.Persistance.internal;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,14 +31,19 @@ public class TextFilePersistor {
      * @return Boolean
      */
     protected boolean save(final Object object, final String fileName) {
-
-        try (FileWriter fw = new FileWriter(persistenceDir + fileName, true);
+String f =persistenceDir + fileName;
+File ff= new File(f);
+        try (FileWriter fw = new FileWriter(f, true);
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter out = new PrintWriter(bw)) {
             out.println(object.toString());
 
+            out.close();
+            bw.close();
+            fw.close();
         } catch (IOException e) {
             e.printStackTrace();
+            this.makeFile(ff);
         }
         return true;
     }
@@ -47,7 +54,9 @@ public class TextFilePersistor {
     protected String loadLine(String fileName) {
         File file = new File(persistenceDir + fileName);
         RandomAccessFile fileHandler = null;
+
         try {
+
             fileHandler = new RandomAccessFile(file, "r");
             long fileLength = fileHandler.length() - 1;
             StringBuilder sb = new StringBuilder();
@@ -70,10 +79,10 @@ public class TextFilePersistor {
             String lastLine = sb.reverse().toString();
             return lastLine;
         } catch (java.io.FileNotFoundException e) {
-            e.printStackTrace();
+            this.makeFile(file);
             return null;
         } catch (java.io.IOException e) {
-            e.printStackTrace();
+            this.makeFile(file);
             return null;
         } finally {
             if (fileHandler != null)
@@ -92,17 +101,33 @@ public class TextFilePersistor {
     protected List<String> loadLines(String fileName) {
         File file = new File(persistenceDir + fileName);
         List<String> result = new ArrayList<>();
+
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
                 result.add(line);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            this.makeFile(file);
+
         }
         return result;
     }
 
+    private boolean makeFile(File file){
+        if(!file.exists()){
+//            file.getParent().mkdirs();
+            Log.i("Info","Made missing File: "+file.getAbsolutePath()+" "+file.getName());
+            try {
+                file.createNewFile();
+            }catch(Exception e){
+                e.printStackTrace();
+                Log.i("Info","Cannot make missing File: "+file.getAbsolutePath()+" "+file.getName());
+               return false;
+            }
+        }
+        return true;
+    }
 }
 
 

@@ -28,6 +28,14 @@
         <activity
             android:name=".BluetoothActivity"
             android:label="BluetoothActivity"></activity>
+
+        <service
+            android:name=".PersistenceService"
+            android:exported="false" />
+        <service
+            android:name=".BluetoothBackgroundIntent"
+            android:exported="false" />
+
     </application>
 
 </manifest>

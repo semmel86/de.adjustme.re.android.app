@@ -1,54 +1,136 @@
-package re.adjustme.de.readjustme.Service;
+package re.adjustme.de.readjustme;
 
+
+import android.app.IntentService;
+import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
+import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
+import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceType;
+import re.adjustme.de.readjustme.Persistance.MotionDataPersistor;
+import re.adjustme.de.readjustme.Persistance.PersistorFactory;
+import re.adjustme.de.readjustme.Service.BluetoothService;
 
 import static android.content.ContentValues.TAG;
 
 /**
- * Created by Semmel on 31.10.2017.
+ * TODO
+ * Created by Semmel on 18.11.2017.
  */
 
-public class BluetoothService {
+public class BluetoothBackgroundIntent extends Service {
 
-    private Handler mHandler; // handler that gets info from Bluetooth service
     private BluetoothAdapter mBluetoothAdapter;
-    private BluetoothDevice device;
+    private static Handler mHandler;
+    private PersistenceService mPersistenceService=null;
+    private BluetoothDevice mDevice;
+    private ServiceConnection mConnection = null;
 
-    public BluetoothService(BluetoothDevice device, Handler handler, BluetoothAdapter bluetoothAdapter) {
-        this.device = device;
-        this.mHandler = handler;
-        this.mBluetoothAdapter = bluetoothAdapter;
+
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
+        return super.onStartCommand(intent,flags,startId);
     }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 
-    public void start() {
+    @Override
+    public void onCreate(){
+        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
+        PersistenceConfiguration.setPersistenceDirectory(this.getApplicationContext().getFilesDir());
+        this.init();
+        // startConnection Bluetooth listener
+        getBondedDevice();
+        // connect to device
+        startConnection();
+        // startConnection listening
+        // save the Motion Data
+    }
+
+    private void init() {
+
+        // get Persistence Service Binder
+        setConnection();
+        Intent intent=new Intent(this,PersistenceService.class);
+        boolean b = bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        // set up specific classes
+        this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        setHandler();
+    }
+
+    public void startConnection() {
         if (BluetoothConfiguration.SERVER_MODE) {
-            AcceptThread a = new AcceptThread(device.getName(), BluetoothConfiguration.BT_DEVICE_UUID);
+            AcceptThread a = new AcceptThread(mDevice.getName(), BluetoothConfiguration.BT_DEVICE_UUID);
             a.start();
         } else {
-            ThreadConnectBTdevice b = new ThreadConnectBTdevice(device);
+            ThreadConnectBTdevice b = new ThreadConnectBTdevice(mDevice);
             b.start();
         }
+        Log.i("Info","Started Connecting to Device");
     }
 
+    private void getBondedDevice() {
+
+        // Query paired devices
+        Set<BluetoothDevice> pairedDevices = this.mBluetoothAdapter.getBondedDevices();
+        // If there are any paired devices
+        if (pairedDevices.size() > 0) {
+
+            // Loop through paired devices
+            for (BluetoothDevice device : pairedDevices) {
+                if (!(device.getName() == null) && device.getName().equals(BluetoothConfiguration.BT_DEVICE_NAME)) {
+                   mDevice=device;
+                   Log.i("Info","Found a known Bluetooth device: "+device.getName() );
+                    break;
+                }
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "No paired devices", Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
+
+
+    /**
+     * *****************************
+     * PRIVATE Bluetooth Threads
+     * *****************************
+     */
     private void listenOnConnectedSocket(BluetoothSocket socket) {
         Log.i("INFO", "Start listening");
         ConnectedThread conn = null;
@@ -63,7 +145,6 @@ public class BluetoothService {
         }
         conn.start();
     }
-
     // SERVER MODE
     // This Class is used for a single tread to get a connection
     // returns a connected Socket on success
@@ -153,7 +234,7 @@ public class BluetoothService {
             mmOutStream = tmpOut;
         }
 
-        public void run() {
+        public synchronized void run() {
             Log.i("Info", "Connection status:" + mmSocket.isConnected());
             mmBuffer = new byte[1024];
             Integer numBytes=null; // bytes returned from read()
@@ -168,8 +249,8 @@ public class BluetoothService {
                         String s2=new String(mmBuffer,0,numBytes);
                         Message readMsg = mHandler.obtainMessage(
                                 BluetoothConfiguration.MESSAGE_READ, numBytes, -1,
-                                mmBuffer);
-                        readMsg.sendToTarget();
+                                s2);
+                       readMsg.sendToTarget();
                     }
                 } catch (IOException e) {
                     Log.d("Info", "Input stream was disconnected", e);
@@ -270,4 +351,118 @@ public class BluetoothService {
             }
         }
     }
+
+
+
+    /**
+     * *****************************
+     * PRIVATE INITIAL SETUP METHODS
+     * *****************************
+     */
+
+
+    private void setHandler() {
+        this.mHandler = new DataHandler(mPersistenceService) ;
+    }
+
+    private void setConnection(){
+       mConnection= new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+                PersistenceService.PersistenceServiceBinder b= (PersistenceService.PersistenceServiceBinder) iBinder;
+                mPersistenceService=b.getService();
+                // ensures the handler got a persistence serice instance!!!
+                setHandler();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName componentName) {
+                mPersistenceService=null;
+            }
+        };
+    }
+
+private static class DataHandler extends Handler{
+    private PersistenceService mPersistenceService=null;
+    private StringBuilder mReceivedData;
+
+    public DataHandler(PersistenceService p ) {
+        this.mPersistenceService = p;
+        this.mReceivedData=new StringBuilder();
+    }
+    public synchronized void handleMessage(android.os.Message msg) {
+        switch (msg.what) {
+            case BluetoothConfiguration.MESSAGE_READ:
+
+               // byte[] bytes = (byte[]) msg.obj;
+                //StringBuilder s = new StringBuilder();
+                String received=(String)msg.obj;
+                mReceivedData.append(received);
+
+//                if (s.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) > 0) {
+//                    mReceivedData.append(s.substring(0, s.lastIndexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) + BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length()));
+//                }
+                if (mReceivedData.length() > 30) {
+
+                    String fullData = mReceivedData.toString();
+
+                    mReceivedData = new StringBuilder();
+
+                    if (fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) > 0) {
+                        fullData = fullData.substring(fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) + BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length());
+                        List<MotionData> data = new ArrayList<>();
+                        while (fullData.length() > 0 && fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) > 0) {
+                            // Send the obtained bytes to the UI activity.
+                            String singleData = fullData.substring(0, fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR));
+                            if (singleData.length() > 0) {
+                                MotionData md = getMotionDataObjectFromString(singleData);
+
+                                if (md != null) {
+                                    Log.i("Info",md.toString());
+                                    mPersistenceService.save(md);
+                                }
+
+                            }
+                            fullData = fullData.substring(fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) + BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length());
+
+                        }
+                    }
+                }
+        }
+    }
+
+    private MotionData getMotionDataObjectFromString(String input) {
+        String[] data = new String[5];
+        MotionData md = new MotionData();
+        // split the single String into its data
+        try {
+            for (int i = 0; i < 5; i++) {
+                if (input.indexOf(BluetoothConfiguration.MESSAGE_SEPARATOR) > 0) {
+                    data[i] = input.substring(0, input.indexOf(BluetoothConfiguration.MESSAGE_SEPARATOR));
+                    input = input.substring(input.indexOf(BluetoothConfiguration.MESSAGE_SEPARATOR) + BluetoothConfiguration.MESSAGE_SEPARATOR.length());
+                } else {
+                    data[i] = input;
+                }
+            }
+            // init Object
+
+            try {
+                if (data[0].equalsIgnoreCase(BluetoothConfiguration.SENSOR_STATUS_OK)) {
+                    md.setBegin(new Timestamp(System.currentTimeMillis()));
+                    md.setSensor(Integer.valueOf(data[1]));
+                    md.setX(Integer.valueOf(data[2]));
+                    md.setY(Integer.valueOf(data[3]));
+                    md.setZ(Integer.valueOf(data[4]));
+                } else {
+                    md = null;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            md = null; //ignore Exceptions on Parsing
+        }
+        return md;
+    }
+}
 }

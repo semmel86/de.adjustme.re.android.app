@@ -1,10 +1,11 @@
-package re.adjustme.de.readjustme.Service;
+package re.adjustme.de.readjustme;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,8 +26,9 @@ public class PersistenceService extends Service {
     private HashMap<Sensor, List<MotionData>> sensorData;
     private MotionDataPersistor persistor;
 
-    protected PersistenceService() {
+    public PersistenceService() {
         // get Persistor
+        sensorData=new HashMap<Sensor, List<MotionData>>();
         this.persistor = PersistorFactory.getMotionDataPersistor(PersistenceConfiguration.DEFAULT_PERSISTOR);
 
         // load current data foreach Sensor
@@ -35,17 +37,20 @@ public class PersistenceService extends Service {
             sensorData.put(s, list);
         }
     }
-
+    // save persist immediately the object
+    // and adds to the cached map after
     public void save(MotionData md) {
         persistor.saveMotion(md);
         sensorData.get(md.getSensor()).add(md);
+        Log.i("Info Persistence","Saved Motion Data: "+md.toString() );
 
     }
-
+    // get the data from cached Map
     public MotionData getLast(Sensor s) {
         return this.sensorData.get(s).get(0);
     }
 
+    // get the data from cached Map
     public List<MotionData> getList(Sensor s) {
         return this.sensorData.get(s);
     }

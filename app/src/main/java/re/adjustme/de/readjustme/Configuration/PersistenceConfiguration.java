@@ -10,7 +10,7 @@ public class PersistenceConfiguration {
 
     public static final String CSV_SEPARATOR = ";";
     public static final PersistenceType DEFAULT_PERSISTOR = PersistenceType.FILE;
-    private static final String PERSITANCE_DIRECTORY = System.getProperty("user.dir") + "/persistence/";
+    private static String PERSITANCE_DIRECTORY = System.getProperty("user.dir") + "/persistence/";
 
     public static String getPersitenceDirectory() {
         File file = new File(PERSITANCE_DIRECTORY);
@@ -19,5 +19,9 @@ public class PersistenceConfiguration {
             file.mkdirs();
         }
         return PERSITANCE_DIRECTORY;
+    }
+
+    public static void setPersistenceDirectory(File persistenceDirectory) {
+        PERSITANCE_DIRECTORY = persistenceDirectory.getAbsolutePath()+ "/persistence/";
     }
 }
