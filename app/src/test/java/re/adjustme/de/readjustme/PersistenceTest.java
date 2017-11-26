@@ -12,8 +12,8 @@ import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceType;
 import re.adjustme.de.readjustme.Configuration.Sensor;
 import re.adjustme.de.readjustme.Entity.MotionData;
-import re.adjustme.de.readjustme.Persistance.MotionDataPersistor;
-import re.adjustme.de.readjustme.Persistance.PersistorFactory;
+import re.adjustme.de.readjustme.Persistence.MotionDataPersistor;
+import re.adjustme.de.readjustme.Persistence.PersistorFactory;
 
 /**
  * Created by Semmel on 18.11.2017.

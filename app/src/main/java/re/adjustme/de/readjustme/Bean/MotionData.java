@@ -1,5 +1,7 @@
 package re.adjustme.de.readjustme.Bean;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -11,7 +13,7 @@ import re.adjustme.de.readjustme.Configuration.Sensor;
  * Created by Semmel on 18.11.2017.
  */
 
-public class MotionData implements Serializable {
+public class MotionData implements Serializable, Comparable {
 
     final long serialVersionUID = 41234500967890L;
 
@@ -39,12 +41,12 @@ public class MotionData implements Serializable {
         return this.sensor;
     }
 
-    public void setSensor(int i) {
-        this.sensor = Sensor.getSensor(i);
-    }
-
     public void setSensor(Sensor sensor) {
         this.sensor = sensor;
+    }
+
+    public void setSensor(int i) {
+        this.sensor = Sensor.getSensor(i);
     }
 
     public int getX() {
@@ -87,15 +89,6 @@ public class MotionData implements Serializable {
         this.duration = duration;
     }
 
-    //    public MotionData(Sensor sensor, Timestamp begin, Long duration, int x, int y, int z){
-//        this.sensor=sensor;
-//        this.begin=begin;
-//        this.duration=duration;
-//        this.x=x;
-//        this.y=y;
-//        this.z=z;
-//    }
-    // 1 ; 20171118123325634213 ; 25632 ; 10 ; 90 ; 155
     @Override
     public String toString() {
         return sensor.getSensorNumber() + PersistenceConfiguration.CSV_SEPARATOR +
@@ -106,4 +99,30 @@ public class MotionData implements Serializable {
                 + z;
     }
 
+    @Override
+    public int compareTo(@NonNull Object o) {
+        MotionData m = null;
+        try {
+            m = (MotionData) o;
+        } catch (Exception e) {
+            // not equal if it isn't a MotionData
+            return -1;
+        }
+        int difX = this.getX() - m.getX();
+        int difY = this.getY() - m.getY();
+        int difZ = this.getZ() - m.getZ();
+        if ((difX > 0 && difX > this.sensor.getEpsilon_x()) || (difX < 0 && difX < this.sensor.getEpsilon_x())) {
+            // x-difference is to high
+            return 1;
+        } else if ((difY > 0 && difY > this.sensor.getEpsilon_y()) || (difY < 0 && difY < this.sensor.getEpsilon_y())) {
+            // y-difference is to high
+            return 1;
+        } else if ((difZ > 0 && difZ > this.sensor.getEpsilon_z()) || (difZ < 0 && difZ < this.sensor.getEpsilon_z())) {
+            // z-difference is to high
+            return 1;
+        }
+        // all possible differences are between the 0 and predefined epsilon
+        // so we consider this motion data equals Object o
+        return 0;
+    }
 }

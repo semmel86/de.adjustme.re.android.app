@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme.Persistance.internal;
+package re.adjustme.de.readjustme.Persistence.internal;
 
 import java.io.File;
 import java.io.FileInputStream;

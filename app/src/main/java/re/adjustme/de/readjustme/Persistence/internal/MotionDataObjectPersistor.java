@@ -1,11 +1,11 @@
-package re.adjustme.de.readjustme.Persistance.internal;
+package re.adjustme.de.readjustme.Persistence.internal;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Configuration.Sensor;
-import re.adjustme.de.readjustme.Persistance.MotionDataPersistor;
+import re.adjustme.de.readjustme.Persistence.MotionDataPersistor;
 
 /**
  * Really slow for many single load and save options.

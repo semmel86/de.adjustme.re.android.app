@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme.Persistance.internal;
+package re.adjustme.de.readjustme.Persistence.internal;
 
 import android.util.Log;
 
@@ -31,8 +31,8 @@ public class TextFilePersistor {
      * @return Boolean
      */
     protected boolean save(final Object object, final String fileName) {
-String f =persistenceDir + fileName;
-File ff= new File(f);
+        String f = persistenceDir + fileName;
+        File ff = new File(f);
         try (FileWriter fw = new FileWriter(f, true);
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter out = new PrintWriter(bw)) {
@@ -114,16 +114,16 @@ File ff= new File(f);
         return result;
     }
 
-    private boolean makeFile(File file){
-        if(!file.exists()){
+    private boolean makeFile(File file) {
+        if (!file.exists()) {
 //            file.getParent().mkdirs();
-            Log.i("Info","Made missing File: "+file.getAbsolutePath()+" "+file.getName());
+            Log.i("Info", "Made missing File: " + file.getAbsolutePath() + " " + file.getName());
             try {
                 file.createNewFile();
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-                Log.i("Info","Cannot make missing File: "+file.getAbsolutePath()+" "+file.getName());
-               return false;
+                Log.i("Info", "Cannot make missing File: " + file.getAbsolutePath() + " " + file.getName());
+                return false;
             }
         }
         return true;

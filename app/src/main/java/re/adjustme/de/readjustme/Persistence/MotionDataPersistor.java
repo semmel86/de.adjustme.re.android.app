@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme.Persistance;
+package re.adjustme.de.readjustme.Persistence;
 
 import java.util.List;
 

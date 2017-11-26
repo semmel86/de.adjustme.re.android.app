@@ -18,17 +18,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Set;
 
-import re.adjustme.de.readjustme.Service.BluetoothService;
-
 public class MainActivity extends MyNavigationActivity {
     Button bluttoothButton, b2;
-    BluetoothService mBluetoothService;
     private BluetoothAdapter BA;
     private Set<BluetoothDevice> pairedDevices;
     private ArrayList<String> arrayOfFoundBTDevices = new ArrayList<String>();
@@ -65,9 +61,7 @@ public class MainActivity extends MyNavigationActivity {
         }
 
     };
-    private TextView tv;
-    private String testChange;
-    private StringBuilder sb;
+
     private String[] permissionsToRequest =
             {
                     Manifest.permission.BLUETOOTH_ADMIN,
@@ -92,17 +86,16 @@ public class MainActivity extends MyNavigationActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tv = (TextView) findViewById(R.id.textView2);
         bluttoothButton = (Button) findViewById(R.id.button);
         b2 = (Button) findViewById(R.id.button2);
         BA = BluetoothAdapter.getDefaultAdapter();
         checkPermissions();
-        lv = (ListView) findViewById(R.id.listView);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        Intent intent = new Intent(this, BluetoothBackgroundIntent.class);
+        Intent intent = new Intent(this, BluetoothBackgroundService.class);
         startService(intent);
+
     }
 
 
@@ -118,40 +111,22 @@ public class MainActivity extends MyNavigationActivity {
 
 
     // list active paired devices
-    public void list2(View v) {
-        this.checkBluethoothActive();
-        ArrayList list = new ArrayList();
-        displayListOfFoundDevices();
-        list.addAll(arrayOfFoundBTDevices);
-        //Toast.makeText(getApplicationContext(), "Try to find Devices", Toast.LENGTH_SHORT).show();
-
+    public void startService(View v) {
+        Intent intent = new Intent(this, BluetoothBackgroundService.class);
+        startService(intent);
     }
 
-    public void getArrayOfAlreadyPairedBluetoothDevices(View v) {
-        tv.setText("Paired Devices:");
-        this.checkBluethoothActive();
-        ArrayList<String> arrayOfAlreadyPairedBTDevices = new ArrayList<>();
+    public void calibrate(View v) {
+        mPersistenceService.calibrate();
+    }
 
-        // Query paired devices
-        Set<BluetoothDevice> pairedDevices = BA.getBondedDevices();
-        // If there are any paired devices
-        if (pairedDevices.size() > 0) {
-            arrayOfAlreadyPairedBTDevices = new ArrayList<String>();
-
-            // Loop through paired devices
-            for (BluetoothDevice device : pairedDevices) {
-                arrayOfAlreadyPairedBTDevices.add(device.getName() + " - " + device.getAddress());
-            }
-        } else {
-            Toast.makeText(getApplicationContext(), "No paired devices", Toast.LENGTH_SHORT).show();
-        }
-
-        final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayOfAlreadyPairedBTDevices);
-        lv.setAdapter(adapter);
+    public void stopService(View v) {
+        Intent intent = new Intent(this, BluetoothBackgroundService.class);
+        stopService(intent);
     }
 
     private void displayListOfFoundDevices() {
-        tv.setText("Found Devices:");
+
         // startConnection looking for bluetooth devices C:\Users\Semmel\
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mReceiver, filter);

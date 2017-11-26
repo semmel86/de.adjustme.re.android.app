@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme.Persistance.internal;
+package re.adjustme.de.readjustme.Persistence.internal;
 
 import android.app.IntentService;
 import android.arch.persistence.room.Room;
@@ -9,8 +9,8 @@ import java.util.List;
 
 import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Configuration.Sensor;
-import re.adjustme.de.readjustme.Persistance.MotionDataPersistor;
-import re.adjustme.de.readjustme.Persistance.internal.RoomDatabaseAccess.AppDatabase;
+import re.adjustme.de.readjustme.Persistence.MotionDataPersistor;
+import re.adjustme.de.readjustme.Persistence.internal.RoomDatabaseAccess.AppDatabase;
 
 /**
  * Created by Semmel on 18.11.2017.

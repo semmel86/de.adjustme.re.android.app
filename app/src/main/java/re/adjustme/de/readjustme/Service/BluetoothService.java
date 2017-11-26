@@ -4,11 +4,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.ComponentName;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 
@@ -18,7 +15,6 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
-import re.adjustme.de.readjustme.Configuration.PersistenceType;
 
 import static android.content.ContentValues.TAG;
 
@@ -156,7 +152,7 @@ public class BluetoothService {
         public void run() {
             Log.i("Info", "Connection status:" + mmSocket.isConnected());
             mmBuffer = new byte[1024];
-            Integer numBytes=null; // bytes returned from read()
+            Integer numBytes = null; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
@@ -165,7 +161,7 @@ public class BluetoothService {
                         // Read from the InputStream.
                         numBytes = mmInStream.read(mmBuffer);
                         // Send the obtained bytes to the UI activity.
-                        String s2=new String(mmBuffer,0,numBytes);
+                        String s2 = new String(mmBuffer, 0, numBytes);
                         Message readMsg = mHandler.obtainMessage(
                                 BluetoothConfiguration.MESSAGE_READ, numBytes, -1,
                                 mmBuffer);

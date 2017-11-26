@@ -1,8 +1,8 @@
-package re.adjustme.de.readjustme.Persistance;
+package re.adjustme.de.readjustme.Persistence;
 
 import re.adjustme.de.readjustme.Configuration.PersistenceType;
-import re.adjustme.de.readjustme.Persistance.internal.MotionDataObjectPersistor;
-import re.adjustme.de.readjustme.Persistance.internal.MotionDataTextFilePersistor;
+import re.adjustme.de.readjustme.Persistence.internal.MotionDataObjectPersistor;
+import re.adjustme.de.readjustme.Persistence.internal.MotionDataTextFilePersistor;
 
 /**
  * Created by Semmel on 18.11.2017.

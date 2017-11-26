@@ -33,7 +33,7 @@
             android:name=".PersistenceService"
             android:exported="false" />
         <service
-            android:name=".BluetoothBackgroundIntent"
+            android:name=".BluetoothBackgroundService"
             android:exported="false" />
 
     </application>

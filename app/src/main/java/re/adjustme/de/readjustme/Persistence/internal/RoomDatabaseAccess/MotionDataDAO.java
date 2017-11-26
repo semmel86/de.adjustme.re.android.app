@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme.Persistance.internal.RoomDatabaseAccess;
+package re.adjustme.de.readjustme.Persistence.internal.RoomDatabaseAccess;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;

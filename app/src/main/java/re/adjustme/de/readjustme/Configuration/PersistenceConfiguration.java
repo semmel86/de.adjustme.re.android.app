@@ -10,18 +10,18 @@ public class PersistenceConfiguration {
 
     public static final String CSV_SEPARATOR = ";";
     public static final PersistenceType DEFAULT_PERSISTOR = PersistenceType.FILE;
-    private static String PERSITANCE_DIRECTORY = System.getProperty("user.dir") + "/persistence/";
+    private static String PERSITENCE_DIRECTORY = System.getProperty("user.dir") + "/persistence/";
 
     public static String getPersitenceDirectory() {
-        File file = new File(PERSITANCE_DIRECTORY);
+        File file = new File(PERSITENCE_DIRECTORY);
         // create if missing
         if (!file.exists() || !file.isDirectory()) {
             file.mkdirs();
         }
-        return PERSITANCE_DIRECTORY;
+        return PERSITENCE_DIRECTORY;
     }
 
     public static void setPersistenceDirectory(File persistenceDirectory) {
-        PERSITANCE_DIRECTORY = persistenceDirectory.getAbsolutePath()+ "/persistence/";
+        PERSITENCE_DIRECTORY = persistenceDirectory.getAbsolutePath() + "/persistence/";
     }
 }

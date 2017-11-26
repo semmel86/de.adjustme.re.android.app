@@ -47,28 +47,29 @@ public class BluetoothActivity extends MyNavigationActivity {
     private BluetoothAdapter mBluetoothAdapter;
 
 
-    private PersistenceService mPersistenceService=null;
+    private PersistenceService mPersistenceService = null;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            PersistenceService.PersistenceServiceBinder b= (PersistenceService.PersistenceServiceBinder) iBinder;
-            mPersistenceService=b.getService();
+            PersistenceService.PersistenceServiceBinder b = (PersistenceService.PersistenceServiceBinder) iBinder;
+            mPersistenceService = b.getService();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            mPersistenceService=null;
+            mPersistenceService = null;
         }
     };
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         // get Persistence Service Connection
-        Intent intent=new Intent(this,PersistenceService.class);
+        Intent intent = new Intent(this, PersistenceService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // set fields
@@ -168,7 +169,7 @@ public class BluetoothActivity extends MyNavigationActivity {
                             }
                             s.append((char) b.intValue());
                         }
-                        String s2=new String(bytes,0,msg.arg1);
+                        String s2 = new String(bytes, 0, msg.arg1);
                         // aggregate BT-Snippets
                         if (s.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) > 0) {
                             mReceivedData.append(s.substring(0, s.lastIndexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) + BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length()));
@@ -196,7 +197,7 @@ public class BluetoothActivity extends MyNavigationActivity {
                                     fullData = fullData.substring(fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) + BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length());
 
                                 }
-                            //    outStream.setText("");
+                                //    outStream.setText("");
 //                        for (MotionData m : data) {
 //                            tvSensor.setText(m.getSensor().name());
 //                            tvStatus.setText("OK");
