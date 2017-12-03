@@ -3,6 +3,7 @@ package re.adjustme.de.readjustme.Persistence;
 import java.util.List;
 
 import re.adjustme.de.readjustme.Bean.MotionData;
+import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
 import re.adjustme.de.readjustme.Configuration.Sensor;
 
 /**
@@ -14,7 +15,7 @@ public interface MotionDataPersistor {
     /**
      * Add this MotionData to  Persistence
      */
-    public boolean saveMotion(MotionData data);
+    public void saveMotion(MotionData data);
 
     /**
      * Get the whole data for the given Sensor
@@ -25,5 +26,10 @@ public interface MotionDataPersistor {
      * Get the last saved MotionData entry
      */
     public MotionData getLastMotionData(Sensor sensor);
+
+    /**
+     *  Save the full MotionDataSet
+     */
+    public void saveMotionSet(MotionDataSetDto m);
 
 }

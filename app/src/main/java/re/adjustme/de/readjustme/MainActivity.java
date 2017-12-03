@@ -7,56 +7,44 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Set;
 
+import re.adjustme.de.readjustme.Bean.MotionData;
+
 public class MainActivity extends MyNavigationActivity {
+    private TextView posture;
     Button bluttoothButton, b2;
     private BluetoothAdapter BA;
     private Set<BluetoothDevice> pairedDevices;
     private ArrayList<String> arrayOfFoundBTDevices = new ArrayList<String>();
     private ListView lv;
     // Create a BroadcastReceiver for ACTION_FOUND.
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
         public void onReceive(final Context context, Intent intent) {
             String action = intent.getAction();
 
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Discovery has found a device. Get the BluetoothDevice
-                // object and its info from the Intent.
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                String deviceName = device.getName();
-                String deviceHardwareAddress = device.getAddress(); // MAC address
-                for (BluetoothDevice d : BA.getBondedDevices()) {
-                    if (d.getName().equals(device.getName()) && d.getAddress().equals(device.getAddress())) {
-                        Toast.makeText(context, "Try Connection " + deviceName, Toast.LENGTH_SHORT).show();
-                        connectToDevice(device);
-                    }
-                }
-                arrayOfFoundBTDevices.add(deviceName + " - " + deviceHardwareAddress);
-                final ArrayAdapter mAdapter = new ArrayAdapter(context, android.R.layout.simple_list_item_1, arrayOfFoundBTDevices);
-                lv.setAdapter(mAdapter);
-                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                        // info on item
-                        Toast.makeText(context, lv.getAdapter().getItem(arg2).toString(), Toast.LENGTH_SHORT).show();
-
-                    }
-                });
+            if(action.equals("Posture")){
+                String s= intent.getStringExtra("PostureName");
+                posture.setText(s);
+                //Toast.makeText(context,posture, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -70,6 +58,12 @@ public class MainActivity extends MyNavigationActivity {
                     Manifest.permission.ACCESS_COARSE_LOCATION
             };
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig)
+    {
+        super.onConfigurationChanged(newConfig);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
 
     private void connectToDevice(BluetoothDevice device) {
         // let the Bluetooth service make his work
@@ -89,13 +83,14 @@ public class MainActivity extends MyNavigationActivity {
         bluttoothButton = (Button) findViewById(R.id.button);
         b2 = (Button) findViewById(R.id.button2);
         BA = BluetoothAdapter.getDefaultAdapter();
+        checkBluethoothActive();
         checkPermissions();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    posture=(TextView)findViewById(R.id.textView2);
 
-        Intent intent = new Intent(this, BluetoothBackgroundService.class);
-        startService(intent);
-
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mPostureReceiver, new IntentFilter("Posture"));
     }
 
 
@@ -110,10 +105,25 @@ public class MainActivity extends MyNavigationActivity {
     }
 
 
-    // list active paired devices
+    // start BT service
     public void startService(View v) {
-        Intent intent = new Intent(this, BluetoothBackgroundService.class);
-        startService(intent);
+        try {
+            Intent intent = new Intent(this, BluetoothBackgroundService.class);
+            startService(intent);
+            Toast.makeText(getApplicationContext(), "started BT Service", Toast.LENGTH_LONG).show();
+        }catch(Exception e){
+            Toast.makeText(getApplicationContext(), "already started", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void StartEvalService(View v){
+        try {
+            Intent intent = new Intent(this, EvaluationBackgroundService.class);
+            startService(intent);
+            Toast.makeText(getApplicationContext(), "started Evaluation", Toast.LENGTH_LONG).show();
+        }catch(Exception e){
+            Toast.makeText(getApplicationContext(), "already started", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void calibrate(View v) {
@@ -121,15 +131,31 @@ public class MainActivity extends MyNavigationActivity {
     }
 
     public void stopService(View v) {
-        Intent intent = new Intent(this, BluetoothBackgroundService.class);
-        stopService(intent);
+        try {
+            Intent intent = new Intent(this, BluetoothBackgroundService.class);
+            stopService(intent);
+            Toast.makeText(getApplicationContext(), "stopped", Toast.LENGTH_LONG).show();
+        }catch(Exception e){
+            Toast.makeText(getApplicationContext(), "already stopped", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+    public void stopEvalService(View v) {
+        try {
+            Intent intent = new Intent(this, EvaluationBackgroundService.class);
+            stopService(intent);
+            Toast.makeText(getApplicationContext(), "stopped", Toast.LENGTH_LONG).show();
+        }catch(Exception e){
+            Toast.makeText(getApplicationContext(), "already stopped", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void displayListOfFoundDevices() {
 
         // startConnection looking for bluetooth devices C:\Users\Semmel\
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mReceiver, filter);
+        registerReceiver(mPostureReceiver, filter);
         if (BA.startDiscovery()) {
             Log.i("info", "Start Discovery.");
         } else {
@@ -143,7 +169,7 @@ public class MainActivity extends MyNavigationActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mReceiver);
+        unregisterReceiver(mPostureReceiver);
 
     }
 

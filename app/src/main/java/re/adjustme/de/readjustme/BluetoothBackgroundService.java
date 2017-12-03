@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -44,7 +45,7 @@ public class BluetoothBackgroundService extends Service {
 
     private static Handler mHandler;
     // current MotionData used for aggregation via equals
-    private static HashMap<Sensor, MotionData> currentRawMotionData;
+   // private static HashMap<Sensor, MotionData> currentRawMotionData;
     private BluetoothAdapter mBluetoothAdapter;
     private PersistenceService mPersistenceService = null;
     private ServiceConnection mConnection = null;
@@ -55,7 +56,7 @@ public class BluetoothBackgroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
         this.init();
         // startConnection Bluetooth listener
         getBondedDevice();
@@ -67,9 +68,9 @@ public class BluetoothBackgroundService extends Service {
     @Override
     public void onDestroy() {
         // save the last data before shutdown !!!
-        for (MotionData m : currentRawMotionData.values()) {
-            mPersistenceService.save(m);
-        }
+//        for (MotionData m : currentRawMotionData.values()) {
+//            mPersistenceService.save(m);
+//        }
         destroyed = true;
         if (mSocket.isConnected()) {
             try {
@@ -78,7 +79,6 @@ public class BluetoothBackgroundService extends Service {
                 e.printStackTrace();
             }
         }
-
         stopSelf();
     }
 
@@ -90,8 +90,8 @@ public class BluetoothBackgroundService extends Service {
 
     @Override
     public void onCreate() {
-        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
-        currentRawMotionData = new HashMap<>();
+//        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
+        //currentRawMotionData = new HashMap<>();
         PersistenceConfiguration.setPersistenceDirectory(this.getApplicationContext().getFilesDir());
     }
 
@@ -162,6 +162,7 @@ public class BluetoothBackgroundService extends Service {
             Log.i("info", "Failure on listenOnConnectedSocket");
             e.printStackTrace();
         }
+        sendConnected();
         conn.start();
     }
 
@@ -182,7 +183,7 @@ public class BluetoothBackgroundService extends Service {
             public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
                 PersistenceService.PersistenceServiceBinder b = (PersistenceService.PersistenceServiceBinder) iBinder;
                 mPersistenceService = b.getService();
-                // ensures the handler got a persistence serice instance!!!
+                // ensures the handler got a persistence service instance!!!
                 setHandler();
             }
 
@@ -225,24 +226,7 @@ public class BluetoothBackgroundService extends Service {
                                     // get an motion data object from String
                                     MotionData md = getMotionDataObjectFromString(singleData);
                                     if (md != null) {
-                                        // compare to current MotionData of the same sensor
-                                        if (currentRawMotionData.containsKey(md.getSensor())) {
-                                            if (md.compareTo(currentRawMotionData.get(md.getSensor())) == 0) {
-                                                // no change, we only count up the duration
-                                                long duration = currentRawMotionData.get(md.getSensor()).getDuration();
-                                                duration = md.getBegin().getTime() - currentRawMotionData.get(md.getSensor()).getBegin().getTime();
-                                                currentRawMotionData.get(md.getSensor()).setDuration(duration);
-                                                // Log.i("Info", "Enlarged duration to: " + duration + " it's " + duration / 1000 + " sek");
-                                            } else {
-                                                // there is a difference, change md to current and persist old current
-                                                mPersistenceService.save(currentRawMotionData.get(md.getSensor()));
-                                                currentRawMotionData.put(md.getSensor(), md);
-                                            }
-
-                                        } else {
-                                            Log.i("Info", "Set first entry for this Sensor as current");
-                                            currentRawMotionData.put(md.getSensor(), md);
-                                        }
+                                        mPersistenceService.processNewMotionData(md);
                                     }
                                 }
                                 fullData = fullData.substring(fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) + BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length());
@@ -518,5 +502,18 @@ public class BluetoothBackgroundService extends Service {
                 Log.e(TAG, "Could not close the client socket", e);
             }
         }
+    }
+
+
+    private void sendConnected(){
+        Log.d("sender", "BT Connected");
+        Intent intent = new Intent(BluetoothConfiguration.BLUETOOTH_CONNECTED);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private void sendDisonnected(){
+        Log.d("sender", "BT Disconnected");
+        Intent intent = new Intent(BluetoothConfiguration.BLUETOOTH_DISCONNECTED);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

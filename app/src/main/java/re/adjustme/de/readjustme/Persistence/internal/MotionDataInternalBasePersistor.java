@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import java.util.List;
 
 import re.adjustme.de.readjustme.Bean.MotionData;
+import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
 import re.adjustme.de.readjustme.Configuration.Sensor;
 import re.adjustme.de.readjustme.Persistence.MotionDataPersistor;
 import re.adjustme.de.readjustme.Persistence.internal.RoomDatabaseAccess.AppDatabase;
@@ -28,8 +29,8 @@ public class MotionDataInternalBasePersistor extends IntentService implements Mo
 
 
     @Override
-    public boolean saveMotion(MotionData data) {
-        return false;
+    public void saveMotion(MotionData data) {
+
     }
 
     @Override
@@ -40,6 +41,11 @@ public class MotionDataInternalBasePersistor extends IntentService implements Mo
     @Override
     public MotionData getLastMotionData(Sensor sensor) {
         return null;
+    }
+
+    @Override
+    public void saveMotionSet(MotionDataSetDto m) {
+
     }
 
     @Override

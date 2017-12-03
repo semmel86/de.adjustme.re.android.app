@@ -52,12 +52,13 @@ public abstract class MyNavigationActivity extends AppCompatActivity {
         }
     };
 
-    private void setConnection() {
+    protected void setConnection() {
         mConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
                 PersistenceService.PersistenceServiceBinder b = (PersistenceService.PersistenceServiceBinder) iBinder;
                 mPersistenceService = b.getService();
+                afterServiceConnection();
             }
 
             @Override
@@ -65,6 +66,10 @@ public abstract class MyNavigationActivity extends AppCompatActivity {
                 mPersistenceService = null;
             }
         };
+    }
+
+    protected void afterServiceConnection(){
+        
     }
 
     @Override
