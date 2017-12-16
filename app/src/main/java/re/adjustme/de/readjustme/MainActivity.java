@@ -87,7 +87,7 @@ public class MainActivity extends MyNavigationActivity {
         checkPermissions();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-    posture=(TextView)findViewById(R.id.textView2);
+        posture=(TextView)findViewById(R.id.textView2);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mPostureReceiver, new IntentFilter("Posture"));
@@ -126,6 +126,10 @@ public class MainActivity extends MyNavigationActivity {
         }
     }
 
+    public void calculateClassifier(View v){
+        Intent intent = new Intent(this, EvaluationBackgroundService.class);
+        startService(intent);
+    }
     public void calibrate(View v) {
         mPersistenceService.calibrate();
     }
@@ -205,5 +209,6 @@ public class MainActivity extends MyNavigationActivity {
             }
         }
     }
+
 
 }

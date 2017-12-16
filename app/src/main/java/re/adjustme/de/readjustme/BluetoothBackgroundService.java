@@ -31,6 +31,7 @@ import java.util.UUID;
 
 import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
+import re.adjustme.de.readjustme.Configuration.HardwareFailures;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Configuration.Sensor;
 
@@ -260,7 +261,14 @@ public class BluetoothBackgroundService extends Service {
                         md.setY(Integer.valueOf(data[3]));
                         md.setZ(Integer.valueOf(data[4]));
                     } else {
+
                         md = null;
+
+                        if(Integer.valueOf(data[0])==HardwareFailures.INITIATION_FAILURE.getCode()){
+                            Log.i("Info","Hardware-Failure: " + HardwareFailures.getFailure(Integer.valueOf(data[0])).getMessage() + " " + Integer.valueOf(data[1]));
+                        }else{
+                            Log.i("Info","Hardware-Failure: " + HardwareFailures.getFailure(Integer.valueOf(data[0])).getMessage());
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

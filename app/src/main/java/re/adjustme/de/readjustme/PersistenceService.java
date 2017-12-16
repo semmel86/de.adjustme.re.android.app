@@ -34,6 +34,7 @@ public class PersistenceService extends Service {
     private MotionDataPersistor persistor;
     private String label="";
     private boolean isInLabeledPosition=false;
+    private HashMap<Sensor, List<MotionData>> fullMotionData;
 
     public PersistenceService() {
 
@@ -55,7 +56,8 @@ public class PersistenceService extends Service {
         calibration.setX(0);
         calibration.setY(0);
         calibration.setZ(0);
-//
+
+        fullMotionData=new HashMap<>();
 //        // load current data foreach Sensor
         for (Sensor s : Sensor.values()) {
             List<MotionData> list = persistor.getMotionDataForSensor(s);
@@ -63,9 +65,14 @@ public class PersistenceService extends Service {
                 calibration.setSensor(s);
                 calibrationMotionData.put(s, calibration);
             }
+            fullMotionData.put(s,list);
+
        }
     }
 
+    public HashMap<Sensor, List<MotionData>> getMotionData(){
+        return  fullMotionData;
+    }
     @Override
     public void onDestroy(){
         // save the pending raw data
@@ -107,13 +114,13 @@ public class PersistenceService extends Service {
     // save persist immediately the object
     // and adds to the cached map after
     public void save(MotionData md) {
-        doCalibration(md);
+        //doCalibration(md);
         // SAVE
         labelMotionData(md);
         persistor.saveMotion(md);
         motionDataSet.update(md);
         persistor.saveMotionSet(motionDataSet);
-        Log.i("Info Persistence", "Saved calibrated Motion Data: " + md.toString());
+        Log.i("Info Persistence", "Saved Motion Data: " + md.toString());
     }
 
     // get the data from cached Map
@@ -182,7 +189,7 @@ public class PersistenceService extends Service {
         md.setLabel(label);
     }
 
-    public MotionData[] getMotionDataSet() {
-        return motionDataSet.getMotionDataSet();
+    public MotionDataSetDto getMotionDataSet() {
+        return motionDataSet;
     }
 }

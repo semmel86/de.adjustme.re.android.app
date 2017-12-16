@@ -1,6 +1,7 @@
 package re.adjustme.de.readjustme.Persistence;
 
 import re.adjustme.de.readjustme.Configuration.PersistenceType;
+import re.adjustme.de.readjustme.Persistence.internal.ClassificationDataObjectPersistor;
 import re.adjustme.de.readjustme.Persistence.internal.MotionDataObjectPersistor;
 import re.adjustme.de.readjustme.Persistence.internal.MotionDataTextFilePersistor;
 
@@ -24,7 +25,9 @@ public class PersistorFactory {
             default:
                 return null;
         }
+    }
 
-
+    static public ClassificationDataPersistor getClassificationDataPersistor(PersistenceType type){
+        return new ClassificationDataObjectPersistor();
     }
 }

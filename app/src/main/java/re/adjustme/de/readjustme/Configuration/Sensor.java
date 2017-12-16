@@ -9,11 +9,11 @@ package re.adjustme.de.readjustme.Configuration;
 
 public enum Sensor {
 
-    SENSOR_FRONT(1, 5, 5, 5),
-    SENSOR_LOWER_BACK(2, 5, 5, 5),
-    SENSOR_UPPER_BACK(3, 5, 5, 5),
-    SENSOR_RIGHT_SHOULDER(4, 5, 5, 5),
-    SENSOR_LEFT_SHOULDER(5, 5, 5, 5);
+    SENSOR_FRONT(1, 0, 0, 0),
+    SENSOR_LOWER_BACK(2, 0, 0, 0),
+    SENSOR_UPPER_BACK(3, 0, 0, 0),
+    SENSOR_RIGHT_SHOULDER(4, 0, 0, 0),
+    SENSOR_LEFT_SHOULDER(5, 0, 0, 0);
 
     private int sensorNumber;
     private int epsilon_x;
