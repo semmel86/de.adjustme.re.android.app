@@ -9,7 +9,6 @@ public class DashboardDayActivity extends MyNavigationActivity {
 
     private TextView mTextMessage;
     private ProgressBar pB1;
-    private ProgressBar pB2;
 
 
     @Override
@@ -19,14 +18,12 @@ public class DashboardDayActivity extends MyNavigationActivity {
 
 
         pB1 = (ProgressBar) findViewById(R.id.progressBar);
-        pB2 = (ProgressBar) findViewById(R.id.progressBar2);
         pB1.setMax(100);
         pB1.setProgress(65);
-        pB2.setMax(100);
 
-        pB2.setProgress(65);
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setSelectedItemId(R.id.navigation_dashboard);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 

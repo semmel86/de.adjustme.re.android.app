@@ -86,7 +86,9 @@ public class MainActivity extends MyNavigationActivity {
         checkBluethoothActive();
         checkPermissions();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setSelectedItemId(R.id.navigation_home);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
         posture=(TextView)findViewById(R.id.textView2);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(

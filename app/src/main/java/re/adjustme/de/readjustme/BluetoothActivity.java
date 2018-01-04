@@ -69,6 +69,7 @@ public class BluetoothActivity extends MyNavigationActivity {
         setContentView(R.layout.activity_bluetooth_data);
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setSelectedItemId(R.id.navigation_bluetooth);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         labelTxt = (EditText) findViewById(R.id.editText2);
