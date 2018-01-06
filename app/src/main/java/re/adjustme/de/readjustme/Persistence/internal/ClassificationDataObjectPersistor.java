@@ -2,7 +2,6 @@ package re.adjustme.de.readjustme.Persistence.internal;
 
 import java.util.List;
 
-import re.adjustme.de.readjustme.Bean.ClassificationData;
 import re.adjustme.de.readjustme.Bean.MotionClassificator;
 import re.adjustme.de.readjustme.Persistence.ClassificationDataPersistor;
 

@@ -21,6 +21,7 @@ public class BluetoothConfiguration {
     // public static final String BT_DEVICE_NAME = "P023"; // Semmels Tablet
     // public static boolean SERVER_MODE = true;
     public static final String BT_DEVICE_NAME = "HC-06"; // Unser Bluetooth Modul
+    public static final long CONNECTION_DELAY=500;
     /*
      Final BT Message values.
      */

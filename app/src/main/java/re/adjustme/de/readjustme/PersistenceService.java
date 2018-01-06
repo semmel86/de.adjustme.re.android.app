@@ -15,6 +15,7 @@ import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Configuration.Sensor;
+import re.adjustme.de.readjustme.Persistence.BackendConnection;
 import re.adjustme.de.readjustme.Persistence.MotionDataPersistor;
 import re.adjustme.de.readjustme.Persistence.PersistorFactory;
 import re.adjustme.de.readjustme.Persistence.internal.ObjectPersistor;
@@ -35,6 +36,7 @@ public class PersistenceService extends Service {
     private String label="";
     private boolean isInLabeledPosition=false;
     private HashMap<Sensor, List<MotionData>> fullMotionData;
+    private BackendConnection backend=new BackendConnection();
 
     public PersistenceService() {
 
@@ -121,6 +123,7 @@ public class PersistenceService extends Service {
         motionDataSet.update(md);
         persistor.saveMotionSet(motionDataSet);
         Log.i("Info Persistence", "Saved Motion Data: " + md.toString());
+        backend.sendRequest(motionDataSet.getJson(),this.getApplicationContext());
     }
 
     // get the data from cached Map

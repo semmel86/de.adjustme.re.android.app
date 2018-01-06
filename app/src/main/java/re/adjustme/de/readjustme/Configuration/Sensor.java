@@ -10,6 +10,7 @@ package re.adjustme.de.readjustme.Configuration;
 public enum Sensor {
 
     // Sensor definition
+    // SENSOR(Number, Epsilon_x,Epsilon_y,Epsilon_z, exclude_x,exclude_y,exclude_z)
     SENSOR_FRONT(1, 0, 0, 0,false,false,true),
     SENSOR_LOWER_BACK(2, 0, 0, 0, false,false,true),
     SENSOR_UPPER_BACK(3, 0, 0, 0,false,false,true),

@@ -1,7 +1,6 @@
 package re.adjustme.de.readjustme;
 
 import android.app.Service;
-import android.bluetooth.BluetoothSocket;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +12,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +61,7 @@ public class EvaluationBackgroundService extends Service {
     @Override
     public void onDestroy() {
         mEvalThread.stop();
+        mEvalThread=null;
         stopSelf();
     }
     @Override
@@ -102,7 +101,7 @@ public class EvaluationBackgroundService extends Service {
         classifier=persistor.load();
         if(classifier==null || classifier.isEmpty()){
             calculateModel();
-        }
+       }
         if(mEvalThread==null) {
             mEvalThread = new EvalThread();
         }
@@ -110,7 +109,7 @@ public class EvaluationBackgroundService extends Service {
     }
 
 
-    public void calculateModel(){
+   public void calculateModel(){
         Toast.makeText(this, "Start Calculation", Toast.LENGTH_SHORT).show();
         if(mPersistenceService==null){
             setConnection();
@@ -165,23 +164,53 @@ public class EvaluationBackgroundService extends Service {
                         // TODO update Max distance
                         double distance = 180;
                         c.setMaxDistance(180);
-//                                Math.sqrt(Math.pow(c. - x, 2)
-//                                + Math.pow(meanY - y, 2)
-//                                + Math.pow(meanZ - z, 2));
+
                     }
                 }
             }
 
 
         }
-        List<MotionClassificator> forSave=new ArrayList<>();
-        for(MotionClassificator c:motions.values()){
-            forSave.add(c);
-        }
+
+       // List<String> motions=new ArrayList<String>();
+       // loop over all entrys and get Motions
+       List<String> exclude = new ArrayList<>();
+       exclude.add("Test Arbeitsplatz 1");
+       exclude.add("Test Arbeitsplatz 2");
+       exclude.add("Test Arbeitsplatz 3");
+       exclude.add("Test Arbeitsplatz 4");
+       exclude.add("Test Arbeitplatz 4");
+       exclude.add("Test Arbeitsplatz 5");
+       exclude.add("Test Nacken");
+       exclude.add("Test Schulter ");
+       exclude.add("Test RÃ¼cken lateral-rotation links");
+       exclude.add("AAA");
+       exclude.add("AAB");
+       exclude.add("");
+       exclude.add("I");
+       exclude.add("I ");
+       exclude.add(" I");
+       List<MotionClassificator> forSave = new ArrayList<>();
+       for (MotionClassificator c : motions.values()) {
+           boolean ex = false;
+           // test exclusion
+           for (String st : exclude) {
+               if (st.equals(c.getName())) {
+                   ex = true;
+               }
+           }
+           if (!ex) {
+               forSave.add(c);
+           }
+       }
+
+
+
         persistor.save(forSave);
         classifier=forSave;
         Toast.makeText(this, "Classification Model Calculated", Toast.LENGTH_SHORT).show();
     }
+
     private class EvalThread extends Thread{
 
         private MotionDataSetDto motionDataSet;
@@ -219,24 +248,6 @@ public class EvaluationBackgroundService extends Service {
             }
 
         }
-//        MotionData md=motionDataSet[0];
-//        int x=md.getY();
-//        int y=md.getZ();
-//
-//        String pos="";
-//
-//        if(x < 15 && x > -15 && y < 15 && y > -15 )  pos="liegt gerade";
-//        // y achse
-//        if(x < 15 && x > -15 && y > 15 && y < 75 ) pos="nach vorn geneigt";
-//        if(x < 15 && x > -15 && y > 75 && y < 105 ) pos="liegt auf der vorderen Kante";
-//        if(x < 15 && x > -15 && y < -15 && y > -75 )pos="nach hinten geneigt";
-//        if(x < 15 && x > -15 && y < -75 && y > -105 )pos="liegt auf der hinteren Kante";
-//        // x achse
-//        if(x < -15 && x > -75 && y < 15 && y > -15 )  pos="nach links geneigt";
-//        if(x < -75 && x > -105 && y < 15 && y > -15 )  pos="liegt auf der linken Kante";
-//        if(x > 15 && x < 75 && y < 15 && y > -15 )  pos="nach rechts geneigt";
-//        if(x > 75 && x < 105 && y < 15 && y > -15 )  pos="liegt auf der Rechten Kante";
-//
 
             this.sendPostureBroadcast(classificator.getName());
 

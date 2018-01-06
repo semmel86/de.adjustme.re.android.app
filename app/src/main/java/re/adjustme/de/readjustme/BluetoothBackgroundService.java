@@ -131,10 +131,11 @@ public class BluetoothBackgroundService extends Service {
 
             // Loop through paired devices
             for (BluetoothDevice device : pairedDevices) {
+                Log.i("Info", "Found a unknown Bluetooth device: " + device.getName() + " "+device.getType());
                 if (!(device.getName() == null) && device.getName().equals(BluetoothConfiguration.BT_DEVICE_NAME)) {
                     mDevice = device;
-                    Log.i("Info", "Found a known Bluetooth device: " + device.getName());
-                    break;
+                    Log.i("Info", "Found a known Bluetooth device: " + device.getName() + " "+device.getType());
+                 //   break;
                 }
             }
         } else {
@@ -388,6 +389,12 @@ public class BluetoothBackgroundService extends Service {
                                     BluetoothConfiguration.MESSAGE_READ, numBytes, -1,
                                     s2);
                             readMsg.sendToTarget();
+//                            Log.i("Debug", "BT received Input.");
+                        }else{
+                            try {
+//                                Log.i("Debug", "BT Inputstream empty.");
+                                sleep(BluetoothConfiguration.CONNECTION_DELAY);
+                            }catch(Exception e){};
                         }
                     } else {
                         // get in the except block and restart

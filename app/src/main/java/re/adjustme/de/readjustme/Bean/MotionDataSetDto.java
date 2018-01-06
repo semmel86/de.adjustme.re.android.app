@@ -1,5 +1,9 @@
 package re.adjustme.de.readjustme.Bean;
 
+import android.util.Log;
+
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -14,6 +18,8 @@ public class MotionDataSetDto implements Serializable {
     private MotionData[] motionDataSet;
     private String label = "";
     private boolean isInLabeledPostion = false;
+    public double probability=0;
+    public String predictedLable="";
 
     public MotionDataSetDto() {
         // at least on place for each last sensors MotionData
@@ -65,5 +71,47 @@ public class MotionDataSetDto implements Serializable {
         s.append(isInLabeledPostion);
 
         return s.toString();
+    }
+
+    public void addMotionData(MotionData[] md){
+        motionDataSet=md;
+    }
+    public void setLable(String lable){
+        this.label=lable;
+    }
+    public void setInLabledPos(boolean b){
+        this.isInLabeledPostion=b;
+    }
+    public String getLabel(){
+        return this.label;
+    }
+    public boolean getInPosition(){
+        return this.isInLabeledPostion;
+    }
+    public JSONObject getJson(){
+
+        // Here we convert Java Object to JSON
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("label", this.getLabel());
+            jsonObj.put("prediction", this.predictedLable);
+            jsonObj.put("inPosition",this.isInLabeledPostion);
+            int i=1;
+            for(Sensor s:Sensor.values()) {
+                MotionData md = motionDataSet[s.getSensorNumber() - 1];
+                jsonObj.put("s"+i, s.getSensorNumber());
+                jsonObj.put("t"+i, md.getBegin());
+                jsonObj.put("d"+i, md.getDuration());
+                jsonObj.put("x"+i, md.getX());
+                jsonObj.put("y"+i, md.getY());
+                jsonObj.put("z"+i, md.getZ());
+                i++;
+            }
+        }catch(Exception e) {
+                e.printStackTrace();
+            }
+
+        Log.i("Info",jsonObj.toString());
+        return jsonObj;
     }
 }
