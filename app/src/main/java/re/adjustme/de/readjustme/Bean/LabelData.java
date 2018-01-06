@@ -1,41 +1,45 @@
 package re.adjustme.de.readjustme.Bean;
 
-import java.sql.Time;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
+
+import re.adjustme.de.readjustme.Configuration.BodyAreas;
+import re.adjustme.de.readjustme.Configuration.Label;
 
 /**
  * Created by semmel on 06.01.2018.
  */
 
-public class LabelData {
+public class LabelData implements Serializable {
 
-    private String area;
+    private BodyAreas area;
 
-    public String getArea() {
-        return area;
-    }
 
-    public void setArea(String area) {
+
+    public void setArea( BodyAreas area) {
         this.area = area;
     }
 
-    private String label;
+    private Label label;
     private Timestamp begin;
     private Long duration;
 
-    public LabelData(String label,String area){
+    public LabelData(Label label, BodyAreas area){
         this.label=label;
         this.begin=new Timestamp(new Date().getTime());
         this.duration=0L;
         this.area=area;
     }
 
-    public String getLabel() {
+    public BodyAreas getArea() {
+        return area;
+    }
+    public Label getLabel() {
         return label;
     }
 
-    public void setLabel(String label) {
+    public void setLabel(Label label) {
         this.label = label;
     }
 
