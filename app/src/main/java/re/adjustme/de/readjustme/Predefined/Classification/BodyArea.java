@@ -7,17 +7,22 @@ package re.adjustme.de.readjustme.Predefined.Classification;
  */
 
 public enum BodyArea {
-    SHOULDER("Shoulder", ShoulderLabel.values()),
-    SPLINE("Spline", SplineLabel.values());
+    SHOULDER("Shoulder", ShoulderLabel.values(),300000L),
+    SPLINE("Spline", SplineLabel.values(),600000L);
 
     private String areaType;
     private Label[] label;
+    private long notificationDuration;
 
-    BodyArea(String areaType, Label[] label) {
+    BodyArea(String areaType, Label[] label,Long l) {
         this.areaType = areaType;
         this.label = label;
+        this.notificationDuration=l;
     }
 
+    public long getMaxDuration(){
+        return this.notificationDuration;
+    }
 
     public boolean contains(String label) {
         for (Label v : this.label) {

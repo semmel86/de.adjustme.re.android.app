@@ -1,5 +1,8 @@
 package re.adjustme.de.readjustme;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -67,8 +70,11 @@ public class PersistenceService extends Service {
                     if (lastLabel != null && lastLabel.getLabel().equals(label)) {
                         // same Label -> accumulate duration
                         Timestamp current = new Timestamp(new Date().getTime());
-                        lastLabel.setDuration(current.getTime() - lastLabel.getBegin().getTime());
-
+                        long dur=current.getTime() - lastLabel.getBegin().getTime();
+                        lastLabel.setDuration(dur);
+                        if(dur>=lastLabel.getArea().getMaxDuration()){
+                            sendNotification(lastLabel.getArea().name());
+                        }
                     } else {
                         // other label -> new LabelData object
                         LabelData newLabel = new LabelData(label, bodyarea);
@@ -283,5 +289,31 @@ public class PersistenceService extends Service {
             // Return this instance of LocalService so clients can call public methods
             return PersistenceService.this;
         }
+    }
+
+    protected void sendNotification(String text){
+        // prepare intent which is triggered if the
+        // notification is selected
+
+        Intent intent = new Intent(this, PersistenceService.class);
+        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        // build notification
+        // the addAction re-use the same intent to keep the example short
+        Notification n  = new Notification.Builder(this)
+                .setContentTitle("Re.adjustme - Haltungs notification")
+                .setContentText(text)
+                //.setSmallIcon(R.drawable.icon)
+                .setContentIntent(pIntent)
+                .setAutoCancel(true).build();
+               // .addAction(R.drawable.icon, "Call", pIntent)
+               // .addAction(R.drawable.icon, "More", pIntent)
+               // .addAction(R.drawable.icon, "And more", pIntent).build();
+
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0, n);
     }
 }
