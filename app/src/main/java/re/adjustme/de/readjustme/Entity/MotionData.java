@@ -39,12 +39,12 @@ public class MotionData implements Serializable {
         return this.sensor;
     }
 
-    public void setSensor(Sensor sensor) {
-        this.sensor = sensor;
-    }
-
     public void setSensor(int i) {
         this.sensor = Sensor.getSensor(i);
+    }
+
+    public void setSensor(Sensor sensor) {
+        this.sensor = sensor;
     }
 
     public int getX() {

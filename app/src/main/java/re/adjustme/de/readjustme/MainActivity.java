@@ -17,8 +17,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,29 +25,26 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Set;
 
-import re.adjustme.de.readjustme.Bean.MotionData;
-
 public class MainActivity extends MyNavigationActivity {
-    private TextView posture;
     Button bluttoothButton, b2;
-    private BluetoothAdapter BA;
-    private Set<BluetoothDevice> pairedDevices;
-    private ArrayList<String> arrayOfFoundBTDevices = new ArrayList<String>();
-    private ListView lv;
+    private TextView posture;
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
         public void onReceive(final Context context, Intent intent) {
             String action = intent.getAction();
 
-            if(action.equals("Posture")){
-                String s= intent.getStringExtra("PostureName");
+            if (action.equals("Posture")) {
+                String s = intent.getStringExtra("PostureName");
                 posture.setText(s);
                 //Toast.makeText(context,posture, Toast.LENGTH_SHORT).show();
             }
         }
 
     };
-
+    private BluetoothAdapter BA;
+    private Set<BluetoothDevice> pairedDevices;
+    private ArrayList<String> arrayOfFoundBTDevices = new ArrayList<String>();
+    private ListView lv;
     private String[] permissionsToRequest =
             {
                     Manifest.permission.BLUETOOTH_ADMIN,
@@ -59,8 +54,7 @@ public class MainActivity extends MyNavigationActivity {
             };
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig)
-    {
+    public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
@@ -88,8 +82,12 @@ public class MainActivity extends MyNavigationActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setSelectedItemId(R.id.navigation_home);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+<<<<<<< HEAD
 
         posture=(TextView)findViewById(R.id.textView2);
+=======
+        posture = (TextView) findViewById(R.id.textView2);
+>>>>>>> master
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mPostureReceiver, new IntentFilter("Posture"));
@@ -113,25 +111,26 @@ public class MainActivity extends MyNavigationActivity {
             Intent intent = new Intent(this, BluetoothBackgroundService.class);
             startService(intent);
             Toast.makeText(getApplicationContext(), "started BT Service", Toast.LENGTH_LONG).show();
-        }catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "already started", Toast.LENGTH_LONG).show();
         }
     }
 
-    public void StartEvalService(View v){
+    public void StartEvalService(View v) {
         try {
             Intent intent = new Intent(this, EvaluationBackgroundService.class);
             startService(intent);
             Toast.makeText(getApplicationContext(), "started Evaluation", Toast.LENGTH_LONG).show();
-        }catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "already started", Toast.LENGTH_LONG).show();
         }
     }
 
-    public void calculateClassifier(View v){
+    public void calculateClassifier(View v) {
         Intent intent = new Intent(this, EvaluationBackgroundService.class);
         startService(intent);
     }
+
     public void calibrate(View v) {
         mPersistenceService.calibrate();
     }
@@ -141,7 +140,7 @@ public class MainActivity extends MyNavigationActivity {
             Intent intent = new Intent(this, BluetoothBackgroundService.class);
             stopService(intent);
             Toast.makeText(getApplicationContext(), "stopped", Toast.LENGTH_LONG).show();
-        }catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "already stopped", Toast.LENGTH_LONG).show();
         }
     }
@@ -152,7 +151,7 @@ public class MainActivity extends MyNavigationActivity {
             Intent intent = new Intent(this, EvaluationBackgroundService.class);
             stopService(intent);
             Toast.makeText(getApplicationContext(), "stopped", Toast.LENGTH_LONG).show();
-        }catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "already stopped", Toast.LENGTH_LONG).show();
         }
     }

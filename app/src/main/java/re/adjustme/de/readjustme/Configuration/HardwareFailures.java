@@ -5,10 +5,18 @@ package re.adjustme.de.readjustme.Configuration;
  */
 
 public enum HardwareFailures {
-    GENRAL_FAILURE(200,"Unexpected failure."),
+    GENRAL_FAILURE(200, "Unexpected failure."),
     INITIATION_FAILURE(201, "MPU initialization failed."),
     RUNTIME_ERROR(202, "Runtime Error."),
     INITIALIZATION(500, "INIT New Start.");
+
+    private String message;
+    private int code;
+
+    HardwareFailures(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 
     public static HardwareFailures getFailure(int i) {
         for (HardwareFailures s : HardwareFailures.values()) {
@@ -19,18 +27,11 @@ public enum HardwareFailures {
         return null;
     }
 
-    HardwareFailures(int code,String message){
-        this.code=code;
-        this.message=message;
-    }
-    private String message;
-    private int code;
-
-    public int getCode(){
+    public int getCode() {
         return code;
     }
 
-    public String getMessage(){
+    public String getMessage() {
         return message;
     }
 }

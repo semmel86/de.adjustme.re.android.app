@@ -6,24 +6,23 @@ import java.io.Serializable;
  * Created by semmel on 16.12.2017.
  */
 
-public class ClassificationData implements Serializable{
+public class ClassificationData implements Serializable {
 
+    long dur = 0;
     private int maxX = -180;
     private int minX = 180;
-    private long meanX =0;
-    private boolean useX =true;
-    long dur=0;
-
+    private long meanX = 0;
+    private boolean useX = true;
     private int maxY = -180;
     private int minY = 180;
     private long meanY = 0;
-    private boolean useY =true;
+    private boolean useY = true;
 
 
     private int maxZ = -180;
     private int minZ = 180;
     private long meanZ = 0;
-    private boolean useZ =true;
+    private boolean useZ = true;
 
 
     private double MaxDistance;
@@ -62,7 +61,6 @@ public class ClassificationData implements Serializable{
     }
 
 
-
     public double getMaxDistance() {
         return MaxDistance;
     }
@@ -99,6 +97,10 @@ public class ClassificationData implements Serializable{
         return minY;
     }
 
+    public void setMinY(int minY) {
+        this.minY = minY;
+    }
+
     public int getMaxZ() {
         return maxZ;
     }
@@ -121,10 +123,6 @@ public class ClassificationData implements Serializable{
 
     public void setMeanZ(long meanZ) {
         this.meanZ = meanZ;
-    }
-
-    public void setMinY(int minY) {
-        this.minY = minY;
     }
 
     public long getMeanX() {

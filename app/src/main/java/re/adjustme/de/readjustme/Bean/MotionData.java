@@ -1,7 +1,6 @@
 package re.adjustme.de.readjustme.Bean;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -58,12 +57,12 @@ public class MotionData implements Serializable, Comparable {
         return this.sensor;
     }
 
-    public void setSensor(int i) {
-        this.sensor = Sensor.getSensor(i);
-    }
-
     public void setSensor(Sensor sensor) {
         this.sensor = sensor;
+    }
+
+    public void setSensor(int i) {
+        this.sensor = Sensor.getSensor(i);
     }
 
     public int getX() {
@@ -108,7 +107,7 @@ public class MotionData implements Serializable, Comparable {
 
     @Override
     public String toString() {
-        StringBuilder s=new StringBuilder();
+        StringBuilder s = new StringBuilder();
         s.append(sensor.getSensorNumber());
         s.append(PersistenceConfiguration.CSV_SEPARATOR);
         s.append(begin);
@@ -120,11 +119,11 @@ public class MotionData implements Serializable, Comparable {
         s.append(y);
         s.append(PersistenceConfiguration.CSV_SEPARATOR);
         s.append(z);
-       // write only if set
-        if(label!=null){
+        // write only if set
+        if (label != null) {
             s.append(PersistenceConfiguration.CSV_SEPARATOR);
             s.append(label);
-            if(inLabeledPosition!=null){
+            if (inLabeledPosition != null) {
                 s.append(PersistenceConfiguration.CSV_SEPARATOR);
                 s.append(inLabeledPosition);
             }
@@ -145,15 +144,15 @@ public class MotionData implements Serializable, Comparable {
         int difX = this.getX() - m.getX();
         int difY = this.getY() - m.getY();
         int difZ = this.getZ() - m.getZ();
-        if ((difX > 0 && difX > this.sensor.getEpsilon_x()) || (difX < 0 && difX < this.sensor.getEpsilon_x()*(-1))) {
+        if ((difX > 0 && difX > this.sensor.getEpsilon_x()) || (difX < 0 && difX < this.sensor.getEpsilon_x() * (-1))) {
             // x-difference is to high
 //            Log.i("Comparable-Info","MotionData is different on x "+this.toString() +"\n"+m.toString());
             return 1;
-        } else if ((difY > 0 && difY > this.sensor.getEpsilon_y()) || (difY < 0 && difY < this.sensor.getEpsilon_y()*(-1))) {
+        } else if ((difY > 0 && difY > this.sensor.getEpsilon_y()) || (difY < 0 && difY < this.sensor.getEpsilon_y() * (-1))) {
             // y-difference is to high
 //            Log.i("Comparable-Info","MotionData is different on y "+this.toString() +"\n"+m.toString());
             return 1;
-        } else if ((difZ > 0 && difZ > this.sensor.getEpsilon_z()) || (difZ < 0 && difZ < this.sensor.getEpsilon_z()*(-1))) {
+        } else if ((difZ > 0 && difZ > this.sensor.getEpsilon_z()) || (difZ < 0 && difZ < this.sensor.getEpsilon_z() * (-1))) {
             // z-difference is to high
 //            Log.i("Comparable-Info","MotionData is different on z "+this.toString() +"\n"+m.toString());
             return 1;
@@ -164,8 +163,8 @@ public class MotionData implements Serializable, Comparable {
         return 0;
     }
 
-    public MotionData clone(){
-        MotionData clone=new MotionData();
+    public MotionData clone() {
+        MotionData clone = new MotionData();
         clone.setSensor(sensor);
         clone.setLabel(label);
         clone.setInLabeledPosition(inLabeledPosition);
