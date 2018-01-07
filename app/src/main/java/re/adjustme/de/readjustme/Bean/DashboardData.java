@@ -95,7 +95,7 @@ public class DashboardData implements Serializable {
                     return null;
                 }
             case SPLINE:
-                if (shoulder_timeline.size() > 0) {
+                if (spline_timeline.size() > 0) {
                     return spline_timeline.peek();
                 } else {
                     return null;
