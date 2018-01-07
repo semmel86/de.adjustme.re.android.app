@@ -1,31 +1,18 @@
 package re.adjustme.de.readjustme.Persistence;
 
-import android.app.Activity;
-import android.app.IntentService;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import re.adjustme.de.readjustme.Persistence.internal.HttpRequestQueue;
 
@@ -35,7 +22,7 @@ import re.adjustme.de.readjustme.Persistence.internal.HttpRequestQueue;
 
 public class BackendConnection extends Service {
 
-    public void sendRequest(JSONObject body,Context context){
+    public void sendRequest(JSONObject body, Context context) {
         String url = "http://re.adjustme.de/testData.php";
 
         JsonObjectRequest jsObjRequest;
@@ -44,18 +31,18 @@ public class BackendConnection extends Service {
 
                     @Override
                     public void onResponse(JSONObject response) {
-    Log.d("backend",response.toString());
+                        Log.d("backend", response.toString());
                     }
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("backend-error","Doesn't send anything.");
+                        Log.d("backend-error", "Doesn't send anything.");
                     }
                 });
 // Access the RequestQueue through your singleton class.
         HttpRequestQueue.getInstance(context).addToRequestQueue(jsObjRequest);
-}
+    }
 
 
     @Nullable

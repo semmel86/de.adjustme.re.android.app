@@ -27,7 +27,7 @@ public class PersistorFactory {
         }
     }
 
-    static public ClassificationDataPersistor getClassificationDataPersistor(PersistenceType type){
+    static public ClassificationDataPersistor getClassificationDataPersistor(PersistenceType type) {
         return new ClassificationDataObjectPersistor();
     }
 }

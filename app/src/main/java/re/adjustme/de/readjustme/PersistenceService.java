@@ -11,6 +11,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,6 +49,7 @@ public class PersistenceService extends Service {
     private HashMap<Sensor, List<MotionData>> fullMotionData;
     private BackendConnection backend = new BackendConnection();
     private DashboardData dashboardData;
+
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
         public void onReceive(final Context context, Intent intent) {
@@ -60,30 +63,35 @@ public class PersistenceService extends Service {
                 Label label = bodyarea.getLable(intent.getStringExtra("PostureName"));
                 // put to Dashboard
                 LabelData lastLabel = dashboardData.getlast(bodyarea);
-if(label!=null){
-                if (lastLabel != null && lastLabel.getLabel().equals(label)) {
-                    // same Label -> accumulate duration
-                    Timestamp current = new Timestamp(new Date().getTime());
-                    lastLabel.setDuration(current.getTime() - lastLabel.getBegin().getTime());
+                if (label != null) {
+                    if (lastLabel != null && lastLabel.getLabel().equals(label)) {
+                        // same Label -> accumulate duration
+                        Timestamp current = new Timestamp(new Date().getTime());
+                        lastLabel.setDuration(current.getTime() - lastLabel.getBegin().getTime());
 
-                } else {
-                    // other label -> new LabelData object
-                    LabelData newLabel = new LabelData(label, bodyarea);
-                    dashboardData.addLabelData(newLabel);
-                    save(dashboardData);
+                    } else {
+                        // other label -> new LabelData object
+                        LabelData newLabel = new LabelData(label, bodyarea);
+                        dashboardData.addLabelData(newLabel);
+                        save(dashboardData);
+                    }
                 }
-            }}
+            }
         }
 
     };
+
+    public PersistenceService() {
+        super();
+        intiPersistenceService();
+    }
 
     private void save(DashboardData dashboardData) {
         ObjectPersistor helper = new ObjectPersistor();
         helper.save(dashboardData, "DashboardData");
     }
 
-    public PersistenceService() {
-
+    private void intiPersistenceService() {
         ObjectPersistor helper = new ObjectPersistor();
         // helper.load("calibrationMotionData");
         // load Dashboard Object if possible
@@ -120,7 +128,6 @@ if(label!=null){
             fullMotionData.put(s, list);
 
         }
-
         // Register BroadcastReceiver to receive current Motions
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mPostureReceiver, new IntentFilter("Posture"));
@@ -131,12 +138,17 @@ if(label!=null){
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        this.intiPersistenceService();
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
     public void onDestroy() {
         // save the pending raw data
         for (MotionData m : currentRawMotionData.values()) {
             save(m);
         }
-
         save(dashboardData);
     }
 
@@ -174,19 +186,28 @@ if(label!=null){
     // save persist immediately the object
     // and adds to the cached map after
     public void save(MotionData md) {
-        //doCalibration(md);
+        if (PersistenceConfiguration.ENABEL_CALIBRATION) {
+            doCalibration(md);
+        }
         // SAVE
-        labelMotionData(md);
-        persistor.saveMotion(md);
-        motionDataSet.update(md);
-        persistor.saveMotionSet(motionDataSet);
-        Log.i("Info Persistence", "Saved Motion Data: " + md.toString());
-        backend.sendRequest(motionDataSet.getJson(), this.getApplicationContext());
-    }
-
-    // get the data from cached Map
-    public MotionData getLast(Sensor s) {
-        return motionDataSet.getMotion(s);
+        if (PersistenceConfiguration.SAVE_LOCAL) {
+            labelMotionData(md);
+            persistor.saveMotion(md);
+            motionDataSet.update(md);
+            persistor.saveMotionSet(motionDataSet);
+            Log.i("Info Persistence", "Saved Motion Data: " + md.toString());
+        }
+        if (PersistenceConfiguration.SAVE_BACKEND) {
+            JSONObject motionData = motionDataSet.getJson();
+            for (BodyAreas b : BodyAreas.values()) {
+                try {
+                    motionData.put(b.name(), dashboardData.getlast(b).getLabel());
+                } catch (Exception e) {
+                    Log.e("Error Persistence", "Error on parsing Json");
+                }
+            }
+            backend.sendRequest(motionData, this.getApplicationContext());
+        }
     }
 
 
@@ -217,6 +238,42 @@ if(label!=null){
         }
     }
 
+    public String getLabel() {
+        return this.label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public boolean getIsInLabeledPosition() {
+        return this.isInLabeledPosition;
+    }
+
+    public void setIsInLabeledPosition(boolean b) {
+        this.isInLabeledPosition = b;
+    }
+
+    private void labelMotionData(MotionData md) {
+        md.setInLabeledPosition(isInLabeledPosition);
+        md.setLabel(label);
+    }
+
+    // get reference to current MotionDataSet object
+    public MotionDataSetDto getMotionDataSet() {
+        return motionDataSet;
+    }
+
+    // get the data from cached Map
+    public MotionData getLast(Sensor s) {
+        return motionDataSet.getMotion(s);
+    }
+
+    // get reference to current DashboardData object
+    public DashboardData getDashboardData() {
+        return this.dashboardData;
+    }
+
     /**
      * Class used for the client Binder.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
@@ -228,30 +285,5 @@ if(label!=null){
         }
 
 
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public void setIsInLabeledPosition(boolean b) {
-        this.isInLabeledPosition = b;
-    }
-
-    public String getLabel() {
-        return this.label;
-    }
-
-    public boolean getIsInLabeledPosition() {
-        return this.isInLabeledPosition;
-    }
-
-    private void labelMotionData(MotionData md) {
-        md.setInLabeledPosition(isInLabeledPosition);
-        md.setLabel(label);
-    }
-
-    public MotionDataSetDto getMotionDataSet() {
-        return motionDataSet;
     }
 }

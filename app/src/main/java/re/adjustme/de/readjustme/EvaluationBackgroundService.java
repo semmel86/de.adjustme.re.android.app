@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.res.Configuration;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -100,7 +99,7 @@ public class EvaluationBackgroundService extends Service {
     private void startEvalThread() {
         persistor = PersistorFactory.getClassificationDataPersistor(PersistenceType.OBJECT);
         motionclassifier = persistor.loadClassificationMap();
-        if ( motionclassifier == null ||  motionclassifier.isEmpty()) {
+        if (motionclassifier == null || motionclassifier.isEmpty()) {
             calculateModel();
         }
         if (mEvalThread == null) {
@@ -192,23 +191,23 @@ public class EvaluationBackgroundService extends Service {
 
 
         persistor.save(result);
-        motionclassifier=result;
+        motionclassifier = result;
         Toast.makeText(this, "Classification Model Calculated", Toast.LENGTH_SHORT).show();
     }
 
     private void evaluateMotionData(MotionDataSetDto motionDataSet) {
 
-         for(BodyAreas area:motionclassifier.keySet()) {
-             double probability = 0;
-             MotionClassificator classificator = new MotionClassificator("");
+        for (BodyAreas area : motionclassifier.keySet()) {
+            double probability = 0;
+            MotionClassificator classificator = new MotionClassificator("");
 
 
-             for (MotionClassificator m : motionclassifier.get(area)) {
+            for (MotionClassificator m : motionclassifier.get(area)) {
                 double currProbability = m.getProbability(motionDataSet);
                 if (Double.compare(currProbability, probability) > 0) {
                     classificator = m;
                     probability = currProbability;
-                  //  Log.i("Info", "Classification: " + classificator.getName() + " " + currProbability);
+                    //  Log.i("Info", "Classification: " + classificator.getName() + " " + currProbability);
                 }
 
             }
@@ -216,15 +215,15 @@ public class EvaluationBackgroundService extends Service {
         }
     }
 
-    private void sendPostureBroadcast(String posture,String area) {
+    private void sendPostureBroadcast(String posture, String area) {
 
         Intent intent = new Intent("Posture");
         // You can also include some extra data.
 
         intent.putExtra("PostureName", posture);
-        intent.putExtra("Area",area);
+        intent.putExtra("Area", area);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-        Log.i("Info Posture Detection", area+" - "+ posture);
+        Log.i("Info Posture Detection", area + " - " + posture);
     }
 
     private class EvalThread extends Thread {

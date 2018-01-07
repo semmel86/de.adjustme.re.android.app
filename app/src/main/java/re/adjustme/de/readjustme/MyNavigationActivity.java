@@ -20,7 +20,7 @@ import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 public abstract class MyNavigationActivity extends AppCompatActivity {
 
     protected PersistenceService mPersistenceService = null;
-    protected EvaluationBackgroundService mEvaluationBackgroundService =null;
+    protected EvaluationBackgroundService mEvaluationBackgroundService = null;
     protected ServiceConnection mEvaluationConnection = null;
     protected ServiceConnection mPersistenceConnection = null;
 
@@ -87,8 +87,8 @@ public abstract class MyNavigationActivity extends AppCompatActivity {
     }
 
 
-    protected void afterServiceConnection(){
-        
+    protected void afterServiceConnection() {
+
     }
 
     @Override

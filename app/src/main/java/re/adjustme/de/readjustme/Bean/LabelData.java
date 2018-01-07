@@ -14,27 +14,24 @@ import re.adjustme.de.readjustme.Configuration.Label;
 public class LabelData implements Serializable {
 
     private BodyAreas area;
-
-
-
-    public void setArea( BodyAreas area) {
-        this.area = area;
-    }
-
     private Label label;
     private Timestamp begin;
     private Long duration;
-
-    public LabelData(Label label, BodyAreas area){
-        this.label=label;
-        this.begin=new Timestamp(new Date().getTime());
-        this.duration=0L;
-        this.area=area;
+    public LabelData(Label label, BodyAreas area) {
+        this.label = label;
+        this.begin = new Timestamp(new Date().getTime());
+        this.duration = 0L;
+        this.area = area;
     }
 
     public BodyAreas getArea() {
         return area;
     }
+
+    public void setArea(BodyAreas area) {
+        this.area = area;
+    }
+
     public Label getLabel() {
         return label;
     }

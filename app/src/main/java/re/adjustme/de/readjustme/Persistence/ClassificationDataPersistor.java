@@ -18,5 +18,5 @@ public interface ClassificationDataPersistor {
 
     public HashMap<BodyAreas, List<MotionClassificator>> loadClassificationMap();
 
-    public void save(HashMap<BodyAreas,List<MotionClassificator>> data);
+    public void save(HashMap<BodyAreas, List<MotionClassificator>> data);
 }

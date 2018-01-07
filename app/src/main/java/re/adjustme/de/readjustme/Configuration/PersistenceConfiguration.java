@@ -10,6 +10,9 @@ public class PersistenceConfiguration {
 
     public static final String CSV_SEPARATOR = ";";
     public static final PersistenceType DEFAULT_PERSISTOR = PersistenceType.FILE;
+    public static final boolean SAVE_LOCAL = true;
+    public static final boolean SAVE_BACKEND = true;
+    public static final boolean ENABEL_CALIBRATION = false;
     private static String PERSITENCE_DIRECTORY = System.getProperty("user.dir") + "/persistence/";
 
     public static String getPersitenceDirectory() {

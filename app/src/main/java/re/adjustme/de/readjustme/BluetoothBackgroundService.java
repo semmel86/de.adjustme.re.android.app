@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -33,7 +32,6 @@ import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
 import re.adjustme.de.readjustme.Configuration.HardwareFailures;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Configuration.Sensor;
 
 import static android.content.ContentValues.TAG;
 
@@ -46,7 +44,7 @@ public class BluetoothBackgroundService extends Service {
 
     private static Handler mHandler;
     // current MotionData used for aggregation via equals
-   // private static HashMap<Sensor, MotionData> currentRawMotionData;
+    // private static HashMap<Sensor, MotionData> currentRawMotionData;
     private BluetoothAdapter mBluetoothAdapter;
     private PersistenceService mPersistenceService = null;
     private ServiceConnection mConnection = null;
@@ -57,7 +55,7 @@ public class BluetoothBackgroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-      //  Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
+        //  Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
         this.init();
         // startConnection Bluetooth listener
         getBondedDevice();
@@ -73,7 +71,7 @@ public class BluetoothBackgroundService extends Service {
 //            mPersistenceService.save(m);
 //        }
         destroyed = true;
-        if (mSocket.isConnected()) {
+        if (mSocket!=null && mSocket.isConnected()) {
             try {
                 mSocket.close();
             } catch (IOException e) {
@@ -91,8 +89,6 @@ public class BluetoothBackgroundService extends Service {
 
     @Override
     public void onCreate() {
-//        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
-        //currentRawMotionData = new HashMap<>();
         PersistenceConfiguration.setPersistenceDirectory(this.getApplicationContext().getFilesDir());
     }
 
@@ -110,7 +106,7 @@ public class BluetoothBackgroundService extends Service {
 
 
     public void startConnection() {
-        if (!destroyed) {
+        if (!destroyed && mDevice!=null) {
             if (BluetoothConfiguration.SERVER_MODE) {
                 AcceptThread a = new AcceptThread(mDevice.getName(), BluetoothConfiguration.BT_DEVICE_UUID);
                 a.start();
@@ -120,6 +116,7 @@ public class BluetoothBackgroundService extends Service {
             }
             Log.i("Info", "Started Connecting to Device");
         }
+
     }
 
     private void getBondedDevice() {
@@ -131,16 +128,16 @@ public class BluetoothBackgroundService extends Service {
 
             // Loop through paired devices
             for (BluetoothDevice device : pairedDevices) {
-                Log.i("Info", "Found a unknown Bluetooth device: " + device.getName() + " "+device.getType());
-                if (!(device.getName() == null) && device.getName().equals(BluetoothConfiguration.BT_DEVICE_NAME)) {
+                for(String btModul:BluetoothConfiguration.BT_DEVICE_NAME){
+                 if (!(device.getName() == null) && device.getName().equals(btModul)) {
                     mDevice = device;
-                    Log.i("Info", "Found a known Bluetooth device: " + device.getName() + " "+device.getType());
-                 //   break;
-                }
+                    Log.i("Info", "Found a known Bluetooth device: " + device.getName() + " " + device.getType());
+                    break;
+                }}
             }
-        } else {
-            Toast.makeText(getApplicationContext(), "No paired devices", Toast.LENGTH_SHORT).show();
-        }
+         }
+            Toast.makeText(getApplicationContext(), "Please pair the HC-05/06", Toast.LENGTH_SHORT).show();
+
 
 
     }
@@ -194,6 +191,18 @@ public class BluetoothBackgroundService extends Service {
                 mPersistenceService = null;
             }
         };
+    }
+
+    private void sendConnected() {
+        Log.d("sender", "BT Connected");
+        Intent intent = new Intent(BluetoothConfiguration.BLUETOOTH_CONNECTED);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private void sendDisonnected() {
+        Log.d("sender", "BT Disconnected");
+        Intent intent = new Intent(BluetoothConfiguration.BLUETOOTH_DISCONNECTED);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     private static class DataHandler extends Handler {
@@ -265,10 +274,10 @@ public class BluetoothBackgroundService extends Service {
 
                         md = null;
 
-                        if(Integer.valueOf(data[0])==HardwareFailures.INITIATION_FAILURE.getCode()){
-                            Log.i("Info","Hardware-Failure: " + HardwareFailures.getFailure(Integer.valueOf(data[0])).getMessage() + " " + Integer.valueOf(data[1]));
-                        }else{
-                            Log.i("Info","Hardware-Failure: " + HardwareFailures.getFailure(Integer.valueOf(data[0])).getMessage());
+                        if (Integer.valueOf(data[0]) == HardwareFailures.INITIATION_FAILURE.getCode()) {
+                            Log.i("Info", "Hardware-Failure: " + HardwareFailures.getFailure(Integer.valueOf(data[0])).getMessage() + " " + Integer.valueOf(data[1]));
+                        } else {
+                            Log.i("Info", "Hardware-Failure: " + HardwareFailures.getFailure(Integer.valueOf(data[0])).getMessage());
                         }
                     }
                 } catch (Exception e) {
@@ -390,11 +399,13 @@ public class BluetoothBackgroundService extends Service {
                                     s2);
                             readMsg.sendToTarget();
 //                            Log.i("Debug", "BT received Input.");
-                        }else{
+                        } else {
                             try {
 //                                Log.i("Debug", "BT Inputstream empty.");
                                 sleep(BluetoothConfiguration.CONNECTION_DELAY);
-                            }catch(Exception e){};
+                            } catch (Exception e) {
+                            }
+                            ;
                         }
                     } else {
                         // get in the except block and restart
@@ -486,6 +497,12 @@ public class BluetoothBackgroundService extends Service {
                     // Connect to the remote device through the socket. This call blocks
                     // until it succeeds or throws an exception.
                     mmSocket.connect();
+
+                    // The connection attempt succeeded. Perform work associated with
+                    // the connection in a separate thread.
+                    mConnected = true;
+                    listenOnConnectedSocket(mmSocket);
+
                 } catch (IOException connectException) {
                     // Unable to connect; close the socket and return.
                     mConnected = false;
@@ -501,11 +518,6 @@ public class BluetoothBackgroundService extends Service {
                         e.printStackTrace();
                     }
                 }
-
-                // The connection attempt succeeded. Perform work associated with
-                // the connection in a separate thread.
-                mConnected = true;
-                listenOnConnectedSocket(mmSocket);
             }
         }
 
@@ -517,18 +529,5 @@ public class BluetoothBackgroundService extends Service {
                 Log.e(TAG, "Could not close the client socket", e);
             }
         }
-    }
-
-
-    private void sendConnected(){
-        Log.d("sender", "BT Connected");
-        Intent intent = new Intent(BluetoothConfiguration.BLUETOOTH_CONNECTED);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
-
-    private void sendDisonnected(){
-        Log.d("sender", "BT Disconnected");
-        Intent intent = new Intent(BluetoothConfiguration.BLUETOOTH_DISCONNECTED);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

@@ -21,8 +21,8 @@ public class MotionDataTextFilePersistor extends TextFilePersistor implements Mo
         this.save(data, data.getSensor().name());
     }
 
-    public void saveMotionSet(MotionDataSetDto m){
-        this.save(m,"FullMotionDataSet.csv");
+    public void saveMotionSet(MotionDataSetDto m) {
+        this.save(m, "FullMotionDataSet.csv");
     }
 
     @Override
@@ -81,8 +81,8 @@ public class MotionDataTextFilePersistor extends TextFilePersistor implements Mo
 
         // 6- set z,
         // depends on the existence of label information
-        if(s.indexOf(PersistenceConfiguration.CSV_SEPARATOR)>0){
-            i= Integer.parseInt(s.substring(0, s.indexOf(PersistenceConfiguration.CSV_SEPARATOR)));
+        if (s.indexOf(PersistenceConfiguration.CSV_SEPARATOR) > 0) {
+            i = Integer.parseInt(s.substring(0, s.indexOf(PersistenceConfiguration.CSV_SEPARATOR)));
             s = s.substring(s.indexOf(PersistenceConfiguration.CSV_SEPARATOR) + 1);
         } else {
             i = Integer.parseInt(s.substring(0, s.length()));
@@ -90,13 +90,13 @@ public class MotionDataTextFilePersistor extends TextFilePersistor implements Mo
         md.setZ(i);
 
         // there is some additional label information
-        if(s.indexOf(PersistenceConfiguration.CSV_SEPARATOR)>=0){
-            String label=s.substring(0, s.indexOf(PersistenceConfiguration.CSV_SEPARATOR));
+        if (s.indexOf(PersistenceConfiguration.CSV_SEPARATOR) >= 0) {
+            String label = s.substring(0, s.indexOf(PersistenceConfiguration.CSV_SEPARATOR));
             s = s.substring(s.indexOf(PersistenceConfiguration.CSV_SEPARATOR) + 1);
             md.setLabel(label);
             // there is also an is in labeled Position information
-            if(s.length()>0){
-                boolean b= Boolean.valueOf(s.substring(0, s.length()));
+            if (s.length() > 0) {
+                boolean b = Boolean.valueOf(s.substring(0, s.length()));
                 md.setInLabeledPosition(b);
             }
         }

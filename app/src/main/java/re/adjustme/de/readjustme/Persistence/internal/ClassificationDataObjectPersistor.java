@@ -23,7 +23,7 @@ public class ClassificationDataObjectPersistor extends ObjectPersistor implement
 
     @Override
     public void save(List<MotionClassificator> data) {
-        this.save(data,"classificationData");
+        this.save(data, "classificationData");
     }
 
     @Override
@@ -34,6 +34,6 @@ public class ClassificationDataObjectPersistor extends ObjectPersistor implement
     @Override
     public void save(HashMap<BodyAreas, List<MotionClassificator>> data) {
 
-            this.save(data,"classificationHashMap");
+        this.save(data, "classificationHashMap");
     }
 }
