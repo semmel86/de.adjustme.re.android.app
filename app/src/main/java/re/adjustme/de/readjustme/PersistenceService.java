@@ -22,10 +22,10 @@ import re.adjustme.de.readjustme.Bean.DashboardData;
 import re.adjustme.de.readjustme.Bean.LabelData;
 import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
-import re.adjustme.de.readjustme.Configuration.BodyAreas;
-import re.adjustme.de.readjustme.Configuration.Label;
+import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
+import re.adjustme.de.readjustme.Predefined.Classification.Label;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Configuration.Sensor;
+import re.adjustme.de.readjustme.Predefined.Sensor;
 import re.adjustme.de.readjustme.Persistence.BackendConnection;
 import re.adjustme.de.readjustme.Persistence.MotionDataPersistor;
 import re.adjustme.de.readjustme.Persistence.PersistorFactory;
@@ -59,7 +59,7 @@ public class PersistenceService extends Service {
             }
             if (action.equals("Posture")) {
                 String s = intent.getStringExtra("PostureName");
-                BodyAreas bodyarea = BodyAreas.valueOf(intent.getStringExtra("Area"));
+                BodyArea bodyarea = BodyArea.valueOf(intent.getStringExtra("Area"));
                 Label label = bodyarea.getLable(intent.getStringExtra("PostureName"));
                 // put to Dashboard
                 LabelData lastLabel = dashboardData.getlast(bodyarea);
@@ -199,7 +199,7 @@ public class PersistenceService extends Service {
         }
         if (PersistenceConfiguration.SAVE_BACKEND) {
             JSONObject motionData = motionDataSet.getJson();
-            for (BodyAreas b : BodyAreas.values()) {
+            for (BodyArea b : BodyArea.values()) {
                 try {
                     motionData.put(b.name(), dashboardData.getlast(b).getLabel());
                 } catch (Exception e) {
@@ -283,7 +283,5 @@ public class PersistenceService extends Service {
             // Return this instance of LocalService so clients can call public methods
             return PersistenceService.this;
         }
-
-
     }
 }

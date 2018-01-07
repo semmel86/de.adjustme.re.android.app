@@ -1,11 +1,10 @@
 package re.adjustme.de.readjustme.Persistence;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
 import re.adjustme.de.readjustme.Bean.MotionClassificator;
-import re.adjustme.de.readjustme.Configuration.BodyAreas;
+import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 
 /**
  * Created by semmel on 16.12.2017.
@@ -17,7 +16,7 @@ public interface ClassificationDataPersistor {
 
     public void save(List<MotionClassificator> data);
 
-    public HashMap<BodyAreas, List<MotionClassificator>> loadClassificationMap();
+    public HashMap<BodyArea, List<MotionClassificator>> loadClassificationMap();
 
-    public void save(HashMap<BodyAreas, List<MotionClassificator>> data);
+    public void save(HashMap<BodyArea, List<MotionClassificator>> data);
 }

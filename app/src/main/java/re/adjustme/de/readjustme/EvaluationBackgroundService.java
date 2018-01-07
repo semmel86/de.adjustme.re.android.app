@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,14 +23,13 @@ import re.adjustme.de.readjustme.Bean.ClassificationData;
 import re.adjustme.de.readjustme.Bean.MotionClassificator;
 import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
-import re.adjustme.de.readjustme.Configuration.BodyAreas;
+import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Configuration.PersistenceType;
-import re.adjustme.de.readjustme.Configuration.Sensor;
+import re.adjustme.de.readjustme.Predefined.PersistenceType;
+import re.adjustme.de.readjustme.Predefined.Sensor;
 import re.adjustme.de.readjustme.Persistence.ClassificationDataPersistor;
 import re.adjustme.de.readjustme.Persistence.PersistorFactory;
-import re.adjustme.de.readjustme.Persistence.internal.ObjectPersistor;
 
 /**
  * Connected to the Persistence Service
@@ -46,7 +44,7 @@ public class EvaluationBackgroundService extends Service {
     // Binder given to clients
     private final IBinder mBinder = new EvaluationBackgroundServiceBinder();
     // Contains a specific Classifier for each Area
-    HashMap<BodyAreas, List<MotionClassificator>> motionclassifier;
+    HashMap<BodyArea, List<MotionClassificator>> motionclassifier;
     private PersistenceService mPersistenceService = null;
     private ServiceConnection mPersistenceConnection = null;
     private EvalThread mEvalThread;
@@ -66,7 +64,7 @@ public class EvaluationBackgroundService extends Service {
 
     @Override
     public void onDestroy() {
-        mEvalThread.stop();
+        mEvalThread.killMe();
         mEvalThread = null;
         stopSelf();
     }
@@ -199,10 +197,10 @@ public class EvaluationBackgroundService extends Service {
             }
         }
 
-        HashMap<BodyAreas, List<MotionClassificator>> result = new HashMap<>();
+        HashMap<BodyArea, List<MotionClassificator>> result = new HashMap<>();
 
         // Build classifier for each area
-        for (BodyAreas b : BodyAreas.values()) {
+        for (BodyArea b : BodyArea.values()) {
             // if area contains lable, add to classifier
             for (MotionClassificator c : motions.values()) {
                 if (b.contains(c.getName())) {
@@ -225,10 +223,9 @@ public class EvaluationBackgroundService extends Service {
 
     private void evaluateMotionData(MotionDataSetDto motionDataSet) {
 
-        for (BodyAreas area : motionclassifier.keySet()) {
+        for (BodyArea area : motionclassifier.keySet()) {
             double probability = 0;
             MotionClassificator classificator = new MotionClassificator("");
-
 
             for (MotionClassificator m : motionclassifier.get(area)) {
                 double currProbability = m.getProbability(motionDataSet);
@@ -237,7 +234,6 @@ public class EvaluationBackgroundService extends Service {
                     probability = currProbability;
                     //  Log.i("Info", "Classification: " + classificator.getName() + " " + currProbability);
                 }
-
             }
             this.sendPostureBroadcast(classificator.getName(), area.name());
         }
@@ -257,6 +253,9 @@ public class EvaluationBackgroundService extends Service {
     private class EvalThread extends Thread {
 
         private MotionDataSetDto motionDataSet;
+        public void killMe(){
+            this.destroy();
+        }
 
         @Override
         public void run() {
@@ -285,7 +284,5 @@ public class EvaluationBackgroundService extends Service {
             // Return this instance of LocalService so clients can call public methods
             return EvaluationBackgroundService.this;
         }
-
-
     }
 }

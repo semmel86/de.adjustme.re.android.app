@@ -30,7 +30,7 @@ import java.util.UUID;
 
 import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
-import re.adjustme.de.readjustme.Configuration.HardwareFailures;
+import re.adjustme.de.readjustme.Predefined.HardwareFailures;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 
 import static android.content.ContentValues.TAG;
@@ -66,10 +66,6 @@ public class BluetoothBackgroundService extends Service {
 
     @Override
     public void onDestroy() {
-        // save the last data before shutdown !!!
-//        for (MotionData m : currentRawMotionData.values()) {
-//            mPersistenceService.save(m);
-//        }
         destroyed = true;
         if (mSocket!=null && mSocket.isConnected()) {
             try {
@@ -100,7 +96,6 @@ public class BluetoothBackgroundService extends Service {
         boolean b = bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         // set up specific classes
         this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
         setHandler();
     }
 
@@ -137,9 +132,6 @@ public class BluetoothBackgroundService extends Service {
             }
          }
             Toast.makeText(getApplicationContext(), "Please pair the HC-05/06", Toast.LENGTH_SHORT).show();
-
-
-
     }
 
 
@@ -161,7 +153,6 @@ public class BluetoothBackgroundService extends Service {
             Log.i("info", "Failure on listenOnConnectedSocket");
             e.printStackTrace();
         }
-        sendConnected();
         conn.start();
     }
 
@@ -191,18 +182,6 @@ public class BluetoothBackgroundService extends Service {
                 mPersistenceService = null;
             }
         };
-    }
-
-    private void sendConnected() {
-        Log.d("sender", "BT Connected");
-        Intent intent = new Intent(BluetoothConfiguration.BLUETOOTH_CONNECTED);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
-
-    private void sendDisonnected() {
-        Log.d("sender", "BT Disconnected");
-        Intent intent = new Intent(BluetoothConfiguration.BLUETOOTH_DISCONNECTED);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     private static class DataHandler extends Handler {

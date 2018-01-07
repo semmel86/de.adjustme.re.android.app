@@ -9,8 +9,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Configuration.PersistenceType;
-import re.adjustme.de.readjustme.Configuration.Sensor;
+import re.adjustme.de.readjustme.Predefined.PersistenceType;
+import re.adjustme.de.readjustme.Predefined.Sensor;
 import re.adjustme.de.readjustme.Entity.MotionData;
 import re.adjustme.de.readjustme.Persistence.MotionDataPersistor;
 import re.adjustme.de.readjustme.Persistence.PersistorFactory;

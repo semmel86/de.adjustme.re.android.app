@@ -12,5 +12,6 @@ public class ClassificationConfiguration {
         The UUID for SPP Service needed to connect to the hc-05/06 device
     */
     public static final Long EVALUATION_TIME = 500L;
+    public static final boolean CALCULATE_ROTATION=false;
 
 }

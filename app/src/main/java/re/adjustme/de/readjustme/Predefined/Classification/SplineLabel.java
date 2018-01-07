@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme.Configuration;
+package re.adjustme.de.readjustme.Predefined.Classification;
 
 /**
  * Defines the different Labels

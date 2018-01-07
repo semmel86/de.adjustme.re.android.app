@@ -7,9 +7,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Stack;
 
-import re.adjustme.de.readjustme.Configuration.BodyAreas;
+import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 
 /**
+ * Wrapper for the Dashboard shown data.
+ *
  * Created by semmel on 06.01.2018.
  */
 public class DashboardData implements Serializable {
@@ -86,7 +88,7 @@ public class DashboardData implements Serializable {
     }
 
 
-    public LabelData getlast(BodyAreas b) {
+    public LabelData getlast(BodyArea b) {
         switch (b) {
             case SHOULDER:
                 if (shoulder_timeline.size() > 0) {

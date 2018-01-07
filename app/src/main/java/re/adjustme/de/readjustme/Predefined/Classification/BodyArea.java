@@ -1,19 +1,19 @@
-package re.adjustme.de.readjustme.Configuration;
+package re.adjustme.de.readjustme.Predefined.Classification;
 
 /**
- * Defines the different Body Areas and the referring labeld Motions
+ * Defines the different Body Areas and the referring labeled Motions
  * <p>
  * Created by Semmel on 18.11.2017.
  */
 
-public enum BodyAreas {
+public enum BodyArea {
     SHOULDER("Shoulder", ShoulderLabel.values()),
     SPLINE("Spline", SplineLabel.values());
 
     private String areaType;
     private Label[] label;
 
-    BodyAreas(String areaType, Label[] label) {
+    BodyArea(String areaType, Label[] label) {
         this.areaType = areaType;
         this.label = label;
     }

@@ -5,6 +5,8 @@ import android.util.Log;
 import java.io.File;
 import java.net.URL;
 
+import re.adjustme.de.readjustme.Predefined.PersistenceType;
+
 /**
  * Created by Semmel on 18.11.2017.
  */
@@ -23,12 +25,6 @@ public class PersistenceConfiguration {
         // create if missing
         if (!file.exists() || !file.isDirectory()) {
             file.mkdirs();
-        }
-
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        URL url = classLoader.getResource("PersistenceConfiguration.java");
-        if(url!=null) {
-            Log.i("PATH", url.getPath());
         }
         return PERSISTENCE_DIRECTORY;
     }

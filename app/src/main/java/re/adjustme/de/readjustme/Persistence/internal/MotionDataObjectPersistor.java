@@ -5,7 +5,7 @@ import java.util.List;
 
 import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
-import re.adjustme.de.readjustme.Configuration.Sensor;
+import re.adjustme.de.readjustme.Predefined.Sensor;
 import re.adjustme.de.readjustme.Persistence.MotionDataPersistor;
 
 /**

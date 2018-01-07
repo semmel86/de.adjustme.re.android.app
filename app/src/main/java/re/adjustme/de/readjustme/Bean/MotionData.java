@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Configuration.Sensor;
+import re.adjustme.de.readjustme.Predefined.Sensor;
 
 /**
  * Created by Semmel on 18.11.2017.
@@ -159,8 +159,7 @@ public class MotionData implements Serializable, Comparable {
         }
         // all possible differences are between the 0 and predefined epsilon
         // so we consider this motion data equals Object o
-//        Log.i("Comparable-Info","MotionData is equal " +this.toString() +"\n"+m.toString());
-        return 0;
+          return 0;
     }
 
     public MotionData clone() {
