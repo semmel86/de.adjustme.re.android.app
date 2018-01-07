@@ -1,5 +1,6 @@
 package re.adjustme.de.readjustme.Persistence;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 

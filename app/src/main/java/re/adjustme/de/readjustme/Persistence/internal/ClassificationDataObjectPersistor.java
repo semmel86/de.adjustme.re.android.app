@@ -1,5 +1,6 @@
 package re.adjustme.de.readjustme.Persistence.internal;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,7 +15,6 @@ import re.adjustme.de.readjustme.Persistence.ClassificationDataPersistor;
  * Created by Semmel on 18.11.2017.
  */
 public class ClassificationDataObjectPersistor extends ObjectPersistor implements ClassificationDataPersistor {
-
 
     @Override
     public List<MotionClassificator> load() {

@@ -12,6 +12,10 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,10 +26,12 @@ import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
 import re.adjustme.de.readjustme.Configuration.BodyAreas;
 import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
+import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceType;
 import re.adjustme.de.readjustme.Configuration.Sensor;
 import re.adjustme.de.readjustme.Persistence.ClassificationDataPersistor;
 import re.adjustme.de.readjustme.Persistence.PersistorFactory;
+import re.adjustme.de.readjustme.Persistence.internal.ObjectPersistor;
 
 /**
  * Connected to the Persistence Service
@@ -95,20 +101,42 @@ public class EvaluationBackgroundService extends Service {
             }
         };
     }
-
-    private void startEvalThread() {
+    private void loadClassifier(){
         persistor = PersistorFactory.getClassificationDataPersistor(PersistenceType.OBJECT);
         motionclassifier = persistor.loadClassificationMap();
         if (motionclassifier == null || motionclassifier.isEmpty()) {
-            calculateModel();
+            unzipClassificator();
+            motionclassifier = persistor.loadClassificationMap();
         }
+    }
+
+    private void startEvalThread() {
+       loadClassifier();
         if (mEvalThread == null) {
             mEvalThread = new EvalThread();
         }
         mEvalThread.start();
     }
+    // write the classificator object to /data/..persistence to load it from there
+    private void unzipClassificator(){
+        File f = new File(PersistenceConfiguration.getPersistenceDirectory()+"classificationHashMap.md");
+        if (!f.exists()) try {
 
+            InputStream is = getAssets().open("classificationHashMap.md");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
 
+            FileOutputStream fos = new FileOutputStream(f);
+            fos.write(buffer);
+            fos.close();
+            Log.i("Info","Unzipped classifiactionHashMap.md from assets.");
+        } catch (Exception e) {
+            Log.e("Error","Cannot unzip classifiactionHashMap.md from assets.");
+        }
+    }
+    // only used on development, to calculate the Classification object
     public void calculateModel() {
         Toast.makeText(this, "Start Calculation", Toast.LENGTH_SHORT).show();
         if (mPersistenceService == null) {

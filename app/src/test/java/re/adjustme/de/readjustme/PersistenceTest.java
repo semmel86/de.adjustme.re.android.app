@@ -68,7 +68,7 @@ public class PersistenceTest {
         data4.setZ(56);
         data5.setZ(123);
 
-        System.out.println(PersistenceConfiguration.getPersitenceDirectory());
+        System.out.println(PersistenceConfiguration.getPersistenceDirectory());
         System.out.println(data1);
         System.out.println(data2);
         System.out.println(data3);
