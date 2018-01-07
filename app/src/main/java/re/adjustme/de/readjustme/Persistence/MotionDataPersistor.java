@@ -28,7 +28,7 @@ public interface MotionDataPersistor {
     public MotionData getLastMotionData(Sensor sensor);
 
     /**
-     *  Save the full MotionDataSet
+     * Save the full MotionDataSet
      */
     public void saveMotionSet(MotionDataSetDto m);
 

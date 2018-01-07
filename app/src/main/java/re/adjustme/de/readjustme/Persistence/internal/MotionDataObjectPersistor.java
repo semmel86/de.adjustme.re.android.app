@@ -41,6 +41,6 @@ public class MotionDataObjectPersistor extends ObjectPersistor implements Motion
 
     @Override
     public void saveMotionSet(MotionDataSetDto m) {
-        this.save(m,"FullMotionDataSet.csv");
+        this.save(m, "FullMotionDataSet.csv");
     }
 }
