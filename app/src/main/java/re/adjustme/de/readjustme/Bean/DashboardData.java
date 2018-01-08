@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Stack;
 
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
+import re.adjustme.de.readjustme.Predefined.Classification.Label;
 
 /**
  * Wrapper for the Dashboard shown data.
@@ -17,8 +18,7 @@ import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 public class DashboardData implements Serializable {
 
     // aggregated lable-sum (duration)
-    HashMap<LabelData, Long> shoulder_sum;
-    HashMap<LabelData, Long> spline_sum;
+    HashMap<BodyArea, HashMap<Label, Long>> posture_sum;
     // Timeline: sorted List of Lables with duration
     Stack<LabelData> shoulder_timeline;
     Stack<LabelData> spline_timeline;
@@ -27,56 +27,61 @@ public class DashboardData implements Serializable {
 
     public DashboardData() {
         this.date = new Date();
-        shoulder_sum = new HashMap<>();
-        spline_sum = new HashMap<>();
+        posture_sum = new HashMap<>();
         shoulder_timeline = new Stack<>();
         spline_timeline = new Stack<>();
     }
 
     public void addLabelData(LabelData l) {
-        LabelData old = null;
+        Label old = null;
         Long oldDuration = null;
-        switch (l.getArea()) {
+        BodyArea area = l.getArea();
+        if (posture_sum.get(area) == null) {
+            posture_sum.put(area, new HashMap<Label, Long>());
+        }
+        switch (area) {
             case SHOULDER:
                 // accumulate old to sum
                 if (shoulder_timeline.size() > 0) {
-                    old = shoulder_timeline.peek();
-                    oldDuration = shoulder_sum.get(old);
-                    shoulder_sum.put(old, oldDuration + old.getDuration());
+                    old = shoulder_timeline.peek().getLabel();
+                    oldDuration = posture_sum.get(area).get(old);
+                    posture_sum.get(area).put(old, oldDuration + shoulder_timeline.peek().getDuration());
                 }
                 // add new
                 this.shoulder_timeline.push(l);
-                this.shoulder_sum.put(l, 0L);
+                this.posture_sum.get(area).put(l.getLabel(), 0L);
+                break;
             case SPLINE:
                 // accumulate old to sum
                 if (spline_timeline.size() > 0) {
-                    old = spline_timeline.peek();
-                    oldDuration = spline_sum.get(old);
-                    spline_sum.put(old, oldDuration + old.getDuration());
+                    old = spline_timeline.peek().getLabel();
+                    oldDuration = posture_sum.get(area).get(old);
+                    posture_sum.get(area).put(old, oldDuration + shoulder_timeline.peek().getDuration());
                 }
                 // add new
                 this.spline_timeline.push(l);
-                this.spline_sum.put(l, 0L);
+                this.posture_sum.get(area).put(l.getLabel(), 0L);
+                break;
             default:
                 Log.e("Dashboard", "Unkown body area.");
 
         }
     }
 
-    public HashMap<LabelData, Long> getShoulder_sum() {
-        return shoulder_sum;
+    public HashMap<Label, Long> getShoulder_sum() {
+        return posture_sum.get(BodyArea.SHOULDER);
     }
 
-    public void setShoulder_sum(HashMap<LabelData, Long> shoulder_sum) {
-        this.shoulder_sum = shoulder_sum;
+    public void setShoulder_sum(HashMap<Label, Long> shoulder_sum) {
+        this.posture_sum.put(BodyArea.SHOULDER, shoulder_sum);
     }
 
-    public HashMap<LabelData, Long> getSpline_sum() {
-        return spline_sum;
+    public HashMap<Label, Long> getSpline_sum() {
+        return posture_sum.get(BodyArea.SPLINE);
     }
 
-    public void setSpline_sum(HashMap<LabelData, Long> spline_sum) {
-        this.spline_sum = spline_sum;
+    public void setSpline_sum(HashMap<Label, Long> spline_sum) {
+        this.posture_sum.put(BodyArea.SPLINE, spline_sum);
     }
 
     public Stack<LabelData> getShoulder_timeline() {
