@@ -12,6 +12,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,10 +23,11 @@ import re.adjustme.de.readjustme.Bean.ClassificationData;
 import re.adjustme.de.readjustme.Bean.MotionClassificator;
 import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
-import re.adjustme.de.readjustme.Configuration.BodyAreas;
+import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
-import re.adjustme.de.readjustme.Configuration.PersistenceType;
-import re.adjustme.de.readjustme.Configuration.Sensor;
+import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
+import re.adjustme.de.readjustme.Predefined.PersistenceType;
+import re.adjustme.de.readjustme.Predefined.Sensor;
 import re.adjustme.de.readjustme.Persistence.ClassificationDataPersistor;
 import re.adjustme.de.readjustme.Persistence.PersistorFactory;
 
@@ -40,7 +44,7 @@ public class EvaluationBackgroundService extends Service {
     // Binder given to clients
     private final IBinder mBinder = new EvaluationBackgroundServiceBinder();
     // Contains a specific Classifier for each Area
-    HashMap<BodyAreas, List<MotionClassificator>> motionclassifier;
+    HashMap<BodyArea, List<MotionClassificator>> motionclassifier;
     private PersistenceService mPersistenceService = null;
     private ServiceConnection mPersistenceConnection = null;
     private EvalThread mEvalThread;
@@ -60,7 +64,7 @@ public class EvaluationBackgroundService extends Service {
 
     @Override
     public void onDestroy() {
-        mEvalThread.stop();
+        mEvalThread.killMe();
         mEvalThread = null;
         stopSelf();
     }
@@ -95,20 +99,47 @@ public class EvaluationBackgroundService extends Service {
             }
         };
     }
-
-    private void startEvalThread() {
+    private void loadClassifier(){
         persistor = PersistorFactory.getClassificationDataPersistor(PersistenceType.OBJECT);
         motionclassifier = persistor.loadClassificationMap();
         if (motionclassifier == null || motionclassifier.isEmpty()) {
-            calculateModel();
+            unzipClassificator();
+            motionclassifier = persistor.loadClassificationMap();
         }
-        if (mEvalThread == null) {
-            mEvalThread = new EvalThread();
-        }
-        mEvalThread.start();
     }
 
+    private void startEvalThread() {
+        // start only if there is any data
+        if(mPersistenceService.receivesLiveData()) {
+            // load classifier first
+            loadClassifier();
+            if (mEvalThread == null) {
+                mEvalThread = new EvalThread();
+            }
+            // start the thread
+            mEvalThread.start();
+        }
+    }
+    // write the classificator object to /data/..persistence to load it from there
+    private void unzipClassificator(){
+        File f = new File(PersistenceConfiguration.getPersistenceDirectory()+"classificationHashMap.md");
+        if (!f.exists()) try {
 
+            InputStream is = getAssets().open("classificationHashMap.md");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+
+            FileOutputStream fos = new FileOutputStream(f);
+            fos.write(buffer);
+            fos.close();
+            Log.i("Info","Unzipped classifiactionHashMap.md from assets.");
+        } catch (Exception e) {
+            Log.e("Error","Cannot unzip classifiactionHashMap.md from assets.");
+        }
+    }
+    // only used on development, to calculate the Classification object
     public void calculateModel() {
         Toast.makeText(this, "Start Calculation", Toast.LENGTH_SHORT).show();
         if (mPersistenceService == null) {
@@ -171,10 +202,10 @@ public class EvaluationBackgroundService extends Service {
             }
         }
 
-        HashMap<BodyAreas, List<MotionClassificator>> result = new HashMap<>();
+        HashMap<BodyArea, List<MotionClassificator>> result = new HashMap<>();
 
         // Build classifier for each area
-        for (BodyAreas b : BodyAreas.values()) {
+        for (BodyArea b : BodyArea.values()) {
             // if area contains lable, add to classifier
             for (MotionClassificator c : motions.values()) {
                 if (b.contains(c.getName())) {
@@ -196,11 +227,10 @@ public class EvaluationBackgroundService extends Service {
     }
 
     private void evaluateMotionData(MotionDataSetDto motionDataSet) {
-
-        for (BodyAreas area : motionclassifier.keySet()) {
+        if(mPersistenceService.receivesLiveData()){
+        for (BodyArea area : motionclassifier.keySet()) {
             double probability = 0;
             MotionClassificator classificator = new MotionClassificator("");
-
 
             for (MotionClassificator m : motionclassifier.get(area)) {
                 double currProbability = m.getProbability(motionDataSet);
@@ -209,9 +239,14 @@ public class EvaluationBackgroundService extends Service {
                     probability = currProbability;
                     //  Log.i("Info", "Classification: " + classificator.getName() + " " + currProbability);
                 }
-
             }
-            this.sendPostureBroadcast(classificator.getName(), area.name());
+            if(probability > ClassificationConfiguration.MIN_PROBABILITY) {
+                this.sendPostureBroadcast(classificator.getName(), area.name());
+            }else{
+                this.sendPostureBroadcast(ClassificationConfiguration.UNKNOWN_POSITION, area.name());
+            }
+        }}else{
+            this.stopSelf();
         }
     }
 
@@ -223,12 +258,15 @@ public class EvaluationBackgroundService extends Service {
         intent.putExtra("PostureName", posture);
         intent.putExtra("Area", area);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-        Log.i("Info Posture Detection", area + " - " + posture);
+
     }
 
     private class EvalThread extends Thread {
 
         private MotionDataSetDto motionDataSet;
+        public void killMe(){
+            this.destroy();
+        }
 
         @Override
         public void run() {
@@ -257,7 +295,5 @@ public class EvaluationBackgroundService extends Service {
             // Return this instance of LocalService so clients can call public methods
             return EvaluationBackgroundService.this;
         }
-
-
     }
 }

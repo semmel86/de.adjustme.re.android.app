@@ -20,7 +20,7 @@ import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
  */
 
 public class TextFilePersistor {
-    private final String persistenceDir = PersistenceConfiguration.getPersitenceDirectory();
+    private final String persistenceDir = PersistenceConfiguration.getPersistenceDirectory();
 
     /**
      * Save Object information ( referring to toString()) to a named File, returns true on success, otherwise false

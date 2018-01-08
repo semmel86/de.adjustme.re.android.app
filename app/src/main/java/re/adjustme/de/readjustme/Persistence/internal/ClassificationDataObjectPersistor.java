@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import re.adjustme.de.readjustme.Bean.MotionClassificator;
-import re.adjustme.de.readjustme.Configuration.BodyAreas;
+import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Persistence.ClassificationDataPersistor;
 
 /**
@@ -14,7 +14,6 @@ import re.adjustme.de.readjustme.Persistence.ClassificationDataPersistor;
  * Created by Semmel on 18.11.2017.
  */
 public class ClassificationDataObjectPersistor extends ObjectPersistor implements ClassificationDataPersistor {
-
 
     @Override
     public List<MotionClassificator> load() {
@@ -27,12 +26,12 @@ public class ClassificationDataObjectPersistor extends ObjectPersistor implement
     }
 
     @Override
-    public HashMap<BodyAreas, List<MotionClassificator>> loadClassificationMap() {
-        return (HashMap<BodyAreas, List<MotionClassificator>>) this.load("classificationHashMap");
+    public HashMap<BodyArea, List<MotionClassificator>> loadClassificationMap() {
+        return (HashMap<BodyArea, List<MotionClassificator>>) this.load("classificationHashMap");
     }
 
     @Override
-    public void save(HashMap<BodyAreas, List<MotionClassificator>> data) {
+    public void save(HashMap<BodyArea, List<MotionClassificator>> data) {
 
         this.save(data, "classificationHashMap");
     }

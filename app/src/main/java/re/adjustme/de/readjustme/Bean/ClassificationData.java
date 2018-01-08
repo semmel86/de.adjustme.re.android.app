@@ -3,6 +3,8 @@ package re.adjustme.de.readjustme.Bean;
 import java.io.Serializable;
 
 /**
+ * Bean holding values for the Classification.
+ *
  * Created by semmel on 16.12.2017.
  */
 
@@ -12,17 +14,12 @@ public class ClassificationData implements Serializable {
     private int maxX = -180;
     private int minX = 180;
     private long meanX = 0;
-    private boolean useX = true;
     private int maxY = -180;
     private int minY = 180;
     private long meanY = 0;
-    private boolean useY = true;
-
-
     private int maxZ = -180;
     private int minZ = 180;
     private long meanZ = 0;
-    private boolean useZ = true;
 
 
     private double MaxDistance;
@@ -34,32 +31,6 @@ public class ClassificationData implements Serializable {
     public void setDur(long durX) {
         this.dur = durX;
     }
-
-
-    public boolean useX() {
-        return useX;
-    }
-
-    public void setUseX(boolean useX) {
-        this.useX = useX;
-    }
-
-    public boolean useY() {
-        return useY;
-    }
-
-    public void setUseY(boolean useY) {
-        this.useY = useY;
-    }
-
-    public boolean useZ() {
-        return useZ;
-    }
-
-    public void setUseZ(boolean useZ) {
-        this.useZ = useZ;
-    }
-
 
     public double getMaxDistance() {
         return MaxDistance;

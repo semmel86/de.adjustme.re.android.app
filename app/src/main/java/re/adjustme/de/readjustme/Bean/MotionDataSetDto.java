@@ -8,9 +8,11 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Configuration.Sensor;
+import re.adjustme.de.readjustme.Predefined.Sensor;
 
 /**
+ * Transfer object for Motion data.
+ * 
  * Created by semmel on 03.12.2017.
  */
 
@@ -117,8 +119,6 @@ public class MotionDataSetDto implements Serializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        Log.i("Info", jsonObj.toString());
         return jsonObj;
     }
 }
