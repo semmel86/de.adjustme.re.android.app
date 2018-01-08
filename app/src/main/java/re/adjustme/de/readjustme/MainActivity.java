@@ -82,13 +82,7 @@ public class MainActivity extends MyNavigationActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setSelectedItemId(R.id.navigation_home);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-<<<<<<< HEAD
-
         posture=(TextView)findViewById(R.id.textView2);
-=======
-        posture = (TextView) findViewById(R.id.textView2);
->>>>>>> master
-
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mPostureReceiver, new IntentFilter("Posture"));
     }
