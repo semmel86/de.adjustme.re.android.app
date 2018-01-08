@@ -109,11 +109,16 @@ public class EvaluationBackgroundService extends Service {
     }
 
     private void startEvalThread() {
-       loadClassifier();
-        if (mEvalThread == null) {
-            mEvalThread = new EvalThread();
+        // start only if there is any data
+        if(mPersistenceService.receivesLiveData()) {
+            // load classifier first
+            loadClassifier();
+            if (mEvalThread == null) {
+                mEvalThread = new EvalThread();
+            }
+            // start the thread
+            mEvalThread.start();
         }
-        mEvalThread.start();
     }
     // write the classificator object to /data/..persistence to load it from there
     private void unzipClassificator(){

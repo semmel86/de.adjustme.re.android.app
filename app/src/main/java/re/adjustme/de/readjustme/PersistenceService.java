@@ -50,6 +50,7 @@ public class PersistenceService extends Service {
     private String label = "";
     private boolean isInLabeledPosition = false;
     private HashMap<Sensor, List<MotionData>> fullMotionData;
+    private boolean receivesLiveData=false;
     private BackendConnection backend = new BackendConnection();
     private DashboardData dashboardData;
 
@@ -192,6 +193,7 @@ public class PersistenceService extends Service {
     // save persist immediately the object
     // and adds to the cached map after
     public void save(MotionData md) {
+        this.receivesLiveData=true;
         if (PersistenceConfiguration.ENABEL_CALIBRATION) {
             doCalibration(md);
         }
@@ -280,6 +282,14 @@ public class PersistenceService extends Service {
         return this.dashboardData;
     }
 
+    // indicates whether the loose coupled Bluetooth service brings in some data
+    public boolean receivesLiveData(){
+        return this.receivesLiveData;
+    }
+
+    public void  unsetReceivesLiveData(){
+        this.receivesLiveData=false;
+    }
     /**
      * Class used for the client Binder.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
@@ -295,7 +305,7 @@ public class PersistenceService extends Service {
         // prepare intent which is triggered if the
         // notification is selected
 
-        Intent intent = new Intent(this, PersistenceService.class);
+        Intent intent = new Intent(this, NotifyServiceReceiver.class);
         PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
         // build notification
@@ -303,7 +313,7 @@ public class PersistenceService extends Service {
         Notification n  = new Notification.Builder(this)
                 .setContentTitle("Re.adjustme - Haltungs notification")
                 .setContentText(text)
-                //.setSmallIcon(R.drawable.icon)
+                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                 .setContentIntent(pIntent)
                 .setAutoCancel(true).build();
                // .addAction(R.drawable.icon, "Call", pIntent)
@@ -315,5 +325,17 @@ public class PersistenceService extends Service {
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         notificationManager.notify(0, n);
+    }
+
+    public class NotifyServiceReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context arg0, Intent arg1) {
+            // TODO Auto-generated method stub
+            int rqs = arg1.getIntExtra("RQS", 0);
+            if (rqs == 1){
+                stopSelf();
+            }
+        }
     }
 }

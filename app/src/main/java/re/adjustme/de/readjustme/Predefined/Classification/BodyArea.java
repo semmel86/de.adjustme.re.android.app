@@ -7,8 +7,8 @@ package re.adjustme.de.readjustme.Predefined.Classification;
  */
 
 public enum BodyArea {
-    SHOULDER("Shoulder", ShoulderLabel.values(),300000L),
-    SPLINE("Spline", SplineLabel.values(),600000L);
+    SHOULDER("Shoulder", ShoulderLabel.values(),300000L), // 300000 = 5min;
+    SPLINE("Spline", SplineLabel.values(),600000L); // 600000 = 10 min;
 
     private String areaType;
     private Label[] label;

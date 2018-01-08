@@ -67,6 +67,7 @@ public class BluetoothBackgroundService extends Service {
     @Override
     public void onDestroy() {
         destroyed = true;
+        mPersistenceService.unsetReceivesLiveData();
         if (mSocket!=null && mSocket.isConnected()) {
             try {
                 mSocket.close();
@@ -74,6 +75,7 @@ public class BluetoothBackgroundService extends Service {
                 e.printStackTrace();
             }
         }
+        unbindService(mConnection);
         stopSelf();
     }
 
@@ -392,6 +394,7 @@ public class BluetoothBackgroundService extends Service {
                     }
                 } catch (IOException e) {
                     Log.d("Info", "Input stream was disconnected", e);
+                    mPersistenceService.unsetReceivesLiveData();
                     if (!mmSocket.isConnected()) {
                         // lost connection, close and destroy this socket,
                         mConnected = false;
