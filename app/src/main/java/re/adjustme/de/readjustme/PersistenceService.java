@@ -78,6 +78,7 @@ public class PersistenceService extends Service {
                         }
                     } else {
                         // other label -> new LabelData object
+                        Log.i("New Posture detected", bodyarea.name() + " - " + label.getDescription());
                         LabelData newLabel = new LabelData(label, bodyarea);
                         dashboardData.addLabelData(newLabel);
                         save(dashboardData);
@@ -203,7 +204,7 @@ public class PersistenceService extends Service {
             persistor.saveMotion(md);
             motionDataSet.update(md);
             persistor.saveMotionSet(motionDataSet);
-            Log.i("Info Persistence", "Saved Motion Data: " + md.toString());
+          //  Log.i("Info Persistence", "Saved Motion Data: " + md.toString());
         }
         if (PersistenceConfiguration.SAVE_BACKEND) {
             JSONObject motionData = motionDataSet.getJson();

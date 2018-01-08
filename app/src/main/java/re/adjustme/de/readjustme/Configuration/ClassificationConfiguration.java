@@ -10,5 +10,6 @@ public class ClassificationConfiguration {
 
     public static final Long EVALUATION_TIME = 500L;
     public static final boolean CALCULATE_ROTATION=false;
-
+    public static final double MIN_PROBABILITY=20;
+    public static final String UNKNOWN_POSITION="Unknown";
 }

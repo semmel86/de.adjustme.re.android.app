@@ -119,8 +119,6 @@ public class MotionDataSetDto implements Serializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        Log.i("Info", jsonObj.toString());
         return jsonObj;
     }
 }

@@ -227,7 +227,7 @@ public class EvaluationBackgroundService extends Service {
     }
 
     private void evaluateMotionData(MotionDataSetDto motionDataSet) {
-
+        if(mPersistenceService.receivesLiveData()){
         for (BodyArea area : motionclassifier.keySet()) {
             double probability = 0;
             MotionClassificator classificator = new MotionClassificator("");
@@ -240,7 +240,13 @@ public class EvaluationBackgroundService extends Service {
                     //  Log.i("Info", "Classification: " + classificator.getName() + " " + currProbability);
                 }
             }
-            this.sendPostureBroadcast(classificator.getName(), area.name());
+            if(probability > ClassificationConfiguration.MIN_PROBABILITY) {
+                this.sendPostureBroadcast(classificator.getName(), area.name());
+            }else{
+                this.sendPostureBroadcast(ClassificationConfiguration.UNKNOWN_POSITION, area.name());
+            }
+        }}else{
+            this.stopSelf();
         }
     }
 
@@ -252,7 +258,7 @@ public class EvaluationBackgroundService extends Service {
         intent.putExtra("PostureName", posture);
         intent.putExtra("Area", area);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-        Log.i("Info Posture Detection", area + " - " + posture);
+
     }
 
     private class EvalThread extends Thread {
