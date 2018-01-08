@@ -15,14 +15,13 @@ import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 public class ObjectPersistor {
 
     private final static String objSuffix = ".md";
-    private final File persistanceDir = new File(PersistenceConfiguration.getPersitenceDirectory());
+    private static File persistanceDir = new File(PersistenceConfiguration.getPersistenceDirectory());
 
     /**
      * Constructor
      */
     public ObjectPersistor() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     /**

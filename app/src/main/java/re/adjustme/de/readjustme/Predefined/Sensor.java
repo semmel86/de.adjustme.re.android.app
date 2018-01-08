@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme.Configuration;
+package re.adjustme.de.readjustme.Predefined;
 
 /**
  * Predefined Sensor numbers referring to Bluetooth interface description.

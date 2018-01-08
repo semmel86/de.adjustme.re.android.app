@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme.Configuration;
+package re.adjustme.de.readjustme.Predefined.Classification;
 
 /**
  * Created by semmel on 06.01.2018.
@@ -7,8 +7,7 @@ package re.adjustme.de.readjustme.Configuration;
 public interface Label {
 
     public String getDescription(String label);
-
+    public String getDescription();
     public String getLabel();
 
-    //public Label[] values();
 }

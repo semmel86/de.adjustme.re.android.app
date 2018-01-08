@@ -8,9 +8,8 @@ package re.adjustme.de.readjustme.Configuration;
 
 public class ClassificationConfiguration {
 
-    /*
-        The UUID for SPP Service needed to connect to the hc-05/06 device
-    */
     public static final Long EVALUATION_TIME = 500L;
-
+    public static final boolean CALCULATE_ROTATION=false;
+    public static final double MIN_PROBABILITY=20;
+    public static final String UNKNOWN_POSITION="Unknown";
 }

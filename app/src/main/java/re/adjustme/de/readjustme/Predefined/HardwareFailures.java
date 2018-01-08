@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme.Configuration;
+package re.adjustme.de.readjustme.Predefined;
 
 /**
  * Created by Semmel on 18.11.2017.

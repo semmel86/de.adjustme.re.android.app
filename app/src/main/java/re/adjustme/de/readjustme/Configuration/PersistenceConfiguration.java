@@ -1,6 +1,11 @@
 package re.adjustme.de.readjustme.Configuration;
 
+import android.util.Log;
+
 import java.io.File;
+import java.net.URL;
+
+import re.adjustme.de.readjustme.Predefined.PersistenceType;
 
 /**
  * Created by Semmel on 18.11.2017.
@@ -13,18 +18,18 @@ public class PersistenceConfiguration {
     public static final boolean SAVE_LOCAL = true;
     public static final boolean SAVE_BACKEND = true;
     public static final boolean ENABEL_CALIBRATION = false;
-    private static String PERSITENCE_DIRECTORY = System.getProperty("user.dir") + "/persistence/";
+    private static String PERSISTENCE_DIRECTORY = System.getProperty("user.dir") + "/persistence/";
 
-    public static String getPersitenceDirectory() {
-        File file = new File(PERSITENCE_DIRECTORY);
+    public static String getPersistenceDirectory() {
+        File file = new File(PERSISTENCE_DIRECTORY);
         // create if missing
         if (!file.exists() || !file.isDirectory()) {
             file.mkdirs();
         }
-        return PERSITENCE_DIRECTORY;
+        return PERSISTENCE_DIRECTORY;
     }
 
     public static void setPersistenceDirectory(File persistenceDirectory) {
-        PERSITENCE_DIRECTORY = persistenceDirectory.getAbsolutePath() + "/persistence/";
+        PERSISTENCE_DIRECTORY = persistenceDirectory.getAbsolutePath() + "/persistence/";
     }
 }

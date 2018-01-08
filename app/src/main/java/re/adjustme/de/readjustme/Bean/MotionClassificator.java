@@ -4,7 +4,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Set;
 
-import re.adjustme.de.readjustme.Configuration.Sensor;
+import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
+import re.adjustme.de.readjustme.Predefined.Sensor;
+
+import static re.adjustme.de.readjustme.Configuration.ClassificationConfiguration.CALCULATE_ROTATION;
 
 /**
  * Created by semmel on 16.12.2017.
@@ -104,7 +107,7 @@ public class MotionClassificator implements Serializable {
                 }
             }
         }
-        //
+
         return (probability / Sensor.values().length);
     }
 
@@ -120,6 +123,7 @@ public class MotionClassificator implements Serializable {
     // and the returned vector represents the difference (x,y,z)
     private int[] getRotation(MotionData[] motionDataSet) {
         int[] vector = new int[3];
+        if(ClassificationConfiguration.CALCULATE_ROTATION) {
 //		vector[0] = ((motionDataSet[0].getX() + motionDataSet[1].getX() + motionDataSet[2].getX()
 //				+ motionDataSet[3].getX() + motionDataSet[4].getX())
 //				- (Math.round(this.classificationDataMap.get(1).getMeanX())
@@ -146,13 +150,14 @@ public class MotionClassificator implements Serializable {
 //						+ Math.round(this.classificationDataMap.get(5).getMeanZ())))
 //				/ 5;
 //
-//		vector[0] = (motionDataSet[0].getX() - (Math.round(this.classificationDataMap.get(1).getMeanX())));
-//		vector[1] = (motionDataSet[0].getY() - (Math.round(this.classificationDataMap.get(1).getMeanY())));
-//		vector[2] = (motionDataSet[0].getZ() - (Math.round(this.classificationDataMap.get(1).getMeanZ())));
-
-        vector[0] = 0;
-        vector[1] = 0;
-        vector[2] = 0;
+		vector[0] = (motionDataSet[0].getX() - (Math.round(this.classificationDataMap.get(1).getMeanX())));
+		vector[1] = (motionDataSet[0].getY() - (Math.round(this.classificationDataMap.get(1).getMeanY())));
+		vector[2] = (motionDataSet[0].getZ() - (Math.round(this.classificationDataMap.get(1).getMeanZ())));
+        }else {
+            vector[0] = 0;
+            vector[1] = 0;
+            vector[2] = 0;
+        }
         return vector;
 
     }
