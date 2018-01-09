@@ -3,6 +3,11 @@ package re.adjustme.de.readjustme;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.content.res.ResourcesCompat;
+import android.widget.CompoundButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -44,20 +49,85 @@ public class DashboardDayActivity extends MyNavigationActivity {
         splinePie = (PieChart) findViewById(R.id.splinePieChart);
         shoulderPie = (PieChart) findViewById(R.id.shoulderPieChart);
 
-        //spline
-        addDataToChart(splinePie, dashboardData.getSpline_sum(), getResources().getString(R.string.spline_dashboard));
+        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.postureProfileRadioGroup);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
 
-        //shoulder
-        addDataToChart(shoulderPie, dashboardData.getShoulder_sum(), getResources().getString(R.string.shoulder_dashboard));
+                DashboardData newDashboardData = new DashboardData();
+                //find selected radio button
+                switch (checkedId) {
+                    case R.id.radio_all:
+                        newDashboardData = dashboardData;
+                        break;
+                    case R.id.radio_week:
+                        newDashboardData = dashboardData.getDashboardDataSubset(DashboardData.TimeSpan.WEEK);
+                        break;
+                    case R.id.radio_day:
+                        newDashboardData = dashboardData.getDashboardDataSubset(DashboardData.TimeSpan.DAY);
+                        break;
+                    case R.id.radio_hour:
+                        newDashboardData = dashboardData.getDashboardDataSubset(DashboardData.TimeSpan.HOUR);
+                        break;
+                }
 
+
+                //spline
+                addDataToChart(splinePie, newDashboardData.getSpline_sum(), getResources().getString(R.string.spline_dashboard));
+                //shoulder
+                addDataToChart(shoulderPie, newDashboardData.getShoulder_sum(), getResources().getString(R.string.shoulder_dashboard));
+            }
+        });
+        RadioButton all = (RadioButton) findViewById(R.id.radio_all);
+        all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                radioButtonChangedListener(compoundButton, b);
+            }
+        });
+        RadioButton week = (RadioButton) findViewById(R.id.radio_week);
+        week.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                radioButtonChangedListener(compoundButton, b);
+            }
+        });
+        RadioButton day = (RadioButton) findViewById(R.id.radio_day);
+        day.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                radioButtonChangedListener(compoundButton, b);
+            }
+        });
+        RadioButton hour = (RadioButton) findViewById(R.id.radio_hour);
+        hour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                radioButtonChangedListener(compoundButton, b);
+            }
+        });
+
+        radioGroup.check(R.id.radio_all);
+
+    }
+
+    private void radioButtonChangedListener(CompoundButton button, boolean isChecked) {
+        if (isChecked) {
+
+            //Make the text underlined
+            SpannableString content = new SpannableString(button.getText());
+            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+            button.setText(content);
+        } else {
+            //Change the color here and make the Text bold
+            SpannableString content = new SpannableString(button.getText().toString());
+            content.setSpan(null, 0, content.length(), 0);
+            button.setText(content);
+        }
     }
 
     private void addDataToChart(PieChart pieChart, HashMap<Label, Long> hashMap, String label) {
         List<PieEntry> entries = new ArrayList<>();
-
-        if (hashMap == null || hashMap.isEmpty()) {
-            return;
-        }
 
         for (Label l : hashMap.keySet()) {
             // turn data into Entry objects
@@ -94,5 +164,4 @@ public class DashboardDayActivity extends MyNavigationActivity {
         pieChart.setCenterText(label);
         pieChart.invalidate();
     }
-
 }

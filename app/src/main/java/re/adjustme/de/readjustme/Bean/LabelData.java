@@ -61,5 +61,7 @@ public class LabelData implements Serializable {
         this.duration = duration;
     }
 
-
+    public Timestamp getEnd() {
+        return new Timestamp(this.getBegin().getTime() + this.getDuration());
+    }
 }

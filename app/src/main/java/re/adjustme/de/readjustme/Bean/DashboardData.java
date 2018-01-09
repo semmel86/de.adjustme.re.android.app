@@ -3,7 +3,10 @@ package re.adjustme.de.readjustme.Bean;
 import android.util.Log;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -24,6 +27,11 @@ public class DashboardData implements Serializable {
     Stack<LabelData> spline_timeline;
     private Date date;
 
+    public enum TimeSpan {
+        HOUR,
+        DAY,
+        WEEK
+    }
 
     public DashboardData() {
         this.date = new Date();
@@ -88,10 +96,17 @@ public class DashboardData implements Serializable {
         return shoulder_timeline;
     }
 
+    public void setShoulder_timeline(Stack<LabelData> shoulder_timeline) {
+        this.shoulder_timeline = shoulder_timeline;
+    }
+
     public Stack<LabelData> getSpline_timeline() {
         return spline_timeline;
     }
 
+    public void setSpline_timeline(Stack<LabelData> spline_timeline) {
+        this.spline_timeline = spline_timeline;
+    }
 
     public LabelData getlast(BodyArea b) {
         switch (b) {
@@ -109,5 +124,71 @@ public class DashboardData implements Serializable {
                 }
         }
         return null;
+    }
+
+    public DashboardData getDashboardDataSubset(TimeSpan timeSpan) {
+        DashboardData newDashboardData = new DashboardData();
+        newDashboardData.setSpline_timeline(adjusteTimeline(this.getSpline_timeline(), timeSpan));
+        newDashboardData.setShoulder_timeline(adjusteTimeline(this.getShoulder_timeline(), timeSpan));
+        newDashboardData.setSpline_sum(createSum(newDashboardData.getSpline_timeline(), BodyArea.SPLINE));
+        newDashboardData.setShoulder_sum(createSum(newDashboardData.getShoulder_timeline(), BodyArea.SHOULDER));
+        return newDashboardData;
+    }
+
+    private HashMap<Label, Long> createSum (Stack<LabelData> timeline, BodyArea b) {
+        HashMap<Label, Long> map = new HashMap<>();
+        for (LabelData l: timeline) {
+            if (map.containsKey(l)) {
+                map.put(l.getLabel(), l.getDuration() + map.get(l));
+            } else{
+                map.put(l.getLabel(), l.getDuration());
+            }
+        }
+        return map;
+    }
+
+    private Stack<LabelData> adjusteTimeline (Stack<LabelData> timeline, TimeSpan timeSpan) {
+        Stack<LabelData> helperStack = new Stack<>();
+        Stack<LabelData> stack = (Stack<LabelData>)timeline.clone();
+        Timestamp relevantTimestamp = getRelevantTimestamp(timeSpan);
+        for (LabelData data: stack){
+            if (data.getEnd().after(relevantTimestamp)){
+                helperStack.push(adjustLabelDataDuration(data, relevantTimestamp));
+            }
+        }
+
+        Stack<LabelData> helperStack2 = new Stack<>();
+        for (LabelData data: helperStack) {
+            helperStack2.push(data);
+        }
+        return helperStack2;
+    }
+
+    private LabelData adjustLabelDataDuration (LabelData data, Timestamp timestamp) {
+        if ((data.getEnd().before(timestamp))|| (data.getBegin().after(timestamp)) ) {
+            return data;
+        }
+        data.setDuration(data.getEnd().getTime() - timestamp.getTime());
+        return data;
+    }
+
+    private Timestamp getRelevantTimestamp (TimeSpan timeSpan) {
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        cal.setTime(new Date()); // compute start of the day for the timestamp
+        cal.clear(Calendar.MINUTE);
+        cal.clear(Calendar.SECOND);
+        cal.clear(Calendar.MILLISECOND);
+        switch (timeSpan){
+            case DAY:
+                cal.set(Calendar.HOUR_OF_DAY, 0);
+                break;
+            case HOUR:
+                break;
+            case WEEK:
+                cal.set(Calendar.HOUR_OF_DAY, 0);
+                cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+                break;
+        }
+        return new Timestamp(cal.getTime().getTime());
     }
 }
