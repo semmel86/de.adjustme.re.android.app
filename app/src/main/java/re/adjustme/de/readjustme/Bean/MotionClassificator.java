@@ -123,6 +123,7 @@ public class MotionClassificator implements Serializable {
     // and the returned vector represents the difference (x,y,z)
     private int[] getRotation(MotionData[] motionDataSet) {
         int[] vector = new int[3];
+        boolean allowedVarianceRestriction=true;
         if(ClassificationConfiguration.CALCULATE_ROTATION) {
 //		vector[0] = ((motionDataSet[0].getX() + motionDataSet[1].getX() + motionDataSet[2].getX()
 //				+ motionDataSet[3].getX() + motionDataSet[4].getX())
@@ -150,10 +151,16 @@ public class MotionClassificator implements Serializable {
 //						+ Math.round(this.classificationDataMap.get(5).getMeanZ())))
 //				/ 5;
 //
-		vector[0] = (motionDataSet[0].getX() - (Math.round(this.classificationDataMap.get(1).getMeanX())));
-		vector[1] = (motionDataSet[0].getY() - (Math.round(this.classificationDataMap.get(1).getMeanY())));
-		vector[2] = (motionDataSet[0].getZ() - (Math.round(this.classificationDataMap.get(1).getMeanZ())));
+
+         /*   for(Sensor s:Sensor.values()) {
+                vector[0] += (motionDataSet[s.getSensorNumber()-1].getX() - (Math.round(this.classificationDataMap.get(s.getSensorNumber()).getMeanX())));
+                vector[1] += (motionDataSet[s.getSensorNumber()-1].getX() - (Math.round(this.classificationDataMap.get(s.getSensorNumber()).getMeanX())));
+                vector[2] += (motionDataSet[s.getSensorNumber()-1].getX() - (Math.round(this.classificationDataMap.get(s.getSensorNumber()).getMeanX())));
+
+            if((motionDataSet[s.getSensorNumber()-1].getX() - (Math.round(this.classificationDataMap.get(s.getSensorNumber()).getMeanX())))- vector[0]/s.getSensorNumber()
+           }*/
         }else {
+            // default vector setting, no rotation
             vector[0] = 0;
             vector[1] = 0;
             vector[2] = 0;

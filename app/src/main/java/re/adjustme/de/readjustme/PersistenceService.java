@@ -56,7 +56,11 @@ public class PersistenceService extends Service {
 
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
+        // simple counter for sendet Notification, to avoid thousands of notifications if the position
+        // doesn't change after the first notification
+        private int sendNotification=1;
         public void onReceive(final Context context, Intent intent) {
+
             String action = intent.getAction();
             if (dashboardData == null) {
                 dashboardData = new DashboardData();
@@ -73,8 +77,9 @@ public class PersistenceService extends Service {
                         Timestamp current = new Timestamp(new Date().getTime());
                         long dur=current.getTime() - lastLabel.getBegin().getTime();
                         lastLabel.setDuration(dur);
-                        if(dur>=lastLabel.getArea().getMaxDuration()){
+                        if(dur>=lastLabel.getArea().getMaxDuration()*sendNotification){
                             sendNotification(lastLabel.getArea().name());
+                            sendNotification++;
                         }
                     } else {
                         // other label -> new LabelData object
@@ -83,6 +88,7 @@ public class PersistenceService extends Service {
                         dashboardData.addLabelData(newLabel);
                         save(dashboardData);
                     }
+
                 }
             }
         }
@@ -204,17 +210,18 @@ public class PersistenceService extends Service {
             persistor.saveMotion(md);
             motionDataSet.update(md);
             persistor.saveMotionSet(motionDataSet);
-          //  Log.i("Info Persistence", "Saved Motion Data: " + md.toString());
+            Log.i("Info Persistence", "Saved Motion Data: " + md.toString());
         }
         if (PersistenceConfiguration.SAVE_BACKEND) {
             JSONObject motionData = motionDataSet.getJson();
             for (BodyArea b : BodyArea.values()) {
                 try {
-                    motionData.put(b.name(), dashboardData.getlast(b).getLabel());
+                    motionData.put(b.name(), dashboardData.getlast(b).getLabel().getDescription());
                 } catch (Exception e) {
                     Log.e("Error Persistence", "Error on parsing Json");
                 }
             }
+            //Log.i("SEND-JSON",motionData.toString());
             backend.sendRequest(motionData, this.getApplicationContext());
         }
     }
@@ -312,8 +319,8 @@ public class PersistenceService extends Service {
         // build notification
         // the addAction re-use the same intent to keep the example short
         Notification n  = new Notification.Builder(this)
-                .setContentTitle("Re.adjustme - Haltungs notification")
-                .setContentText(text)
+                .setContentTitle("Re.adjustme - Haltungs notification "+text)
+                .setContentText("Ändere deinen Haltung....bitte.")
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                 .setContentIntent(pIntent)
                 .setAutoCancel(true).build();

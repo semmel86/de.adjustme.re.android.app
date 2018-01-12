@@ -13,8 +13,8 @@ public enum ShoulderLabel implements Label {
     AK("AK", "Anteversion links"), // je eine Schulterseite ausserhalb d. neutr. pos
     AL("AL", "Anteversion rechts"),
     AM("AM", "Anteversion links & rechts"),
-    AN("AN", "Retroversion links"),
-    AO("AO", "Retroversion rechts"),
+    AN("AN", "Retroversion links"), // ?
+    AO("AO", "Retroversion rechts"), // ?
     AP("AP", "Retroversion links & rechts"),
     AQ("AQ", "Elevation links"),
     AR("AR", "Elevation rechts"),

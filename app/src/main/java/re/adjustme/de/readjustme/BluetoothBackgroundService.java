@@ -131,10 +131,14 @@ public class BluetoothBackgroundService extends Service {
                     Log.i("Info", "Found a known Bluetooth device: " + device.getName() + " " + device.getType());
                     break;
                 }}
+
             }
          }
+         if(mDevice==null){
             Toast.makeText(getApplicationContext(), "Please pair the HC-05/06", Toast.LENGTH_SHORT).show();
+        }
     }
+
 
 
     /**

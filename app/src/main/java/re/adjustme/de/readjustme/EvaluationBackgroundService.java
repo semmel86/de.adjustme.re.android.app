@@ -112,7 +112,8 @@ public class EvaluationBackgroundService extends Service {
         // start only if there is any data
         if(mPersistenceService.receivesLiveData()) {
             // load classifier first
-            loadClassifier();
+            // loadClassifier();
+            this.calculateModel();
             if (mEvalThread == null) {
                 mEvalThread = new EvalThread();
             }
@@ -196,6 +197,7 @@ public class EvaluationBackgroundService extends Service {
                         // TODO update Max distance
                         double distance = 180;
                         c.setMaxDistance(180);
+
 
                     }
                 }
