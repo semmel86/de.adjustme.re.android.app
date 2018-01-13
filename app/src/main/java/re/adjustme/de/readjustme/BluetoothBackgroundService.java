@@ -491,7 +491,7 @@ public class BluetoothBackgroundService extends Service {
 
                 } catch (IOException connectException) {
                     // Unable to connect; close the socket and return.
-                    mConnected = false;
+                   // mConnected = false;
                     try {
                         mmSocket.close();
                     } catch (IOException closeException) {

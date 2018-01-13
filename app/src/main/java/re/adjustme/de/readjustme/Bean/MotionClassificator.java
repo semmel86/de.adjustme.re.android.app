@@ -188,4 +188,17 @@ public class MotionClassificator implements Serializable {
         // 2 - get Probability from distance/maxDistance*100
         return (1 - (distance / maxDist)) * 100;
     }
+
+    @Override
+    public String toString(){
+        StringBuilder s=new StringBuilder();
+        s.append(this.getName()+":");
+        for(Sensor se:Sensor.values()){
+            if(this.classificationDataMap.containsKey(se.getSensorNumber())){
+            s.append("|-- "+se.name()+"--\n");
+            s.append(this.classificationDataMap.get(se.getSensorNumber()).toString());
+            s.append("\n");
+        }}
+        return s.toString();
+    }
 }

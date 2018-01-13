@@ -21,6 +21,10 @@ public class ClassificationData implements Serializable {
     private int minZ = 180;
     private long meanZ = 0;
 
+@Override
+public String toString(){
+    return "    Min X: "+minX+" Max X: "+maxX+" Mean X: "+meanX+"   Min Y: "+minY+" Max Y: "+maxY+" Mean Y: "+meanY;
+}
 
     private double MaxDistance;
 

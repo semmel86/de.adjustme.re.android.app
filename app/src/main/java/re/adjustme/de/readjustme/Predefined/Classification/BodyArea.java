@@ -8,7 +8,9 @@ package re.adjustme.de.readjustme.Predefined.Classification;
 
 public enum BodyArea {
     SHOULDER("shoulder", ShoulderLabel.values(),300000L), // 300000 = 5min;
-    SPLINE("bws", SplineLabel.values(),600000L); // 600000 = 10 min;
+    SPLINE("bws", BwsLabel.values(),600000L),// 600000 = 10 min;
+    HWS("hws", HwsLabel.values(),600000L),
+    LWS("lws", LwsLabel.values(),600000L);
 
     private String areaType;
     private Label[] label;
@@ -36,6 +38,16 @@ public enum BodyArea {
     public Label getLable(String label) {
         for (Label v : this.label) {
             if (v.getLabel().equals(label)) {
+                return v;
+            }
+        }
+        return null;
+    }
+
+    public Label getLable(long round) {
+        String classNo=String.valueOf(round);
+        for (Label v : this.label) {
+            if (v.getSVMClass().equals(classNo)) {
                 return v;
             }
         }
