@@ -8,4 +8,8 @@
 
     <string name="spline_dashboard">spline dashboard</string>
     <string name="shoulder_dashboard">shoulder dashboard</string>
+    <string name="dashboard_radio_all">Entire</string>
+    <string name="dashboard_radio_week">This week</string>
+    <string name="dashboard_radio_day">Today</string>
+    <string name="dashboard_radio_hour">Current Hour</string>
 </resources>

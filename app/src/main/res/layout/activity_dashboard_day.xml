@@ -48,7 +48,62 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView" />
-        </LinearLayout>
+
+            <RadioGroup
+                android:id="@+id/postureProfileRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/text"
+                android:layout_gravity="fill_horizontal"
+                android:background="@color/colorBackground"
+                android:checkedButton="@+id/radio_all"
+                android:gravity="fill_horizontal"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/radio_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:button="@null"
+                    android:gravity="center_horizontal"
+                    android:padding="24px"
+                    android:text="@string/dashboard_radio_all" />
+
+                <RadioButton
+                    android:id="@+id/radio_week"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:button="@null"
+                    android:checked="true"
+                    android:gravity="center_horizontal"
+                    android:padding="24px"
+                    android:text="@string/dashboard_radio_week" />
+
+                <RadioButton
+                    android:id="@+id/radio_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:button="@null"
+                    android:gravity="center_horizontal"
+                    android:padding="24px"
+                    android:text="@string/dashboard_radio_day" />
+
+                <RadioButton
+                    android:id="@+id/radio_hour"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:button="@null"
+                    android:gravity="center_horizontal"
+                    android:padding="24px"
+                    android:text="@string/dashboard_radio_hour" />
+
+            </RadioGroup>
+
+    </LinearLayout>
 
         <ScrollView
             android:layout_width="match_parent"
