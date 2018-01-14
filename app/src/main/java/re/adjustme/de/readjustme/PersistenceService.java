@@ -86,12 +86,8 @@ public class PersistenceService extends Service {
                         Log.i("New Posture detected", bodyarea.name() + " - " + label.getDescription());
                         LabelData newLabel = new LabelData(label, bodyarea);
                         dashboardData.addLabelData(newLabel);
+                        save(dashboardData);
                     }
-<<<<<<< HEAD
-                    save(dashboardData);
-=======
-
->>>>>>> master
                 }
             }
         }
