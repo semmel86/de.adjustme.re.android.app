@@ -53,6 +53,7 @@ public class PersistenceService extends Service {
     private boolean receivesLiveData=false;
     private BackendConnection backend = new BackendConnection();
     private DashboardData dashboardData;
+    private String username;
 
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
@@ -253,6 +254,14 @@ public class PersistenceService extends Service {
             Log.i("Info", "Set first entry for this Sensor as current");
             currentRawMotionData.put(md.getSensor(), md);
         }
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getLabel() {
