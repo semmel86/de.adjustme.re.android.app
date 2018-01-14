@@ -18,7 +18,7 @@ public class BluetoothConfiguration {
     */
     public static final UUID BT_DEVICE_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     public static final String[] BT_DEVICE_NAME = {"HC-06","HC-05"}; // Unser Bluetooth Modul
-    public static final long CONNECTION_DELAY = 500;
+    public static final long CONNECTION_DELAY = 300;
     public static boolean SERVER_MODE = false;
     /*
      Final BT Message values.

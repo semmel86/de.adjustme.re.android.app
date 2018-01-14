@@ -31,13 +31,13 @@ public class BackendConnection extends Service {
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("backend", response.toString());
+                        //Log.d("backend", response.toString());
                     }
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("backend-error", "Doesn't send anything.");
+                       // Log.d("backend-error", "Doesn't send anything.");
                     }
                 });
 // Access the RequestQueue through your singleton class.
