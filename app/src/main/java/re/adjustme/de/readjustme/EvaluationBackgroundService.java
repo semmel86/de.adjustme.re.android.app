@@ -302,7 +302,7 @@ public class EvaluationBackgroundService extends Service {
 
     private void evaluateMotionData(MotionDataSetDto motionDataSet) {
         if(mPersistenceService.receivesLiveData()){
-        for (BodyArea area : motionclassifier.keySet()) {
+        for (BodyArea area : BodyArea.values()) {
             if(ClassificationConfiguration.USE_SVM_MODEL){
                 double classification=svmMotionclassifier.get(area).predict(motionDataSet);
                 Label l= area.getLable(Math.round(classification));

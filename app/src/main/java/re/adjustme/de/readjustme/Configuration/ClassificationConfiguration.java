@@ -13,7 +13,7 @@ public class ClassificationConfiguration {
     public static final boolean CALCULATE_ROTATION = false;
     // if true the model will be calculated
     // else load from APK
-    public static final boolean CALCULATE_MODEL=true;
+    public static final boolean CALCULATE_MODEL=false;
     // if true the max distance will be calculated for each model,
     // else =180
     public static final boolean CALCULATE_DISTANCE=true;
