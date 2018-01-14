@@ -17,7 +17,7 @@ public class PersistenceConfiguration {
     public static final PersistenceType DEFAULT_PERSISTOR = PersistenceType.FILE;
     public static final boolean SAVE_LOCAL = true;
     public static final boolean SAVE_BACKEND = true;
-    public static final boolean ENABEL_CALIBRATION = false;
+    public static final boolean ENABLE_CALIBRATION = true;
     private static String PERSISTENCE_DIRECTORY = System.getProperty("user.dir") + "/persistence/";
 
     public static String getPersistenceDirectory() {

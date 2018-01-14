@@ -124,16 +124,18 @@ public class PersistenceService extends Service {
         // get Persistor
         this.persistor = PersistorFactory.getMotionDataPersistor(PersistenceConfiguration.DEFAULT_PERSISTOR);
 
-        // initiate calibration with (x,y,z)->(0,0,0)
-        MotionData calibration = new MotionData();
-        calibration.setDuration(0);
-        calibration.setX(0);
-        calibration.setY(0);
-        calibration.setZ(0);
+
 
         fullMotionData = new HashMap<>();
 //        // load current data foreach Sensor
         for (Sensor s : Sensor.values()) {
+            // initiate calibration with (x,y,z)->(0,0,0)
+            MotionData calibration = new MotionData();
+            calibration.setDuration(0);
+            calibration.setX(0);
+            calibration.setY(0);
+            calibration.setZ(0);
+
             List<MotionData> list = persistor.getMotionDataForSensor(s);
             if (!calibrationMotionData.containsKey(s)) {
                 calibration.setSensor(s);
@@ -201,7 +203,7 @@ public class PersistenceService extends Service {
     // and adds to the cached map after
     public void save(MotionData md) {
         this.receivesLiveData=true;
-        if (PersistenceConfiguration.ENABEL_CALIBRATION) {
+        if (PersistenceConfiguration.ENABLE_CALIBRATION) {
             doCalibration(md);
         }
         // SAVE
@@ -218,7 +220,7 @@ public class PersistenceService extends Service {
                 try {
                     motionData.put(b.name(), dashboardData.getlast(b).getLabel().getDescription());
                 } catch (Exception e) {
-                    Log.e("Error Persistence", "Error on parsing Json");
+                    //Log.e("Error Persistence", "Error on parsing Json");
                 }
             }
             //Log.i("SEND-JSON",motionData.toString());

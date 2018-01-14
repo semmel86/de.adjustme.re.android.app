@@ -306,7 +306,8 @@ public class EvaluationBackgroundService extends Service {
             if(ClassificationConfiguration.USE_SVM_MODEL){
                 double classification=svmMotionclassifier.get(area).predict(motionDataSet);
                 Label l= area.getLable(Math.round(classification));
-                this.sendPostureBroadcast(l.getLabel(), area.name());
+                this.sendPostureBroadcast(l.getDescription(), area.name());
+                Log.i("Info", "Classification: "+area.name()+"  " + l.getDescription());
             }else {
                 double probability = 0;
                 MotionClassificator classificator = new MotionClassificator("");
@@ -316,7 +317,7 @@ public class EvaluationBackgroundService extends Service {
                     if (Double.compare(currProbability, probability) > 0) {
                         classificator = m;
                         probability = currProbability;
-                        //  Log.i("Info", "Classification: " + classificator.getName() + " " + currProbability);
+                        Log.i("Info", "Classification: " + classificator.getName() + " " + currProbability);
                     }
                 }
 

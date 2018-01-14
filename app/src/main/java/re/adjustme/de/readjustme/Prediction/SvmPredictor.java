@@ -1,6 +1,7 @@
 package re.adjustme.de.readjustme.Prediction;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.List;
 
 import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
@@ -16,8 +17,8 @@ import re.adjustme.de.readjustme.Prediction.internal.svm_train;
  *
  * @author selmkes
  */
-public class SvmPredictor {
-    private static svm_model model = null;
+public class SvmPredictor implements Serializable{
+    private svm_model model;
 
     public SvmPredictor() {
         super();
@@ -82,16 +83,16 @@ public class SvmPredictor {
             }
             // y
             if (!s.isExclude_y()) {
-                x[c + 1] = new svm_node();
-                x[c + 1].index = c + 1;
-                x[c + 1].value = md.getMotion(s).getY();
+                x[c] = new svm_node();
+                x[c].index = c;
+                x[c].value = md.getMotion(s).getY();
                 c++;
             }
             // z
             if (!s.isExclude_z()) {
-                x[c + 2] = new svm_node();
-                x[c + 2].index = c + 2;
-                x[c + 2].value = md.getMotion(s).getZ();
+                x[c] = new svm_node();
+                x[c].index = c ;
+                x[c].value = md.getMotion(s).getZ();
                 c++;
             }
         }
