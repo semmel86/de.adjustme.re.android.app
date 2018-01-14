@@ -4,13 +4,16 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -18,16 +21,24 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.Set;
 
+import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
+
 public class MainActivity extends MyNavigationActivity {
     Button bluttoothButton, b2;
+    private EditText usernameInput;
+    private ProgressBar progressBar;
     private TextView posture;
+    private LinearLayout mainLayout;
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
         public void onReceive(final Context context, Intent intent) {
@@ -73,8 +84,19 @@ public class MainActivity extends MyNavigationActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PersistenceConfiguration.setPersistenceDirectory(this.getApplicationContext().getFilesDir());
+        // get Persistence Service Binder
+        setPersistenceConnection();
+        Intent intent = new Intent(this, PersistenceService.class);
+        boolean b = bindService(intent, mPersistenceConnection, Context.BIND_AUTO_CREATE);
+
         setContentView(R.layout.activity_main);
+        usernameInput = (EditText) findViewById(R.id.editText);
         bluttoothButton = (Button) findViewById(R.id.button);
+        progressBar=(ProgressBar)findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
+        mainLayout = (LinearLayout) findViewById(R.id.mainLayout);
+        mainLayout.setVisibility(View.INVISIBLE);
         b2 = (Button) findViewById(R.id.button2);
         BA = BluetoothAdapter.getDefaultAdapter();
         checkBluethoothActive();
@@ -87,6 +109,26 @@ public class MainActivity extends MyNavigationActivity {
                 mPostureReceiver, new IntentFilter("Posture"));
     }
 
+    protected void setPersistenceConnection() {
+        mPersistenceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+                PersistenceService.PersistenceServiceBinder b = (PersistenceService.PersistenceServiceBinder) iBinder;
+                mPersistenceService = b.getService();
+                afterServiceConnection();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName componentName) {
+                mPersistenceService = null;
+            }
+        };
+    }
+
+    protected void afterServiceConnection() {
+        progressBar.setVisibility(View.INVISIBLE);
+        mainLayout.setVisibility(View.VISIBLE);
+    }
 
     private void checkBluethoothActive() {
         // Check and Log BT
@@ -101,6 +143,9 @@ public class MainActivity extends MyNavigationActivity {
 
     // start BT service
     public void startService(View v) {
+        if (mPersistenceService != null) {
+            mPersistenceService.setUsername(usernameInput.getText().toString());
+        }
         try {
             Intent intent = new Intent(this, BluetoothBackgroundService.class);
             startService(intent);
