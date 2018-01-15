@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -37,7 +36,7 @@ public class BackendConnection extends Service {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                       // Log.d("backend-error", "Doesn't send anything.");
+                        // Log.d("backend-error", "Doesn't send anything.");
                     }
                 });
 // Access the RequestQueue through your singleton class.

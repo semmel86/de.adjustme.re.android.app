@@ -7,8 +7,6 @@ import java.util.Set;
 import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
 import re.adjustme.de.readjustme.Predefined.Sensor;
 
-import static re.adjustme.de.readjustme.Configuration.ClassificationConfiguration.CALCULATE_ROTATION;
-
 /**
  * Created by semmel on 16.12.2017.
  */
@@ -123,8 +121,8 @@ public class MotionClassificator implements Serializable {
     // and the returned vector represents the difference (x,y,z)
     private int[] getRotation(MotionData[] motionDataSet) {
         int[] vector = new int[3];
-        boolean allowedVarianceRestriction=true;
-        if(ClassificationConfiguration.CALCULATE_ROTATION) {
+        boolean allowedVarianceRestriction = true;
+        if (ClassificationConfiguration.CALCULATE_ROTATION) {
 //		vector[0] = ((motionDataSet[0].getX() + motionDataSet[1].getX() + motionDataSet[2].getX()
 //				+ motionDataSet[3].getX() + motionDataSet[4].getX())
 //				- (Math.round(this.classificationDataMap.get(1).getMeanX())
@@ -159,7 +157,7 @@ public class MotionClassificator implements Serializable {
 
             if((motionDataSet[s.getSensorNumber()-1].getX() - (Math.round(this.classificationDataMap.get(s.getSensorNumber()).getMeanX())))- vector[0]/s.getSensorNumber()
            }*/
-        }else {
+        } else {
             // default vector setting, no rotation
             vector[0] = 0;
             vector[1] = 0;
@@ -190,15 +188,16 @@ public class MotionClassificator implements Serializable {
     }
 
     @Override
-    public String toString(){
-        StringBuilder s=new StringBuilder();
-        s.append(this.getName()+":");
-        for(Sensor se:Sensor.values()){
-            if(this.classificationDataMap.containsKey(se.getSensorNumber())){
-            s.append("|-- "+se.name()+"--\n");
-            s.append(this.classificationDataMap.get(se.getSensorNumber()).toString());
-            s.append("\n");
-        }}
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append(this.getName() + ":");
+        for (Sensor se : Sensor.values()) {
+            if (this.classificationDataMap.containsKey(se.getSensorNumber())) {
+                s.append("|-- " + se.name() + "--\n");
+                s.append(this.classificationDataMap.get(se.getSensorNumber()).toString());
+                s.append("\n");
+            }
+        }
         return s.toString();
     }
 }

@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SyncStatusObserver;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -24,17 +23,16 @@ import re.adjustme.de.readjustme.Bean.ClassificationData;
 import re.adjustme.de.readjustme.Bean.MotionClassificator;
 import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
-import re.adjustme.de.readjustme.Persistence.internal.MotionDataTextFilePersistor;
-import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
+import re.adjustme.de.readjustme.Persistence.ClassificationDataPersistor;
+import re.adjustme.de.readjustme.Persistence.PersistorFactory;
+import re.adjustme.de.readjustme.Persistence.internal.MotionDataTextFilePersistor;
+import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Predefined.Classification.Label;
 import re.adjustme.de.readjustme.Predefined.PersistenceType;
 import re.adjustme.de.readjustme.Predefined.Sensor;
-import re.adjustme.de.readjustme.Persistence.ClassificationDataPersistor;
-import re.adjustme.de.readjustme.Persistence.PersistorFactory;
 import re.adjustme.de.readjustme.Prediction.SvmPredictor;
-import re.adjustme.de.readjustme.Prediction.internal.svm_model;
 
 /**
  * Connected to the Persistence Service
@@ -55,6 +53,13 @@ public class EvaluationBackgroundService extends Service {
     private ServiceConnection mPersistenceConnection = null;
     private EvalThread mEvalThread;
     private ClassificationDataPersistor persistor;
+
+    private static double getDistance(double x1, double y1, double x2, double y2) {
+        // 1 - distance
+        double distance = Math.sqrt(Math.pow(x1 - x2, 2)
+                + Math.pow(y1 - y2, 2));
+        return distance;
+    }
 
     @Nullable
     @Override
@@ -92,7 +97,6 @@ public class EvaluationBackgroundService extends Service {
         boolean b = bindService(intent, mPersistenceConnection, Context.BIND_AUTO_CREATE);
     }
 
-
     private void setConnection() {
         mPersistenceConnection = new ServiceConnection() {
             @Override
@@ -109,17 +113,18 @@ public class EvaluationBackgroundService extends Service {
             }
         };
     }
-    private void loadClassifier(){
+
+    private void loadClassifier() {
         persistor = PersistorFactory.getClassificationDataPersistor(PersistenceType.OBJECT);
         // load svm
-        if(ClassificationConfiguration.USE_SVM_MODEL){
-            svmMotionclassifier=persistor.loadSVM();
+        if (ClassificationConfiguration.USE_SVM_MODEL) {
+            svmMotionclassifier = persistor.loadSVM();
             if (svmMotionclassifier == null || svmMotionclassifier.isEmpty()) {
                 unzipClassificator();
-                svmMotionclassifier = persistor.loadSVM() ;
+                svmMotionclassifier = persistor.loadSVM();
             }
             // load simple model
-        }else {
+        } else {
             motionclassifier = persistor.loadClassificationMap();
             if (motionclassifier == null || motionclassifier.isEmpty()) {
                 unzipClassificator();
@@ -130,15 +135,15 @@ public class EvaluationBackgroundService extends Service {
 
     private void startEvalThread() {
         // start only if there is any data
-        if(mPersistenceService.receivesLiveData()) {
+        if (mPersistenceService.receivesLiveData()) {
             // load classifier first
-            if(ClassificationConfiguration.CALCULATE_MODEL) {
+            if (ClassificationConfiguration.CALCULATE_MODEL) {
                 if (ClassificationConfiguration.USE_SVM_MODEL) {
                     this.calculateSVMModel();
                 } else {
                     this.calculateModel();
                 }
-            }else {
+            } else {
                 this.loadClassifier();
             }
 
@@ -149,9 +154,10 @@ public class EvaluationBackgroundService extends Service {
             mEvalThread.start();
         }
     }
+
     // write the classificator object to /data/..persistence to load it from there
-    private void unzipClassificator(){
-        File f = new File(PersistenceConfiguration.getPersistenceDirectory()+"classificationHashMap.md");
+    private void unzipClassificator() {
+        File f = new File(PersistenceConfiguration.getPersistenceDirectory() + "classificationHashMap.md");
         if (!f.exists()) try {
 
             InputStream is = getAssets().open("classificationHashMap.md");
@@ -163,24 +169,24 @@ public class EvaluationBackgroundService extends Service {
             FileOutputStream fos = new FileOutputStream(f);
             fos.write(buffer);
             fos.close();
-            Log.i("Info","Unzipped classifiactionHashMap.md from assets.");
+            Log.i("Info", "Unzipped classifiactionHashMap.md from assets.");
         } catch (Exception e) {
-            Log.e("Error","Cannot unzip classifiactionHashMap.md from assets.");
+            Log.e("Error", "Cannot unzip classifiactionHashMap.md from assets.");
         }
     }
 
-    public void calculateSVMModel(){
+    public void calculateSVMModel() {
         // 1-load the data (Full Motion data set objects)
-        MotionDataTextFilePersistor       csvPersistor=new MotionDataTextFilePersistor();
-        List<MotionDataSetDto> raw=csvPersistor.getMotionDataSetDtos();
-        HashMap<BodyArea,List<MotionDataSetDto>> sortedMap=new HashMap<BodyArea,List<MotionDataSetDto>>();
+        MotionDataTextFilePersistor csvPersistor = new MotionDataTextFilePersistor();
+        List<MotionDataSetDto> raw = csvPersistor.getMotionDataSetDtos();
+        HashMap<BodyArea, List<MotionDataSetDto>> sortedMap = new HashMap<BodyArea, List<MotionDataSetDto>>();
         // init sortedMap with empty lists
-        for(BodyArea area:BodyArea.values()) {
-            sortedMap.put(area,new ArrayList<MotionDataSetDto>());
+        for (BodyArea area : BodyArea.values()) {
+            sortedMap.put(area, new ArrayList<MotionDataSetDto>());
         }
         // 2- assign each line with label & inPosition to a Bodyarea
-        for(MotionDataSetDto curr:raw){
-            if(curr.getInPosition() && curr.getLabel()!=null) {
+        for (MotionDataSetDto curr : raw) {
+            if (curr.getInPosition() && curr.getLabel() != null) {
                 for (BodyArea area : BodyArea.values()) {
                     if (area.contains(curr.getLabel())) {
                         // performs not so nice, but we don't build the model that often...
@@ -190,12 +196,12 @@ public class EvaluationBackgroundService extends Service {
                 }
             }
         }
-        svmMotionclassifier=new HashMap<BodyArea, SvmPredictor>();
+        svmMotionclassifier = new HashMap<BodyArea, SvmPredictor>();
         // 3- build the model for each Bodyarea
         for (BodyArea area : BodyArea.values()) {
-            SvmPredictor predictor=new SvmPredictor();
+            SvmPredictor predictor = new SvmPredictor();
             predictor.trainModel(sortedMap.get(area));
-            svmMotionclassifier.put(area,predictor);
+            svmMotionclassifier.put(area, predictor);
         }
 
         // 4 - save the classifierMap
@@ -258,8 +264,8 @@ public class EvaluationBackgroundService extends Service {
                         c.setDur(c.getDur() + d);
                         // TODO update Max distance
                         double distance = 180;
-                        if(ClassificationConfiguration.CALCULATE_DISTANCE) {
-                             distance = getDistance(c.getMinX(), c.getMaxX(), c.getMinY(), c.getMaxY());
+                        if (ClassificationConfiguration.CALCULATE_DISTANCE) {
+                            distance = getDistance(c.getMinX(), c.getMaxX(), c.getMinY(), c.getMaxY());
                         }
                         c.setMaxDistance(distance);
                     }
@@ -276,8 +282,9 @@ public class EvaluationBackgroundService extends Service {
                 if (b.contains(c.getName())) {
                     if (result.containsKey(b)) {
                         result.get(b).add(c);
-                        if(c!=null && !(c.getName().equals("") || c.getName().equals("unknown"))){
-                        Log.i("MotionClass",c.toString());}
+                        if (c != null && !(c.getName().equals("") || c.getName().equals("unknown"))) {
+                            Log.i("MotionClass", c.toString());
+                        }
                     } else {
                         List<MotionClassificator> l = new ArrayList<>();
                         l.add(c);
@@ -293,41 +300,35 @@ public class EvaluationBackgroundService extends Service {
         Toast.makeText(this, "Classification Model Calculated", Toast.LENGTH_SHORT).show();
     }
 
-    private static double getDistance(double x1,double y1,double x2,double y2){
-        // 1 - distance
-        double distance = Math.sqrt(Math.pow(x1 - x2, 2)
-                + Math.pow(y1 - y2, 2));
-        return distance;
-    }
-
     private void evaluateMotionData(MotionDataSetDto motionDataSet) {
-        if(mPersistenceService.receivesLiveData()){
-        for (BodyArea area : BodyArea.values()) {
-            if(ClassificationConfiguration.USE_SVM_MODEL){
-                double classification=svmMotionclassifier.get(area).predict(motionDataSet);
-                Label l= area.getLable(Math.round(classification));
-                this.sendPostureBroadcast(l.getDescription(), area.name());
-                Log.i("Info", "Classification: "+area.name()+"  " + l.getDescription());
-            }else {
-                double probability = 0;
-                MotionClassificator classificator = new MotionClassificator("");
+        if (mPersistenceService.receivesLiveData()) {
+            for (BodyArea area : BodyArea.values()) {
+                if (ClassificationConfiguration.USE_SVM_MODEL) {
+                    double classification = svmMotionclassifier.get(area).predict(motionDataSet);
+                    Label l = area.getLable(Math.round(classification));
+                    this.sendPostureBroadcast(l.getDescription(), area.name());
+                    Log.i("Info", "Classification: " + area.name() + "  " + l.getDescription());
+                } else {
+                    double probability = 0;
+                    MotionClassificator classificator = new MotionClassificator("");
 
-                for (MotionClassificator m : motionclassifier.get(area)) {
-                    double currProbability = m.getProbability(motionDataSet);
-                    if (Double.compare(currProbability, probability) > 0) {
-                        classificator = m;
-                        probability = currProbability;
-                        Log.i("Info", "Classification: " + classificator.getName() + " " + currProbability);
+                    for (MotionClassificator m : motionclassifier.get(area)) {
+                        double currProbability = m.getProbability(motionDataSet);
+                        if (Double.compare(currProbability, probability) > 0) {
+                            classificator = m;
+                            probability = currProbability;
+                            Log.i("Info", "Classification: " + classificator.getName() + " " + currProbability);
+                        }
+                    }
+
+                    if (probability > ClassificationConfiguration.MIN_PROBABILITY) {
+                        this.sendPostureBroadcast(classificator.getName(), area.name());
+                    } else {
+                        this.sendPostureBroadcast(ClassificationConfiguration.UNKNOWN_POSITION, area.name());
                     }
                 }
-
-                if (probability > ClassificationConfiguration.MIN_PROBABILITY) {
-                    this.sendPostureBroadcast(classificator.getName(), area.name());
-                } else {
-                    this.sendPostureBroadcast(ClassificationConfiguration.UNKNOWN_POSITION, area.name());
-                }
             }
-        }}else{
+        } else {
             this.stopSelf();
         }
     }
@@ -346,7 +347,8 @@ public class EvaluationBackgroundService extends Service {
     private class EvalThread extends Thread {
 
         private MotionDataSetDto motionDataSet;
-        public void killMe(){
+
+        public void killMe() {
             this.destroy();
         }
 

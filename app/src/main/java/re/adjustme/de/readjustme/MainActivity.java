@@ -1,8 +1,6 @@
 package re.adjustme.de.readjustme;
 
-import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -21,15 +19,11 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-
-import java.util.ArrayList;
-import java.util.Set;
 
 import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
@@ -39,7 +33,6 @@ public class MainActivity extends MyNavigationActivity {
     private EditText usernameInput;
     private ProgressBar progressBar;
     private TextView posture;
-    private LinearLayout mainLayout;
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
         public void onReceive(final Context context, Intent intent) {
@@ -53,6 +46,7 @@ public class MainActivity extends MyNavigationActivity {
         }
 
     };
+    private LinearLayout mainLayout;
     private BluetoothAdapter BA;
 
     @Override
@@ -72,8 +66,11 @@ public class MainActivity extends MyNavigationActivity {
 
         setContentView(R.layout.activity_main);
         usernameInput = (EditText) findViewById(R.id.editText);
+        if(mPersistenceService!=null && mPersistenceService.getUsername()!=null){
+            usernameInput.setText(mPersistenceService.getUsername());
+        }
         bluttoothButton = (Button) findViewById(R.id.button);
-        progressBar=(ProgressBar)findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
         mainLayout = (LinearLayout) findViewById(R.id.mainLayout);
         mainLayout.setVisibility(View.INVISIBLE);
@@ -84,7 +81,7 @@ public class MainActivity extends MyNavigationActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setSelectedItemId(R.id.navigation_home);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        posture=(TextView)findViewById(R.id.textView2);
+        posture = (TextView) findViewById(R.id.textView2);
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mPostureReceiver, new IntentFilter("Posture"));
     }
@@ -132,15 +129,15 @@ public class MainActivity extends MyNavigationActivity {
 //            startService(intent);
             Intent intent2 = new Intent(this, EvaluationBackgroundService.class);
 //            startService(intent);
-           InitThread init=new InitThread(intent,intent2);
-           init.start();
+            InitThread init = new InitThread(intent, intent2);
+            init.start();
             Toast.makeText(getApplicationContext(), "Start Services", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Cannot start Services", Toast.LENGTH_LONG).show();
         }
     }
 
-   @Deprecated
+    @Deprecated
     public void StartEvalService(View v) {
         try {
             Intent intent = new Intent(this, EvaluationBackgroundService.class);

@@ -15,7 +15,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -30,8 +29,8 @@ import java.util.UUID;
 
 import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
-import re.adjustme.de.readjustme.Predefined.HardwareFailures;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
+import re.adjustme.de.readjustme.Predefined.HardwareFailures;
 
 import static android.content.ContentValues.TAG;
 
@@ -68,7 +67,7 @@ public class BluetoothBackgroundService extends Service {
     public void onDestroy() {
         destroyed = true;
         mPersistenceService.unsetReceivesLiveData();
-        if (mSocket!=null && mSocket.isConnected()) {
+        if (mSocket != null && mSocket.isConnected()) {
             try {
                 mSocket.close();
             } catch (IOException e) {
@@ -103,7 +102,7 @@ public class BluetoothBackgroundService extends Service {
 
 
     public void startConnection() {
-        if (!destroyed && mDevice!=null) {
+        if (!destroyed && mDevice != null) {
             if (BluetoothConfiguration.SERVER_MODE) {
                 AcceptThread a = new AcceptThread(mDevice.getName(), BluetoothConfiguration.BT_DEVICE_UUID);
                 a.start();
@@ -125,20 +124,20 @@ public class BluetoothBackgroundService extends Service {
 
             // Loop through paired devices
             for (BluetoothDevice device : pairedDevices) {
-                for(String btModul:BluetoothConfiguration.BT_DEVICE_NAME){
-                 if (!(device.getName() == null) && device.getName().equals(btModul)) {
-                    mDevice = device;
-                    Log.i("Info", "Found a known Bluetooth device: " + device.getName() + " " + device.getType());
-                    break;
-                }}
+                for (String btModul : BluetoothConfiguration.BT_DEVICE_NAME) {
+                    if (!(device.getName() == null) && device.getName().equals(btModul)) {
+                        mDevice = device;
+                        Log.i("Info", "Found a known Bluetooth device: " + device.getName() + " " + device.getType());
+                        break;
+                    }
+                }
 
             }
-         }
-         if(mDevice==null){
+        }
+        if (mDevice == null) {
             Toast.makeText(getApplicationContext(), "Please pair the HC-05/06", Toast.LENGTH_SHORT).show();
         }
     }
-
 
 
     /**
@@ -491,7 +490,7 @@ public class BluetoothBackgroundService extends Service {
 
                 } catch (IOException connectException) {
                     // Unable to connect; close the socket and return.
-                   // mConnected = false;
+                    // mConnected = false;
                     try {
                         mmSocket.close();
                     } catch (IOException closeException) {

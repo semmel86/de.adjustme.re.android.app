@@ -114,7 +114,7 @@ public class TextFilePersistor {
         return result;
     }
 
-    public List<String> loadFullLines(){
+    public List<String> loadFullLines() {
         return this.loadLines("FullMotionDataSet.csv");
     }
 

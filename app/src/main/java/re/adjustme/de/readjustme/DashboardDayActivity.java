@@ -8,11 +8,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.content.res.ResourcesCompat;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.text.SpannableString;
-import android.text.style.UnderlineSpan;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
