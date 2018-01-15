@@ -30,6 +30,7 @@ import re.adjustme.de.readjustme.Persistence.BackendConnection;
 import re.adjustme.de.readjustme.Persistence.MotionDataPersistor;
 import re.adjustme.de.readjustme.Persistence.PersistorFactory;
 import re.adjustme.de.readjustme.Persistence.internal.ObjectPersistor;
+import re.adjustme.de.readjustme.Persistence.internal.TextFilePersistor;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Predefined.Classification.Label;
 import re.adjustme.de.readjustme.Predefined.Sensor;
@@ -107,6 +108,16 @@ public class PersistenceService extends Service {
         helper.save(dashboardData, "DashboardData");
     }
 
+    private void saveUserName(String username){
+        ObjectPersistor helper = new ObjectPersistor();
+        helper.save(username, "User");
+    }
+
+    private String loadUserName(){
+        ObjectPersistor helper = new ObjectPersistor();
+        return (String) helper.load("User");
+    }
+
     private void intiPersistenceService() {
         ObjectPersistor helper = new ObjectPersistor();
         // helper.load("calibrationMotionData");
@@ -116,7 +127,7 @@ public class PersistenceService extends Service {
             dashboardData = new DashboardData();
             helper.save(dashboardData, "DashboardData");
         }
-
+        this.username =(String) helper.load("User");
         motionDataSet = new MotionDataSetDto();
         calibrationMotionData = (HashMap<Sensor, MotionData>) helper.load("calibrationMotionData"); // new HashMap<>();
         if (calibrationMotionData == null) {
@@ -219,10 +230,12 @@ public class PersistenceService extends Service {
         if (PersistenceConfiguration.SAVE_BACKEND) {
             JSONObject motionData = motionDataSet.getJson();
             try {
+                motionData.put("user", this.username.toString());
                 for (BodyArea b : BodyArea.values()) {
-                    motionData.put(b.name(), dashboardData.getlast(b).getLabel().getDescription());
+                    if(dashboardData.getlast(b)!=null) {
+                        motionData.put(b.name(), dashboardData.getlast(b).getLabel().getDescription());
+                    }
                 }
-                motionData.put("user", this.username);
             } catch (Exception e) {
                 //Log.e("Error Persistence", "Error on parsing Json");
             }
@@ -265,6 +278,7 @@ public class PersistenceService extends Service {
 
     public void setUsername(String username) {
         this.username = username;
+        saveUserName(username);
     }
 
     public String getLabel() {

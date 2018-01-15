@@ -1,11 +1,8 @@
 package re.adjustme.de.readjustme;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.content.res.ResourcesCompat;
 import android.text.SpannableString;
@@ -33,7 +30,7 @@ import re.adjustme.de.readjustme.Bean.DashboardData;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Predefined.Classification.Label;
 
-public class DashboardDayActivity extends MyNavigationActivity {
+public class DashboardDayActivity extends GenericBaseActivity {
 
     private DashboardData dashboardData = new DashboardData();
     private PieChart splinePie;

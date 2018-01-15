@@ -17,7 +17,7 @@ import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
  * Created by Semmel on 13.11.2017.
  */
 
-public abstract class MyNavigationActivity extends AppCompatActivity {
+public abstract class GenericBaseActivity extends AppCompatActivity {
 
     protected PersistenceService mPersistenceService = null;
     protected EvaluationBackgroundService mEvaluationBackgroundService = null;
@@ -45,8 +45,8 @@ public abstract class MyNavigationActivity extends AppCompatActivity {
                     }
                     return true;
                 case R.id.navigation_bluetooth:
-                    if (!this.getClass().equals(BluetoothActivity.class)) {
-                        intent = new Intent(getApplicationContext(), BluetoothActivity.class);
+                    if (!this.getClass().equals(TrainModelActivity.class)) {
+                        intent = new Intent(getApplicationContext(), TrainModelActivity.class);
                         startActivity(intent);
                     }
                     return true;

@@ -30,7 +30,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"></activity>
 
         <activity
-            android:name=".BluetoothActivity"
+            android:name=".TrainModelActivity"
             android:label="BluetoothActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"></activity>
 
