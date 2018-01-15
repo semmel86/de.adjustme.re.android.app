@@ -34,6 +34,7 @@ public enum ShoulderLabel implements Label {
     AAG("AAG", "Anteversion rechts & Depression rechts","22"),
     AAH("AAH", "Retroversion links & Depression links","23"),
     AAI("AAI", "Retroversion rechts & Depression rechts","24"),
+
     AAJ("AAJ", "Anteversion links & Retroversion rechts","25"), // ab hier Diagonalen über beide Schultern
     AAK("AAK", "Anteversion rechts & Retroversion links","26"),
     //

@@ -15,7 +15,7 @@ public enum BwsLabel implements Label {
     K("K", "Lateralflexion rechts","31"),
     L("L", "Lateralflexion links","32"),
     M("M", "Extension","33"),
-    N("N", "Flexion","34"),
+    N("N", "Flexion","34"), //
     O("O", "Rotation rechts & Lateralflexion rechts","35"),
     P("P", "Rotation links & Lateralflexion rechts","36"),
     Q("Q", "Rotation rechts & Lateralflexion links","37"),

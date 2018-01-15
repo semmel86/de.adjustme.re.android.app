@@ -12,10 +12,10 @@ public enum HwsLabel implements Label {
     A("A", "Neutral Position","1"),
     H("B", "Rotation rechts","55"),
     J("C", "Rotation links","56"),
-    K("D", "Lateralflexion rechts","57"),
-    L("E", "Lateralflexion links","58"),
-    M("F", "Extension","59"),
-    N("G", "Flexion","60"),
+    K("D", "Lateralflexion rechts","57"), // raus
+    L("E", "Lateralflexion links","58"), // raus
+    M("F", "Extension","59"), // turtle neck
+    N("G", "Flexion","60"), // tech-neck
     UNLABELED(ClassificationConfiguration.UNKNOWN_POSITION, "Unbekannte Position","0");
 
 
