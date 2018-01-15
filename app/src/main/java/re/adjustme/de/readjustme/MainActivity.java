@@ -31,6 +31,7 @@ import android.widget.ProgressBar;
 import java.util.ArrayList;
 import java.util.Set;
 
+import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 
 public class MainActivity extends MyNavigationActivity {
@@ -53,33 +54,12 @@ public class MainActivity extends MyNavigationActivity {
 
     };
     private BluetoothAdapter BA;
-    private Set<BluetoothDevice> pairedDevices;
-    private ArrayList<String> arrayOfFoundBTDevices = new ArrayList<String>();
-    private ListView lv;
-    private String[] permissionsToRequest =
-            {
-                    Manifest.permission.BLUETOOTH_ADMIN,
-                    Manifest.permission.BLUETOOTH,
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-            };
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
-
-    private void connectToDevice(BluetoothDevice device) {
-        // let the Bluetooth service make his work
-
-//        this.mBluetoothService = new BluetoothService(device, mHandler, BA);
-//        mBluetoothService.startConnection();
-        // switch to BT pageS
-
-
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,20 +121,26 @@ public class MainActivity extends MyNavigationActivity {
     }
 
 
-    // start BT service
+    // old:start BT service
+    // new: stop all Running Services
     public void startService(View v) {
         if (mPersistenceService != null) {
             mPersistenceService.setUsername(usernameInput.getText().toString());
         }
         try {
             Intent intent = new Intent(this, BluetoothBackgroundService.class);
-            startService(intent);
-            Toast.makeText(getApplicationContext(), "started BT Service", Toast.LENGTH_LONG).show();
+//            startService(intent);
+            Intent intent2 = new Intent(this, EvaluationBackgroundService.class);
+//            startService(intent);
+           InitThread init=new InitThread(intent,intent2);
+           init.start();
+            Toast.makeText(getApplicationContext(), "Start Services", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "already started", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Cannot start Services", Toast.LENGTH_LONG).show();
         }
     }
 
+   @Deprecated
     public void StartEvalService(View v) {
         try {
             Intent intent = new Intent(this, EvaluationBackgroundService.class);
@@ -165,26 +151,34 @@ public class MainActivity extends MyNavigationActivity {
         }
     }
 
-    public void calculateClassifier(View v) {
-        Intent intent = new Intent(this, EvaluationBackgroundService.class);
-        startService(intent);
-    }
+    // don't needed, as startEval initiates calculation if model is missing
+//    public void calculateClassifier(View v) {
+//        Intent intent = new Intent(this, EvaluationBackgroundService.class);
+//        startService(intent);
+//    }
 
+    // set current posture as (0,0,0) for each sensor
     public void calibrate(View v) {
         mPersistenceService.calibrate();
     }
 
+    // stop all Running Services
     public void stopService(View v) {
         try {
+            // stop BT
             Intent intent = new Intent(this, BluetoothBackgroundService.class);
             stopService(intent);
+            // stop Evaluation
+            Intent intent2 = new Intent(this, EvaluationBackgroundService.class);
+            stopService(intent2);
+
             Toast.makeText(getApplicationContext(), "stopped", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "already stopped", Toast.LENGTH_LONG).show();
         }
     }
 
-
+    @Deprecated
     public void stopEvalService(View v) {
         try {
             Intent intent = new Intent(this, EvaluationBackgroundService.class);
@@ -195,21 +189,6 @@ public class MainActivity extends MyNavigationActivity {
         }
     }
 
-    private void displayListOfFoundDevices() {
-
-        // startConnection looking for bluetooth devices C:\Users\Semmel\
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mPostureReceiver, filter);
-        if (BA.startDiscovery()) {
-            Log.i("info", "Start Discovery.");
-        } else {
-            Log.i("info", "Cannot startConnection Discovery.");
-        }
-
-
-    }
-
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -219,9 +198,8 @@ public class MainActivity extends MyNavigationActivity {
 
 
     private void checkPermissions() {
+        for (String currentPerm : BluetoothConfiguration.permissionsToRequest) {
 
-        for (String currentPerm : permissionsToRequest) {
-// Here, thisActivity is the current activity
             if (ContextCompat.checkSelfPermission(this,
                     currentPerm)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -229,10 +207,6 @@ public class MainActivity extends MyNavigationActivity {
                 // Should we show an explanation?
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                         currentPerm)) {
-
-                    // Show an explanation to the user *asynchronously* -- don't block
-                    // this thread waiting for the user's response! After the user
-                    // sees the explanation, try again to request the permission.
 
                 } else {
 
@@ -242,13 +216,37 @@ public class MainActivity extends MyNavigationActivity {
                             new String[]{currentPerm},
                             1);
 
-                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                    // app-defined int constant. The callback method gets the
-                    // result of the request.
                 }
             }
         }
     }
 
+    // Wrap initialization in a single thread to avoid UI delays
+    private class InitThread extends Thread {
+        Intent btIntent;
+        Intent evalIntent;
 
+        public InitThread(Intent bt, Intent eval) {
+            this.btIntent = bt;
+            this.evalIntent = eval;
+        }
+
+        @Override
+        public void run() {
+            // init BlueTooth first
+            startService(btIntent);
+
+            // wait until the data comes in
+            while (!mPersistenceService.receivesLiveData()) {
+                try {
+                    sleep(1000);
+                } catch (InterruptedException e1) {
+
+                }
+            }
+            // and init Evaluation last
+            startService(evalIntent);
+
+        }
+    }
 }
