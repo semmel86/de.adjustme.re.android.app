@@ -317,7 +317,7 @@ public class EvaluationBackgroundService extends Service {
                         if (Double.compare(currProbability, probability) > 0) {
                             classificator = m;
                             probability = currProbability;
-                            Log.i("Info", "Classification: " + classificator.getName() + " " + currProbability);
+                            Log.i("Info", "Classification: " + area.name() + " "+area.getLable(classificator.getName()).getDescription() + " " + currProbability);
                         }
                     }
 
