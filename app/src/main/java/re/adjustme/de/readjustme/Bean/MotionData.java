@@ -57,12 +57,12 @@ public class MotionData implements Serializable, Comparable {
         return this.sensor;
     }
 
-    public void setSensor(Sensor sensor) {
-        this.sensor = sensor;
-    }
-
     public void setSensor(int i) {
         this.sensor = Sensor.getSensor(i);
+    }
+
+    public void setSensor(Sensor sensor) {
+        this.sensor = sensor;
     }
 
     public int getX() {
@@ -159,7 +159,7 @@ public class MotionData implements Serializable, Comparable {
         }
         // all possible differences are between the 0 and predefined epsilon
         // so we consider this motion data equals Object o
-          return 0;
+        return 0;
     }
 
     public MotionData clone() {

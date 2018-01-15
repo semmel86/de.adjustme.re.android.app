@@ -13,7 +13,7 @@ import android.widget.ToggleButton;
  * Created by Semmel on 12.11.2017.
  */
 
-public class BluetoothActivity extends MyNavigationActivity {
+public class TrainModelActivity extends GenericBaseActivity {
 
     private Button setLabelButton;
     private EditText labelTxt;

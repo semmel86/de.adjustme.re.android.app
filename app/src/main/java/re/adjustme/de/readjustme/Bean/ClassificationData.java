@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * Bean holding values for the Classification.
- *
+ * <p>
  * Created by semmel on 16.12.2017.
  */
 
@@ -20,13 +20,12 @@ public class ClassificationData implements Serializable {
     private int maxZ = -180;
     private int minZ = 180;
     private long meanZ = 0;
-
-@Override
-public String toString(){
-    return "    Min X: "+minX+" Max X: "+maxX+" Mean X: "+meanX+"   Min Y: "+minY+" Max Y: "+maxY+" Mean Y: "+meanY;
-}
-
     private double MaxDistance;
+
+    @Override
+    public String toString() {
+        return "    Min X: " + minX + " Max X: " + maxX + " Mean X: " + meanX + "   Min Y: " + minY + " Max Y: " + maxY + " Mean Y: " + meanY;
+    }
 
     public long getDur() {
         return dur;
