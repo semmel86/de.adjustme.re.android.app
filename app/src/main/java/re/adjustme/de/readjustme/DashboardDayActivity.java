@@ -39,7 +39,6 @@ public class DashboardDayActivity extends MyNavigationActivity {
     private PieChart splinePie;
     private PieChart shoulderPie;
     private RadioGroup radioGroup;
-    private PersistenceService mPersistenceService = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +48,6 @@ public class DashboardDayActivity extends MyNavigationActivity {
         setPersistenceConnection();
         Intent intent = new Intent(this, PersistenceService.class);
         boolean b = bindService(intent, mPersistenceConnection, Context.BIND_AUTO_CREATE);
-
         setContentView(R.layout.activity_dashboard_day);
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -100,9 +98,7 @@ public class DashboardDayActivity extends MyNavigationActivity {
     }
 
     private void radioGroupCheckedChanged() {
-        if (mPersistenceService != null) {
-            dashboardData = mPersistenceService.getDashboardData();
-        }
+
         DashboardData newDashboardData = new DashboardData();
         //find selected radio button
         switch (radioGroup.getCheckedRadioButtonId()) {
@@ -127,23 +123,9 @@ public class DashboardDayActivity extends MyNavigationActivity {
         addDataToChart(shoulderPie, newDashboardData.getShoulder_sum(), getResources().getString(R.string.shoulder_dashboard));
     }
 
-    protected void setPersistenceConnection() {
-        mPersistenceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                PersistenceService.PersistenceServiceBinder b = (PersistenceService.PersistenceServiceBinder) iBinder;
-                mPersistenceService = b.getService();
-                afterServiceConnection();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName componentName) {
-                mPersistenceService = null;
-            }
-        };
-    }
-
+    @Override
     protected void afterServiceConnection() {
+        dashboardData = mPersistenceService.getDashboardData();
         radioGroupCheckedChanged();
     }
 
