@@ -23,46 +23,38 @@ public class DashboardData implements Serializable {
     // aggregated lable-sum (duration)
     HashMap<BodyArea, HashMap<Label, Long>> posture_sum;
     // Timeline: sorted List of Lables with duration
+    Stack<LabelData> bws_timeline;
+    Stack<LabelData> hws_timeline;
+    Stack<LabelData> lws_timeline;
     Stack<LabelData> shoulder_timeline;
-    Stack<LabelData> spline_timeline;
     private Date date;
 
     public DashboardData() {
         this.date = new Date();
         posture_sum = new HashMap<>();
+        bws_timeline = new Stack<>();
+        hws_timeline = new Stack<>();
+        lws_timeline= new Stack<>();
         shoulder_timeline = new Stack<>();
-        spline_timeline = new Stack<>();
     }
 
     public void addLabelData(LabelData l) {
-        Label old = null;
-        Long oldDuration = null;
         BodyArea area = l.getArea();
         if (posture_sum.get(area) == null) {
             posture_sum.put(area, new HashMap<Label, Long>());
         }
         switch (area) {
             case SHOULDER:
-                // accumulate old to sum
-                if (shoulder_timeline.size() > 0) {
-                    old = shoulder_timeline.peek().getLabel();
-                    oldDuration = posture_sum.get(area).get(old);
-                    posture_sum.get(area).put(old, oldDuration + shoulder_timeline.peek().getDuration());
-                }
-                // add new
-                this.shoulder_timeline.push(l);
-                this.posture_sum.get(area).put(l.getLabel(), 0L);
+                addArea(area, shoulder_timeline, l);
                 break;
             case SPLINE:
-                // accumulate old to sum
-                if (spline_timeline.size() > 0) {
-                    old = spline_timeline.peek().getLabel();
-                    oldDuration = posture_sum.get(area).get(old);
-                    posture_sum.get(area).put(old, oldDuration + shoulder_timeline.peek().getDuration());
-                }
-                // add new
-                this.spline_timeline.push(l);
-                this.posture_sum.get(area).put(l.getLabel(), 0L);
+                addArea(area, bws_timeline, l);
+                break;
+            case HWS:
+                addArea(area, hws_timeline, l);
+                break;
+            case LWS:
+                addArea(area, lws_timeline, l);
                 break;
             default:
                 Log.e("Dashboard", "Unkown body area.");
@@ -70,20 +62,24 @@ public class DashboardData implements Serializable {
         }
     }
 
-    public HashMap<Label, Long> getShoulder_sum() {
-        return posture_sum.get(BodyArea.SHOULDER);
+    private void addArea(BodyArea b, Stack<LabelData> stack, LabelData l) {
+        if (stack.size() > 0) {
+            // accumulate old to sum
+            Label old = stack.peek().getLabel();
+            posture_sum.get(b).put(old, stack.peek().getDuration());
+        } else {
+            posture_sum.get(b).put(l.getLabel(), l.getDuration());
+        }
+        // add new
+        stack.push(l);
     }
 
-    public void setShoulder_sum(HashMap<Label, Long> shoulder_sum) {
-        this.posture_sum.put(BodyArea.SHOULDER, shoulder_sum);
+    public HashMap<Label, Long> getSum(BodyArea b) {
+        return posture_sum.get(b);
     }
 
-    public HashMap<Label, Long> getSpline_sum() {
-        return posture_sum.get(BodyArea.SPLINE);
-    }
-
-    public void setSpline_sum(HashMap<Label, Long> spline_sum) {
-        this.posture_sum.put(BodyArea.SPLINE, spline_sum);
+    public void setSum (HashMap<Label, Long> sum, BodyArea b) {
+        this.posture_sum.put(b, sum);
     }
 
     public Stack<LabelData> getShoulder_timeline() {
@@ -94,12 +90,28 @@ public class DashboardData implements Serializable {
         this.shoulder_timeline = shoulder_timeline;
     }
 
-    public Stack<LabelData> getSpline_timeline() {
-        return spline_timeline;
+    public Stack<LabelData> getBws_timeline() {
+        return bws_timeline;
     }
 
-    public void setSpline_timeline(Stack<LabelData> spline_timeline) {
-        this.spline_timeline = spline_timeline;
+    public void setBws_timeline(Stack<LabelData> bws_timeline) {
+        this.bws_timeline = bws_timeline;
+    }
+
+    public Stack<LabelData> getHws_timeline() {
+        return hws_timeline;
+    }
+
+    public void setHws_timeline(Stack<LabelData> hws_timeline) {
+        this.hws_timeline = hws_timeline;
+    }
+
+    public Stack<LabelData> getLws_timeline() {
+        return lws_timeline;
+    }
+
+    public void setLws_timeline(Stack<LabelData> lws_timeline) {
+        this.lws_timeline = lws_timeline;
     }
 
     public LabelData getlast(BodyArea b) {
@@ -111,9 +123,21 @@ public class DashboardData implements Serializable {
                     return null;
                 }
             case SPLINE:
-                if (spline_timeline.size() > 0) {
-                    return spline_timeline.peek();
+                if (bws_timeline.size() > 0) {
+                    return bws_timeline.peek();
                 } else {
+                    return null;
+                }
+            case HWS:
+                if (hws_timeline.size() > 0) {
+                    return hws_timeline.peek();
+                }else{
+                    return null;
+                }
+            case LWS:
+                if (lws_timeline.size() > 0) {
+                    return lws_timeline.peek();
+                } else{
                     return null;
                 }
         }
@@ -122,18 +146,22 @@ public class DashboardData implements Serializable {
 
     public DashboardData getDashboardDataSubset(TimeSpan timeSpan) {
         DashboardData newDashboardData = new DashboardData();
-        newDashboardData.setSpline_timeline(adjusteTimeline(this.getSpline_timeline(), timeSpan));
+        newDashboardData.setBws_timeline(adjusteTimeline(this.getBws_timeline(), timeSpan));
         newDashboardData.setShoulder_timeline(adjusteTimeline(this.getShoulder_timeline(), timeSpan));
-        newDashboardData.setSpline_sum(createSum(newDashboardData.getSpline_timeline(), BodyArea.SPLINE));
-        newDashboardData.setShoulder_sum(createSum(newDashboardData.getShoulder_timeline(), BodyArea.SHOULDER));
+        newDashboardData.setHws_timeline(adjusteTimeline(this.getHws_timeline(), timeSpan));
+        newDashboardData.setLws_timeline(adjusteTimeline(this.getLws_timeline(), timeSpan));
+        newDashboardData.setSum(createSum(newDashboardData.getBws_timeline(), BodyArea.SPLINE), BodyArea.SPLINE);
+        newDashboardData.setSum(createSum(newDashboardData.getShoulder_timeline(), BodyArea.SHOULDER), BodyArea.SHOULDER);
+        newDashboardData.setSum(createSum(newDashboardData.getHws_timeline(), BodyArea.HWS), BodyArea.HWS);
+        newDashboardData.setSum(createSum(newDashboardData.getLws_timeline(), BodyArea.LWS), BodyArea.LWS);
         return newDashboardData;
     }
 
     private HashMap<Label, Long> createSum(Stack<LabelData> timeline, BodyArea b) {
         HashMap<Label, Long> map = new HashMap<>();
         for (LabelData l : timeline) {
-            if (map.containsKey(l)) {
-                map.put(l.getLabel(), l.getDuration() + map.get(l));
+            if (map.containsKey(l.getLabel())) {
+                map.put(l.getLabel(), l.getDuration() + map.get(l.getLabel()));
             } else {
                 map.put(l.getLabel(), l.getDuration());
             }

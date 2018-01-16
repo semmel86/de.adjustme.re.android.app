@@ -31,7 +31,10 @@ public class MainActivity extends GenericBaseActivity {
     Button bluttoothButton, b2;
     private EditText usernameInput;
     private ProgressBar progressBar;
-    private TextView posture;
+    private TextView hws_posture;
+    private TextView shoulder_posture;
+    private TextView bws_posture;
+    private TextView lws_posture;
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
         public void onReceive(final Context context, Intent intent) {
@@ -39,8 +42,21 @@ public class MainActivity extends GenericBaseActivity {
 
             if (action.equals("Posture")) {
                 String s = intent.getStringExtra("PostureName");
-                posture.setText(s);
-                //Toast.makeText(context,posture, Toast.LENGTH_SHORT).show();
+                String area = intent.getStringExtra("Area");
+                switch (area) {
+                    case "HWS":
+                        hws_posture.setText(s);
+                        break;
+                    case "SHOULDER":
+                        shoulder_posture.setText(s);
+                        break;
+                    case "SPLINE":
+                        bws_posture.setText(s);
+                        break;
+                    case "LWS":
+                        lws_posture.setText(s);
+                        break;
+                }
             }
         }
 
@@ -94,7 +110,10 @@ public class MainActivity extends GenericBaseActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setSelectedItemId(R.id.navigation_home);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        posture = (TextView) findViewById(R.id.textView2);
+        hws_posture = (TextView) findViewById(R.id.hws_posture);
+        shoulder_posture = (TextView) findViewById(R.id.shoulder_posture);
+        bws_posture = (TextView) findViewById(R.id.bws_posture);
+        lws_posture = (TextView) findViewById(R.id.lws_posture);
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mPostureReceiver, new IntentFilter("Posture"));
     }
