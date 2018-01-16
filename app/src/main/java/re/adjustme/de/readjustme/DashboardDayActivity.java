@@ -1,18 +1,15 @@
 package re.adjustme.de.readjustme;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.content.res.ResourcesCompat;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.text.SpannableString;
-import android.text.style.UnderlineSpan;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -31,15 +28,17 @@ import java.util.Set;
 
 import re.adjustme.de.readjustme.Bean.DashboardData;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
+import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Predefined.Classification.Label;
 
-public class DashboardDayActivity extends MyNavigationActivity {
+public class DashboardDayActivity extends GenericBaseActivity {
 
     private DashboardData dashboardData = new DashboardData();
     private PieChart splinePie;
     private PieChart shoulderPie;
+    private PieChart hwsPie;
+    private PieChart lwsPie;
     private RadioGroup radioGroup;
-    private PersistenceService mPersistenceService = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +48,6 @@ public class DashboardDayActivity extends MyNavigationActivity {
         setPersistenceConnection();
         Intent intent = new Intent(this, PersistenceService.class);
         boolean b = bindService(intent, mPersistenceConnection, Context.BIND_AUTO_CREATE);
-
         setContentView(R.layout.activity_dashboard_day);
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -58,6 +56,8 @@ public class DashboardDayActivity extends MyNavigationActivity {
 
         splinePie = (PieChart) findViewById(R.id.splinePieChart);
         shoulderPie = (PieChart) findViewById(R.id.shoulderPieChart);
+        hwsPie = (PieChart) findViewById(R.id.hwsPieChart);
+        lwsPie = (PieChart) findViewById(R.id.lwsPieChart);
 
         radioGroup = (RadioGroup) findViewById(R.id.postureProfileRadioGroup);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -100,9 +100,6 @@ public class DashboardDayActivity extends MyNavigationActivity {
     }
 
     private void radioGroupCheckedChanged() {
-        if (mPersistenceService != null) {
-            dashboardData = mPersistenceService.getDashboardData();
-        }
         DashboardData newDashboardData = new DashboardData();
         //find selected radio button
         switch (radioGroup.getCheckedRadioButtonId()) {
@@ -120,30 +117,19 @@ public class DashboardDayActivity extends MyNavigationActivity {
                 break;
         }
 
-
         //spline
-        addDataToChart(splinePie, newDashboardData.getSpline_sum(), getResources().getString(R.string.spline_dashboard));
+        addDataToChart(splinePie, newDashboardData.getSum(BodyArea.SPLINE), getResources().getString(R.string.spline_dashboard));
         //shoulder
-        addDataToChart(shoulderPie, newDashboardData.getShoulder_sum(), getResources().getString(R.string.shoulder_dashboard));
+        addDataToChart(shoulderPie, newDashboardData.getSum(BodyArea.SHOULDER), getResources().getString(R.string.shoulder_dashboard));
+        //hws
+        addDataToChart(hwsPie, newDashboardData.getSum(BodyArea.HWS), getResources().getString(R.string.hws_dashboard));
+        //lws
+        addDataToChart(lwsPie, newDashboardData.getSum(BodyArea.LWS), getResources().getString(R.string.lws_dashboard));
     }
 
-    protected void setPersistenceConnection() {
-        mPersistenceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                PersistenceService.PersistenceServiceBinder b = (PersistenceService.PersistenceServiceBinder) iBinder;
-                mPersistenceService = b.getService();
-                afterServiceConnection();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName componentName) {
-                mPersistenceService = null;
-            }
-        };
-    }
-
+    @Override
     protected void afterServiceConnection() {
+        dashboardData = mPersistenceService.getDashboardData();
         radioGroupCheckedChanged();
     }
 

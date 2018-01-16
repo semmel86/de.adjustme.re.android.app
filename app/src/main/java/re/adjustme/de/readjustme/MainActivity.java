@@ -1,44 +1,40 @@
 package re.adjustme.de.readjustme;
 
-import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 
-import java.util.ArrayList;
-import java.util.Set;
-
+import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 
-public class MainActivity extends MyNavigationActivity {
+public class MainActivity extends GenericBaseActivity {
     Button bluttoothButton, b2;
     private EditText usernameInput;
     private ProgressBar progressBar;
-    private TextView posture;
-    private LinearLayout mainLayout;
+    private TextView hws_posture;
+    private TextView shoulder_posture;
+    private TextView bws_posture;
+    private TextView lws_posture;
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
         public void onReceive(final Context context, Intent intent) {
@@ -46,40 +42,33 @@ public class MainActivity extends MyNavigationActivity {
 
             if (action.equals("Posture")) {
                 String s = intent.getStringExtra("PostureName");
-                posture.setText(s);
-                //Toast.makeText(context,posture, Toast.LENGTH_SHORT).show();
+                String area = intent.getStringExtra("Area");
+                switch (area) {
+                    case "HWS":
+                        hws_posture.setText(s);
+                        break;
+                    case "SHOULDER":
+                        shoulder_posture.setText(s);
+                        break;
+                    case "SPLINE":
+                        bws_posture.setText(s);
+                        break;
+                    case "LWS":
+                        lws_posture.setText(s);
+                        break;
+                }
             }
         }
 
     };
+    private LinearLayout mainLayout;
     private BluetoothAdapter BA;
-    private Set<BluetoothDevice> pairedDevices;
-    private ArrayList<String> arrayOfFoundBTDevices = new ArrayList<String>();
-    private ListView lv;
-    private String[] permissionsToRequest =
-            {
-                    Manifest.permission.BLUETOOTH_ADMIN,
-                    Manifest.permission.BLUETOOTH,
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-            };
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
-
-    private void connectToDevice(BluetoothDevice device) {
-        // let the Bluetooth service make his work
-
-//        this.mBluetoothService = new BluetoothService(device, mHandler, BA);
-//        mBluetoothService.startConnection();
-        // switch to BT pageS
-
-
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +81,25 @@ public class MainActivity extends MyNavigationActivity {
 
         setContentView(R.layout.activity_main);
         usernameInput = (EditText) findViewById(R.id.editText);
+        usernameInput.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                if(s.length() != 0)
+                    setNewUsername(s.toString());
+            }
+        });
         bluttoothButton = (Button) findViewById(R.id.button);
-        progressBar=(ProgressBar)findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
         mainLayout = (LinearLayout) findViewById(R.id.mainLayout);
         mainLayout.setVisibility(View.INVISIBLE);
@@ -104,31 +110,28 @@ public class MainActivity extends MyNavigationActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setSelectedItemId(R.id.navigation_home);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        posture=(TextView)findViewById(R.id.textView2);
+        hws_posture = (TextView) findViewById(R.id.hws_posture);
+        shoulder_posture = (TextView) findViewById(R.id.shoulder_posture);
+        bws_posture = (TextView) findViewById(R.id.bws_posture);
+        lws_posture = (TextView) findViewById(R.id.lws_posture);
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mPostureReceiver, new IntentFilter("Posture"));
     }
 
-    protected void setPersistenceConnection() {
-        mPersistenceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                PersistenceService.PersistenceServiceBinder b = (PersistenceService.PersistenceServiceBinder) iBinder;
-                mPersistenceService = b.getService();
-                afterServiceConnection();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName componentName) {
-                mPersistenceService = null;
-            }
-        };
-    }
 
     protected void afterServiceConnection() {
         progressBar.setVisibility(View.INVISIBLE);
         mainLayout.setVisibility(View.VISIBLE);
+        if(mPersistenceService.getUsername()!=null){
+            usernameInput.setText(mPersistenceService.getUsername());
+        }
     }
+
+    private void setNewUsername(String name){
+        if (mPersistenceService != null) {
+            mPersistenceService.setUsername(usernameInput.getText().toString());
+           }
+        }
 
     private void checkBluethoothActive() {
         // Check and Log BT
@@ -141,20 +144,21 @@ public class MainActivity extends MyNavigationActivity {
     }
 
 
-    // start BT service
+    // old:start BT service
+    // new: stop all Running Services
     public void startService(View v) {
-        if (mPersistenceService != null) {
-            mPersistenceService.setUsername(usernameInput.getText().toString());
-        }
         try {
             Intent intent = new Intent(this, BluetoothBackgroundService.class);
-            startService(intent);
-            Toast.makeText(getApplicationContext(), "started BT Service", Toast.LENGTH_LONG).show();
+            Intent intent2 = new Intent(this, EvaluationBackgroundService.class);
+            InitThread init = new InitThread(intent, intent2);
+            init.start();
+            Toast.makeText(getApplicationContext(), "Start Services", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "already started", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Cannot start Services", Toast.LENGTH_LONG).show();
         }
     }
 
+    @Deprecated
     public void StartEvalService(View v) {
         try {
             Intent intent = new Intent(this, EvaluationBackgroundService.class);
@@ -165,26 +169,29 @@ public class MainActivity extends MyNavigationActivity {
         }
     }
 
-    public void calculateClassifier(View v) {
-        Intent intent = new Intent(this, EvaluationBackgroundService.class);
-        startService(intent);
-    }
 
+    // set current posture as (0,0,0) for each sensor
     public void calibrate(View v) {
         mPersistenceService.calibrate();
     }
 
+    // stop all Running Services
     public void stopService(View v) {
         try {
+            // stop BT
             Intent intent = new Intent(this, BluetoothBackgroundService.class);
             stopService(intent);
+            // stop Evaluation
+            Intent intent2 = new Intent(this, EvaluationBackgroundService.class);
+            stopService(intent2);
+
             Toast.makeText(getApplicationContext(), "stopped", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "already stopped", Toast.LENGTH_LONG).show();
         }
     }
 
-
+    @Deprecated
     public void stopEvalService(View v) {
         try {
             Intent intent = new Intent(this, EvaluationBackgroundService.class);
@@ -195,21 +202,6 @@ public class MainActivity extends MyNavigationActivity {
         }
     }
 
-    private void displayListOfFoundDevices() {
-
-        // startConnection looking for bluetooth devices C:\Users\Semmel\
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mPostureReceiver, filter);
-        if (BA.startDiscovery()) {
-            Log.i("info", "Start Discovery.");
-        } else {
-            Log.i("info", "Cannot startConnection Discovery.");
-        }
-
-
-    }
-
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -217,11 +209,9 @@ public class MainActivity extends MyNavigationActivity {
 
     }
 
-
     private void checkPermissions() {
+        for (String currentPerm : BluetoothConfiguration.permissionsToRequest) {
 
-        for (String currentPerm : permissionsToRequest) {
-// Here, thisActivity is the current activity
             if (ContextCompat.checkSelfPermission(this,
                     currentPerm)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -229,10 +219,6 @@ public class MainActivity extends MyNavigationActivity {
                 // Should we show an explanation?
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                         currentPerm)) {
-
-                    // Show an explanation to the user *asynchronously* -- don't block
-                    // this thread waiting for the user's response! After the user
-                    // sees the explanation, try again to request the permission.
 
                 } else {
 
@@ -242,13 +228,37 @@ public class MainActivity extends MyNavigationActivity {
                             new String[]{currentPerm},
                             1);
 
-                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                    // app-defined int constant. The callback method gets the
-                    // result of the request.
                 }
             }
         }
     }
 
+    // Wrap initialization in a single thread to avoid UI delays
+    private class InitThread extends Thread {
+        Intent btIntent;
+        Intent evalIntent;
 
+        public InitThread(Intent bt, Intent eval) {
+            this.btIntent = bt;
+            this.evalIntent = eval;
+        }
+
+        @Override
+        public void run() {
+            // init BlueTooth first
+            startService(btIntent);
+
+            // wait until the data comes in
+            while (!mPersistenceService.receivesLiveData()) {
+                try {
+                    sleep(1000);
+                } catch (InterruptedException e1) {
+
+                }
+            }
+            // and init Evaluation last
+            startService(evalIntent);
+
+        }
+    }
 }

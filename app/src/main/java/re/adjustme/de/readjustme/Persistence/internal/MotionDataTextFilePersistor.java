@@ -7,8 +7,8 @@ import java.util.List;
 import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Predefined.Sensor;
 import re.adjustme.de.readjustme.Persistence.MotionDataPersistor;
+import re.adjustme.de.readjustme.Predefined.Sensor;
 
 /**
  * Created by Semmel on 18.11.2017.
@@ -104,21 +104,21 @@ public class MotionDataTextFilePersistor extends TextFilePersistor implements Mo
         return md;
     }
 
-    public List<MotionDataSetDto> getMotionDataSetDtos(){
+    public List<MotionDataSetDto> getMotionDataSetDtos() {
         final List<String> motions = this.loadFullLines();
         final List<MotionDataSetDto> list = new ArrayList<>();
 
-        for(final String s : motions){
+        for (final String s : motions) {
             list.add(this.getFullMotionDataFromString(s));
         }
         return list;
     }
 
-    private MotionDataSetDto getFullMotionDataFromString(String s){
+    private MotionDataSetDto getFullMotionDataFromString(String s) {
         final MotionDataSetDto mDto = new MotionDataSetDto();
         final MotionData[] motionDataSet = new MotionData[5];
         // sensor
-        for(int j = 0; j < 5; j++){
+        for (int j = 0; j < 5; j++) {
             final MotionData md = new MotionData();
             // 1 ; 20171118123325634213 ; 25632 ; 10 ; 90 ; 155
             // 1 - set Sensor
@@ -152,10 +152,10 @@ public class MotionDataTextFilePersistor extends TextFilePersistor implements Mo
 
             // 6- set z,
             // depends on the existence of label information
-            if(s.indexOf(PersistenceConfiguration.CSV_SEPARATOR) > 0){
+            if (s.indexOf(PersistenceConfiguration.CSV_SEPARATOR) > 0) {
                 i = Integer.parseInt(s.substring(0, s.indexOf(PersistenceConfiguration.CSV_SEPARATOR)));
                 s = s.substring(s.indexOf(PersistenceConfiguration.CSV_SEPARATOR) + 1);
-            }else{
+            } else {
                 i = Integer.parseInt(s.substring(0, s.length()));
                 System.out.println("Parsing error, should never happen.");
             }
@@ -165,12 +165,12 @@ public class MotionDataTextFilePersistor extends TextFilePersistor implements Mo
         }
 
         // there is some additional label information
-        if(s.indexOf(PersistenceConfiguration.CSV_SEPARATOR) >= 0){
+        if (s.indexOf(PersistenceConfiguration.CSV_SEPARATOR) >= 0) {
             final String label = s.substring(0, s.indexOf(PersistenceConfiguration.CSV_SEPARATOR));
             s = s.substring(s.indexOf(PersistenceConfiguration.CSV_SEPARATOR) + 1);
             mDto.setLable(label);
             // there is also an is in labeled Position information
-            if(s.length() > 0){
+            if (s.length() > 0) {
                 final boolean b = Boolean.valueOf(s.substring(0, s.length()));
                 mDto.setInLabledPos(b);
             }

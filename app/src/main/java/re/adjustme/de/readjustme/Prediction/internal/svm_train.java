@@ -9,26 +9,26 @@ import java.util.Vector;
 
 import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
 
-public class svm_train{
-    private svm_parameter              param;                                                // set by
+public class svm_train {
+    private static svm_print_interface svm_print_null = new svm_print_interface() {
+        @Override
+        public void print(final String s) {
+        }
+    };
+    private svm_parameter param;                                                // set by
     // parse_command_line
-    private svm_problem                prob;                                                 // set by
-                                                                                             // read_problem
-    private svm_model                  model;
-    private String                     input_file_name;                                      // set by
-                                                                                             // parse_command_line
-    private String                     model_file_name;                                      // set by
-                                                                                             // parse_command_line
-    private String                     error_msg;
-    private int                        cross_validation;
-    private int                        nr_fold;
+    private svm_problem prob;                                                 // set by
+    // read_problem
+    private svm_model model;
+    private String input_file_name;                                      // set by
+    // parse_command_line
+    private String model_file_name;                                      // set by
+    // parse_command_line
+    private String error_msg;
+    private int cross_validation;
+    private int nr_fold;
 
-    private static svm_print_interface svm_print_null = new svm_print_interface(){
-                                                          @Override
-                                                          public void print(final String s){}
-                                                      };
-
-    public svm_train(){
+    public svm_train() {
         this.init();
     }
 
@@ -66,7 +66,20 @@ public class svm_train{
     // System.exit(1);
     // }
 
-    private void do_cross_validation(){
+    private static double atof(final String s) {
+        final double d = Double.valueOf(s).doubleValue();
+        if (Double.isNaN(d) || Double.isInfinite(d)) {
+            System.err.print("NaN or Infinity in input\n");
+            System.exit(1);
+        }
+        return (d);
+    }
+
+    private static int atoi(final String s) {
+        return Integer.parseInt(s);
+    }
+
+    private void do_cross_validation() {
         int i;
         int total_correct = 0;
         double total_error = 0;
@@ -74,8 +87,8 @@ public class svm_train{
         final double[] target = new double[this.prob.l];
 
         svm.svm_cross_validation(this.prob, this.param, this.nr_fold, target);
-        if(this.param.svm_type == svm_parameter.EPSILON_SVR || this.param.svm_type == svm_parameter.NU_SVR){
-            for(i = 0; i < this.prob.l; i++){
+        if (this.param.svm_type == svm_parameter.EPSILON_SVR || this.param.svm_type == svm_parameter.NU_SVR) {
+            for (i = 0; i < this.prob.l; i++) {
                 final double y = this.prob.y[i];
                 final double v = target[i];
                 total_error += (v - y) * (v - y);
@@ -89,60 +102,16 @@ public class svm_train{
             System.out.print(
                     "Cross Validation Squared correlation coefficient = "
                             + ((this.prob.l * sumvy - sumv * sumy) * (this.prob.l * sumvy - sumv * sumy))
-                                    / ((this.prob.l * sumvv - sumv * sumv) * (this.prob.l * sumyy - sumy * sumy))
+                            / ((this.prob.l * sumvv - sumv * sumv) * (this.prob.l * sumyy - sumy * sumy))
                             + "\n");
-        }else{
-            for(i = 0; i < this.prob.l; i++){
-                if(target[i] == this.prob.y[i]){
+        } else {
+            for (i = 0; i < this.prob.l; i++) {
+                if (target[i] == this.prob.y[i]) {
                     ++total_correct;
                 }
             }
             System.out.print("Cross Validation Accuracy = " + 100.0 * total_correct / this.prob.l + "%\n");
         }
-    }
-
-    public svm_model train(List<MotionDataSetDto> motionDataSetDtos){
-        this.read_problem(motionDataSetDtos);
-        if(this.cross_validation != 0){
-            this.do_cross_validation();
-        }else{
-            this.model = svm.svm_train(this.prob, this.param);
-//            try{
-//                svm.svm_save_model(this.model_file_name, this.model);
-//            }
-//            catch(final IOException e){
-//                // TODO Auto-generated catch block
-//                e.printStackTrace();
-//            }
-        }
-        return this.model;
-    }
-    // train modell adn save to file
-    public svm_model train(final String filePath){
-        this.input_file_name = filePath;
-        this.model_file_name = filePath + ".model";
-        try{
-            this.read_problem();
-        }
-        catch(final IOException e){
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        System.out.println(svm.svm_check_parameter(this.prob, this.param));
-
-        if(this.cross_validation != 0){
-            this.do_cross_validation();
-        }else{
-            this.model = svm.svm_train(this.prob, this.param);
-            try{
-                svm.svm_save_model(this.model_file_name, this.model);
-            }
-            catch(final IOException e){
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        return this.model;
     }
 
     // private void run(final String argv[]) throws IOException{
@@ -168,20 +137,50 @@ public class svm_train{
     // t.run(argv);
     // }
 
-    private static double atof(final String s){
-        final double d = Double.valueOf(s).doubleValue();
-        if(Double.isNaN(d) || Double.isInfinite(d)){
-            System.err.print("NaN or Infinity in input\n");
-            System.exit(1);
+    public svm_model train(List<MotionDataSetDto> motionDataSetDtos) {
+        this.read_problem(motionDataSetDtos);
+        if (this.cross_validation != 0) {
+            this.do_cross_validation();
+        } else {
+            this.model = svm.svm_train(this.prob, this.param);
+//            try{
+//                svm.svm_save_model(this.model_file_name, this.model);
+//            }
+//            catch(final IOException e){
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
         }
-        return (d);
+        return this.model;
     }
 
-    private static int atoi(final String s){
-        return Integer.parseInt(s);
+    // train modell adn save to file
+    public svm_model train(final String filePath) {
+        this.input_file_name = filePath;
+        this.model_file_name = filePath + ".model";
+        try {
+            this.read_problem();
+        } catch (final IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println(svm.svm_check_parameter(this.prob, this.param));
+
+        if (this.cross_validation != 0) {
+            this.do_cross_validation();
+        } else {
+            this.model = svm.svm_train(this.prob, this.param);
+            try {
+                svm.svm_save_model(this.model_file_name, this.model);
+            } catch (final IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return this.model;
     }
 
-    private void init(){
+    private void init() {
         final int i;
         final svm_print_interface print_func = null; // default printing to stdout
 
@@ -302,13 +301,13 @@ public class svm_train{
         // }
     }
 
-    void read_problem(List<MotionDataSetDto> motionDataSetDtos){
+    void read_problem(List<MotionDataSetDto> motionDataSetDtos) {
 
         final Vector<Double> vy = new Vector<Double>();
         final Vector<svm_node[]> vx = new Vector<svm_node[]>();
         int max_index = 0;
 
-        for(MotionDataSetDto currentMotion:motionDataSetDtos) {
+        for (MotionDataSetDto currentMotion : motionDataSetDtos) {
             // while(true){
             if (motionDataSetDtos != null) {
                 final String line = currentMotion.toSVMLightStr();
@@ -360,17 +359,18 @@ public class svm_train{
             }
         }
     }
+
     // read in a problem (in svmlight format)
-    void read_problem() throws IOException{
+    void read_problem() throws IOException {
         System.out.println(this.input_file_name);
         final BufferedReader fp = new BufferedReader(new FileReader(this.input_file_name));
         final Vector<Double> vy = new Vector<Double>();
         final Vector<svm_node[]> vx = new Vector<svm_node[]>();
         int max_index = 0;
 
-        while(true){
+        while (true) {
             final String line = fp.readLine();
-            if(line == null){
+            if (line == null) {
                 break;
             }
 
@@ -379,12 +379,12 @@ public class svm_train{
             vy.addElement(svm_train.atof(st.nextToken()));
             final int m = st.countTokens() / 2;
             final svm_node[] x = new svm_node[m];
-            for(int j = 0; j < m; j++){
+            for (int j = 0; j < m; j++) {
                 x[j] = new svm_node();
                 x[j].index = svm_train.atoi(st.nextToken());
                 x[j].value = svm_train.atof(st.nextToken());
             }
-            if(m > 0){
+            if (m > 0) {
                 max_index = Math.max(max_index, x[m - 1].index);
             }
             vx.addElement(x);
@@ -393,25 +393,25 @@ public class svm_train{
         this.prob = new svm_problem();
         this.prob.l = vy.size();
         this.prob.x = new svm_node[this.prob.l][];
-        for(int i = 0; i < this.prob.l; i++){
+        for (int i = 0; i < this.prob.l; i++) {
             this.prob.x[i] = vx.elementAt(i);
         }
         this.prob.y = new double[this.prob.l];
-        for(int i = 0; i < this.prob.l; i++){
+        for (int i = 0; i < this.prob.l; i++) {
             this.prob.y[i] = vy.elementAt(i);
         }
 
-        if(this.param.gamma == 0 && max_index > 0){
+        if (this.param.gamma == 0 && max_index > 0) {
             this.param.gamma = 1.0 / max_index;
         }
 
-        if(this.param.kernel_type == svm_parameter.PRECOMPUTED){
-            for(int i = 0; i < this.prob.l; i++){
-                if(this.prob.x[i][0].index != 0){
+        if (this.param.kernel_type == svm_parameter.PRECOMPUTED) {
+            for (int i = 0; i < this.prob.l; i++) {
+                if (this.prob.x[i][0].index != 0) {
                     System.err.print("Wrong kernel matrix: first column must be 0:sample_serial_number\n");
                     System.exit(1);
                 }
-                if((int) this.prob.x[i][0].value <= 0 || (int) this.prob.x[i][0].value > max_index){
+                if ((int) this.prob.x[i][0].value <= 0 || (int) this.prob.x[i][0].value > max_index) {
                     System.err.print("Wrong input format: sample_serial_number out of range\n");
                     System.exit(1);
                 }
@@ -420,19 +420,19 @@ public class svm_train{
 
         fp.close();
     }
-    
-    
- // read in a problem (in svmlight format)
-    void setProblem(Vector<Double> features) throws IOException{
+
+
+    // read in a problem (in svmlight format)
+    void setProblem(Vector<Double> features) throws IOException {
         System.out.println(this.input_file_name);
         final BufferedReader fp = new BufferedReader(new FileReader(this.input_file_name));
         final Vector<Double> vy = new Vector<Double>();
         final Vector<svm_node[]> vx = new Vector<svm_node[]>();
         int max_index = 0;
 
-        while(true){
+        while (true) {
             final String line = fp.readLine();
-            if(line == null){
+            if (line == null) {
                 break;
             }
 
@@ -441,13 +441,13 @@ public class svm_train{
             vy.addElement(svm_train.atof(st.nextToken())); //first set class 
             final int m = st.countTokens() / 2; // get feature amount
             final svm_node[] x = new svm_node[m]; // create node
-            for(int j = 0; j < m; j++){
+            for (int j = 0; j < m; j++) {
                 x[j] = new svm_node();
                 x[j].index = svm_train.atoi(st.nextToken()); // key
                 x[j].value = svm_train.atof(st.nextToken()); // value
-             }
-            if(m > 0){
-                max_index = Math.max(max_index, x[m - 1].index); 
+            }
+            if (m > 0) {
+                max_index = Math.max(max_index, x[m - 1].index);
             }
             vx.addElement(x);
         }
@@ -455,25 +455,25 @@ public class svm_train{
         this.prob = new svm_problem();
         this.prob.l = vy.size();
         this.prob.x = new svm_node[this.prob.l][];
-        for(int i = 0; i < this.prob.l; i++){
+        for (int i = 0; i < this.prob.l; i++) {
             this.prob.x[i] = vx.elementAt(i);
         }
         this.prob.y = new double[this.prob.l];
-        for(int i = 0; i < this.prob.l; i++){
+        for (int i = 0; i < this.prob.l; i++) {
             this.prob.y[i] = vy.elementAt(i);
         }
 
-        if(this.param.gamma == 0 && max_index > 0){
+        if (this.param.gamma == 0 && max_index > 0) {
             this.param.gamma = 1.0 / max_index;
         }
 
-        if(this.param.kernel_type == svm_parameter.PRECOMPUTED){
-            for(int i = 0; i < this.prob.l; i++){
-                if(this.prob.x[i][0].index != 0){
+        if (this.param.kernel_type == svm_parameter.PRECOMPUTED) {
+            for (int i = 0; i < this.prob.l; i++) {
+                if (this.prob.x[i][0].index != 0) {
                     System.err.print("Wrong kernel matrix: first column must be 0:sample_serial_number\n");
                     System.exit(1);
                 }
-                if((int) this.prob.x[i][0].value <= 0 || (int) this.prob.x[i][0].value > max_index){
+                if ((int) this.prob.x[i][0].value <= 0 || (int) this.prob.x[i][0].value > max_index) {
                     System.err.print("Wrong input format: sample_serial_number out of range\n");
                     System.exit(1);
                 }

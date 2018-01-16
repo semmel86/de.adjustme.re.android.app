@@ -17,7 +17,7 @@ import re.adjustme.de.readjustme.Prediction.internal.svm_train;
  *
  * @author selmkes
  */
-public class SvmPredictor implements Serializable{
+public class SvmPredictor implements Serializable {
     private svm_model model;
 
     public SvmPredictor() {
@@ -91,7 +91,7 @@ public class SvmPredictor implements Serializable{
             // z
             if (!s.isExclude_z()) {
                 x[c] = new svm_node();
-                x[c].index = c ;
+                x[c].index = c;
                 x[c].value = md.getMotion(s).getZ();
                 c++;
             }

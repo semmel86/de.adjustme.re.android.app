@@ -7,22 +7,22 @@ package re.adjustme.de.readjustme.Predefined.Classification;
  */
 
 public enum BodyArea {
-    SHOULDER("shoulder", ShoulderLabel.values(),300000L), // 300000 = 5min;
-    SPLINE("bws", BwsLabel.values(),600000L),// 600000 = 10 min;
-    HWS("hws", HwsLabel.values(),600000L),
-    LWS("lws", LwsLabel.values(),600000L);
+    SHOULDER("shoulder", ShoulderLabel.values(), 300000L), // 300000 = 5min;
+    SPLINE("bws", BwsLabel.values(), 600000L),// 600000 = 10 min;
+    HWS("hws", HwsLabel.values(), 600000L),
+    LWS("lws", LwsLabel.values(), 600000L);
 
     private String areaType;
     private Label[] label;
     private long notificationDuration;
 
-    BodyArea(String areaType, Label[] label,Long l) {
+    BodyArea(String areaType, Label[] label, Long l) {
         this.areaType = areaType;
         this.label = label;
-        this.notificationDuration=l;
+        this.notificationDuration = l;
     }
 
-    public long getMaxDuration(){
+    public long getMaxDuration() {
         return this.notificationDuration;
     }
 
@@ -44,8 +44,17 @@ public enum BodyArea {
         return null;
     }
 
+    public Label getLableByDescription(String label) {
+        for (Label v : this.label) {
+            if (v.getDescription().equals(label)) {
+                return v;
+            }
+        }
+        return null;
+    }
+
     public Label getLable(long round) {
-        String classNo=String.valueOf(round);
+        String classNo = String.valueOf(round);
         for (Label v : this.label) {
             if (v.getSVMClass().equals(classNo)) {
                 return v;

@@ -128,7 +128,21 @@
                     android:id="@+id/splinePieChart"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="200dp"></com.github.mikephil.charting.charts.PieChart>
+                    android:minHeight="200dp"/>
+
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/hwsPieChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="200dp"/>
+
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/lwsPieChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="200dp"/>
 
             </LinearLayout>
         </ScrollView>

@@ -1,19 +1,16 @@
 package re.adjustme.de.readjustme.Bean;
 
-import android.util.Log;
-
 import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Predefined.Classification.Label;
 import re.adjustme.de.readjustme.Predefined.Sensor;
 
 /**
  * Transfer object for Motion data.
- * 
+ * <p>
  * Created by semmel on 03.12.2017.
  */
 
@@ -22,7 +19,7 @@ public class MotionDataSetDto implements Serializable {
     public String predictedLable = "";
     private MotionData[] motionDataSet;
     private String label = "";
-    private String svmClass="0";
+    private String svmClass = "0";
     private boolean isInLabeledPostion = false;
 
     public MotionDataSetDto() {
@@ -49,9 +46,10 @@ public class MotionDataSetDto implements Serializable {
         return motionDataSetCopy;
     }
 
-    public void setSvmClass(String classNum){
-        this.svmClass=classNum;
+    public void setSvmClass(String classNum) {
+        this.svmClass = classNum;
     }
+
     public MotionData getMotion(Sensor s) {
         return this.motionDataSet[s.getSensorNumber() - 1].clone();
     }
@@ -83,17 +81,17 @@ public class MotionDataSetDto implements Serializable {
     }
 
     // this method sets the features for svm!
-    public String toSVMLightStr(){
-        if(this.isInLabeledPostion){
+    public String toSVMLightStr() {
+        if (this.isInLabeledPostion) {
             final String sep = " ";
             final String pair = ":";
             final StringBuilder s = new StringBuilder();
             s.append(svmClass);
             s.append(sep);
             int i = 1;
-            for(final Sensor sensor : Sensor.values()){
+            for (final Sensor sensor : Sensor.values()) {
                 final MotionData md = this.motionDataSet[sensor.getSensorNumber() - 1];
-                if(!sensor.isExclude_x()) {
+                if (!sensor.isExclude_x()) {
                     // x
                     s.append(i);
                     s.append(pair);
@@ -101,7 +99,7 @@ public class MotionDataSetDto implements Serializable {
                     s.append(sep);
                     i++;
                 }
-                if(!sensor.isExclude_y()) {
+                if (!sensor.isExclude_y()) {
                     // y
                     s.append(i + 1);
                     s.append(pair);
@@ -109,17 +107,17 @@ public class MotionDataSetDto implements Serializable {
                     s.append(sep);
                     i++;
                 }
-                if(!sensor.isExclude_z()) {
-                        // z
-                        s.append(i + 2);
-                        s.append(pair);
-                        s.append(md.getZ());
-                        s.append(sep);
-                        i++;
+                if (!sensor.isExclude_z()) {
+                    // z
+                    s.append(i + 2);
+                    s.append(pair);
+                    s.append(md.getZ());
+                    s.append(sep);
+                    i++;
                 }
             }
             return s.toString();
-        }else{
+        } else {
             return "";
         }
     }

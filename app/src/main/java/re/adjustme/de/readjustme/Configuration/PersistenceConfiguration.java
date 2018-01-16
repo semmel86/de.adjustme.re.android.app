@@ -1,9 +1,6 @@
 package re.adjustme.de.readjustme.Configuration;
 
-import android.util.Log;
-
 import java.io.File;
-import java.net.URL;
 
 import re.adjustme.de.readjustme.Predefined.PersistenceType;
 

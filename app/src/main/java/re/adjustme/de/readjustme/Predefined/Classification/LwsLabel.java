@@ -9,10 +9,10 @@ import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
  */
 
 public enum LwsLabel implements Label {
-    A("A", "Neutral Position","1"),
-    M("AJ", "Extension","61"),
-    N("AI", "Flexion","62"),
-    UNLABELED(ClassificationConfiguration.UNKNOWN_POSITION, "Unbekannte Position","0");
+    A("A", "Neutral Position", "1"),
+    M("AJ", "Extension", "61"),
+    N("AI", "Flexion", "62"),
+    UNLABELED(ClassificationConfiguration.UNKNOWN_POSITION, "Unbekannte Position", "0");
 
     private String label;
     private String description;
@@ -32,10 +32,11 @@ public enum LwsLabel implements Label {
         return this.label;
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return this.description;
     }
-    public String getSVMClass(){
+
+    public String getSVMClass() {
         return this.SVMClass;
     }
 }

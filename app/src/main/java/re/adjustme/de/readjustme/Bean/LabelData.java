@@ -12,7 +12,7 @@ import re.adjustme.de.readjustme.Predefined.Classification.Label;
  * A motion Label for the current Posture and the Body area of that posture.
  * In addition the Timestamp is set on detection
  * and the duration is tracked.
- *
+ * <p>
  * Created by semmel on 06.01.2018.
  */
 
@@ -22,6 +22,7 @@ public class LabelData implements Serializable {
     private Label label;
     private Timestamp begin;
     private Long duration;
+
     public LabelData(Label label, BodyArea area) {
         this.label = label;
         this.begin = new Timestamp(new Date().getTime());
@@ -54,7 +55,7 @@ public class LabelData implements Serializable {
     }
 
     public Long getDuration() {
-        return duration;
+        return duration != null ? duration : 0L;
     }
 
     public void setDuration(Long duration) {
