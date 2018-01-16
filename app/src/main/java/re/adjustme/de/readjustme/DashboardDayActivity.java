@@ -13,6 +13,7 @@ import android.widget.RadioGroup;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.IMarker;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -195,5 +196,11 @@ public class DashboardDayActivity extends GenericBaseActivity {
         pieChart.getLegend().setEnabled(false);
         pieChart.setCenterText(label);
         pieChart.invalidate();
+
+        IMarker marker = new MyMarkerView(this, R.layout.custom_marker_view);
+        pieChart.setMarker(marker);
+        /*MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
+        mv.setChartView(pieChart);
+        */
     }
 }
