@@ -28,6 +28,7 @@ import java.util.Set;
 
 import re.adjustme.de.readjustme.Bean.DashboardData;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
+import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Predefined.Classification.Label;
 
 public class DashboardDayActivity extends GenericBaseActivity {
@@ -35,6 +36,8 @@ public class DashboardDayActivity extends GenericBaseActivity {
     private DashboardData dashboardData = new DashboardData();
     private PieChart splinePie;
     private PieChart shoulderPie;
+    private PieChart hwsPie;
+    private PieChart lwsPie;
     private RadioGroup radioGroup;
 
     @Override
@@ -53,6 +56,8 @@ public class DashboardDayActivity extends GenericBaseActivity {
 
         splinePie = (PieChart) findViewById(R.id.splinePieChart);
         shoulderPie = (PieChart) findViewById(R.id.shoulderPieChart);
+        hwsPie = (PieChart) findViewById(R.id.hwsPieChart);
+        lwsPie = (PieChart) findViewById(R.id.lwsPieChart);
 
         radioGroup = (RadioGroup) findViewById(R.id.postureProfileRadioGroup);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -95,7 +100,6 @@ public class DashboardDayActivity extends GenericBaseActivity {
     }
 
     private void radioGroupCheckedChanged() {
-
         DashboardData newDashboardData = new DashboardData();
         //find selected radio button
         switch (radioGroup.getCheckedRadioButtonId()) {
@@ -113,11 +117,14 @@ public class DashboardDayActivity extends GenericBaseActivity {
                 break;
         }
 
-
         //spline
-        addDataToChart(splinePie, newDashboardData.getSpline_sum(), getResources().getString(R.string.spline_dashboard));
+        addDataToChart(splinePie, newDashboardData.getSum(BodyArea.SPLINE), getResources().getString(R.string.spline_dashboard));
         //shoulder
-        addDataToChart(shoulderPie, newDashboardData.getShoulder_sum(), getResources().getString(R.string.shoulder_dashboard));
+        addDataToChart(shoulderPie, newDashboardData.getSum(BodyArea.SHOULDER), getResources().getString(R.string.shoulder_dashboard));
+        //hws
+        addDataToChart(hwsPie, newDashboardData.getSum(BodyArea.HWS), getResources().getString(R.string.hws_dashboard));
+        //lws
+        addDataToChart(lwsPie, newDashboardData.getSum(BodyArea.LWS), getResources().getString(R.string.lws_dashboard));
     }
 
     @Override

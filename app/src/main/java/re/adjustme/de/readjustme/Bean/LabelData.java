@@ -55,7 +55,7 @@ public class LabelData implements Serializable {
     }
 
     public Long getDuration() {
-        return duration;
+        return duration != null ? duration : 0L;
     }
 
     public void setDuration(Long duration) {

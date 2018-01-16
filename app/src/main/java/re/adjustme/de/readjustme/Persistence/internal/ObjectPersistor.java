@@ -65,7 +65,7 @@ public class ObjectPersistor {
             }
 
         } else {
-            System.err.println("Persistence File does not exist.");
+            System.err.println("Persistence File (" + fileName + objSuffix + ") does not exist.");
             return null;
         }
     }

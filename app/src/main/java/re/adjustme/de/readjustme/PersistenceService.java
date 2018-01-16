@@ -20,6 +20,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
 
 import re.adjustme.de.readjustme.Bean.DashboardData;
 import re.adjustme.de.readjustme.Bean.LabelData;
@@ -78,8 +79,23 @@ public class PersistenceService extends Service {
                     if (lastLabel != null && lastLabel.getLabel().equals(label)) {
                         // same Label -> accumulate duration
                         Timestamp current = new Timestamp(new Date().getTime());
-                        long dur = current.getTime() - lastLabel.getBegin().getTime();
+                        HashMap<Label, Long> dashboardDataSum = dashboardData.getSum(bodyarea);
+                        Long sumDuration = 0L;
+                        if (dashboardDataSum != null) {
+                             sumDuration = dashboardDataSum.get(lastLabel.getLabel());
+                             sumDuration = sumDuration == null ? 0L : sumDuration;
+                        }
+                        if (lastLabel.getDuration().compareTo(0L) > 0) {
+                            sumDuration = sumDuration - lastLabel.getDuration();
+                        }
+                        Long dur = current.getTime() - lastLabel.getBegin().getTime();
                         lastLabel.setDuration(dur);
+                        if (sumDuration.compareTo(0L) > 0) {
+                            sumDuration = sumDuration + dur;
+                        } else{
+                            sumDuration = dur;
+                        }
+                        dashboardData.getSum(bodyarea).put(lastLabel.getLabel(), sumDuration);
                         if (dur >= lastLabel.getArea().getMaxDuration() * sendNotification) {
                             sendNotification(lastLabel.getArea().name());
                             sendNotification++;
