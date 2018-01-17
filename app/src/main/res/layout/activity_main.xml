@@ -79,17 +79,12 @@
                             android:id="@+id/startService"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_centerHorizontal="false"
                             android:layout_marginEnd="12dp"
                             android:layout_marginStart="24dp"
-                            android:layout_marginTop="0dp"
                             android:drawableTop="@drawable/ic_play"
                             android:drawableTint="@color/textColorHighlight"
                             android:onClick="startService"
-                            android:text="Start Service"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.0"
-                            app:layout_constraintStart_toStartOf="parent" />
+                            android:text="@string/mainActivity_start"/>
 
                         <Button
                             android:id="@+id/stopService"
@@ -100,7 +95,7 @@
                             android:drawableTop="@drawable/ic_pause"
                             android:drawableTint="@color/colorPrimaryDark"
                             android:onClick="stopService"
-                            android:text="Stop Service" />
+                            android:text="@string/mainActivity_stop" />
                     </RelativeLayout>
 
                     <Button
@@ -108,21 +103,21 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="24dp"
-                        android:layout_marginStart="0dp"
                         android:layout_weight="2"
                         android:drawableTint="@color/textColorPrimary"
                         android:drawableTop="@drawable/ic_ruler"
                         android:onClick="calibrate"
-                        android:text="Calibrate"
-                        android:visibility="visible" />
+                        android:text="@string/mainActivity_calibrate" />
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="12dp"
                     android:layout_marginLeft="24dp"
                     android:layout_marginRight="24dp"
+                    android:layout_marginTop="40dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -130,7 +125,7 @@
                         android:layout_width="77dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="HWS" />
+                        android:text="@string/mainActivity_hws" />
 
                     <TextView
                         android:id="@+id/hws_posture"
@@ -147,6 +142,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="12dp"
                     android:layout_marginLeft="24dp"
                     android:layout_marginRight="24dp"
                     android:orientation="horizontal">
@@ -156,7 +152,7 @@
                         android:layout_width="77dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="shoulder" />
+                        android:text="@string/mainActivity_shoulder" />
 
                     <TextView
                         android:id="@+id/shoulder_posture"
@@ -173,6 +169,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="12dp"
                     android:layout_marginLeft="24dp"
                     android:layout_marginRight="24dp"
                     android:orientation="horizontal">
@@ -182,7 +179,7 @@
                         android:layout_width="77dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="BWS" />
+                        android:text="@string/mainActivity_bws" />
 
                     <TextView
                         android:id="@+id/bws_posture"
@@ -207,8 +204,7 @@
                         android:layout_width="77dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="LWS" />
-
+                        android:text="@string/mainActivity_lws" />
                     <TextView
                         android:id="@+id/lws_posture"
                         android:layout_width="match_parent"

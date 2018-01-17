@@ -361,9 +361,9 @@ public class PersistenceService extends Service {
         // build notification
         // the addAction re-use the same intent to keep the example short
         Notification n = new Notification.Builder(this)
-                .setContentTitle("Re.adjustme - Haltungs notification " + text)
-                .setContentText("Ändere deinen Haltung....bitte.")
-                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                .setContentTitle("re.adjustme")
+                .setContentText("Please change your " + text + " posture")
+                .setSmallIcon(R.drawable.ic_logo_nuricon)
                 .setContentIntent(pIntent)
                 .setAutoCancel(true).build();
         // .addAction(R.drawable.icon, "Call", pIntent)
