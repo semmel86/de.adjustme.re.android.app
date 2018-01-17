@@ -66,7 +66,10 @@ public class DashboardData implements Serializable {
         if (stack.size() > 0) {
             // accumulate old to sum
             Label old = stack.peek().getLabel();
-            posture_sum.get(b).put(old, stack.peek().getDuration());
+            Long currentDuration = posture_sum.get(b).get(old);
+            currentDuration = currentDuration == null ? 0L : currentDuration;
+            Long sumDuration = currentDuration + l.getDuration();
+            posture_sum.get(b).put(old, sumDuration);
         } else {
             posture_sum.get(b).put(l.getLabel(), l.getDuration());
         }
