@@ -57,6 +57,7 @@ public class PersistenceService extends Service {
     private DashboardData dashboardData;
     private String username;
     private boolean isRunning = false;
+    private boolean tryStarting = false;
 
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
@@ -195,17 +196,32 @@ public class PersistenceService extends Service {
             save(m);
         }
         setIsRunning(false);
+        setTryStarting(false);
         save(dashboardData);
     }
 
     public void setIsRunning(Boolean running) {
+        if (running != this.isRunning) {
+            sendAppEventBroadcast(running, this.tryStarting);
+        }
         this.isRunning = running;
-        sendAppEventBroadcast(running);
     }
 
     public boolean getIsRunning() {
         return this.isRunning;
     }
+
+    public void setTryStarting(Boolean tryStarting) {
+        if (tryStarting != this.tryStarting) {
+            sendAppEventBroadcast(this.isRunning, tryStarting);
+        }
+        this.tryStarting = tryStarting;
+    }
+
+    public boolean getTryStarting() {
+        return this.tryStarting;
+    }
+
     // sets the current raw Motion Data as calibrated 0-values and all following
     // motions are calculated related to these
     public void calibrate() {
@@ -400,9 +416,10 @@ public class PersistenceService extends Service {
         }
     }
 
-    private void sendAppEventBroadcast(boolean running) {
+    private void sendAppEventBroadcast(boolean running, boolean tryStarting) {
         Intent intent = new Intent("AppEvent");
         intent.putExtra("Running", running ? "true" : "false");
+        intent.putExtra("Starting", tryStarting? "true" : "false");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

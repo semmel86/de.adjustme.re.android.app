@@ -32,11 +32,11 @@ public class MainActivity extends GenericBaseActivity {
     private Button stopServiceBtn;
     private EditText usernameInput;
     private ProgressBar progressBar;
+    private TextView usernameLabel;
     private TextView hws_posture;
     private TextView shoulder_posture;
     private TextView bws_posture;
     private TextView lws_posture;
-    private boolean tryStarting = false;
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
         public void onReceive(final Context context, Intent intent) {
@@ -60,11 +60,9 @@ public class MainActivity extends GenericBaseActivity {
                         break;
                 }
             } else if (action.equals("AppEvent")) {
-                String s = intent.getStringExtra("Running");
-                if (s.equals("true")) {
-                    tryStarting = false;
-                }
-                changeStartStopBtns(s.equals("true"));
+                String running = intent.getStringExtra("Running");
+                String starting = intent.getStringExtra("Starting");
+                setButtons(running.equals("true"),starting.equals("true"));
             }
         }
 
@@ -88,7 +86,7 @@ public class MainActivity extends GenericBaseActivity {
         boolean b = bindService(intent, mPersistenceConnection, Context.BIND_AUTO_CREATE);
 
         setContentView(R.layout.activity_main);
-        usernameInput = (EditText) findViewById(R.id.editText);
+        usernameInput = (EditText) findViewById(R.id.editUsername);
         usernameInput.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -105,6 +103,7 @@ public class MainActivity extends GenericBaseActivity {
                 setNewUsername(s.toString());
             }
         });
+        usernameLabel = (TextView) findViewById(R.id.usernameTextview);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
         mainLayout = (LinearLayout) findViewById(R.id.mainLayout);
@@ -135,19 +134,47 @@ public class MainActivity extends GenericBaseActivity {
         if(mPersistenceService.getUsername()!=null){
             usernameInput.setText(mPersistenceService.getUsername());
         }
-        changeStartStopBtns(mPersistenceService.getIsRunning());
+        setButtons(mPersistenceService.getIsRunning(),mPersistenceService.getTryStarting());
     }
 
-    private void setNewUsername(String name){
-        if ( name.equals("") || name.equals(" ")) {
+    private void setButtons (boolean running, boolean starting) {
+        if (running) {
+            mPersistenceService.setTryStarting(false);
+            changeUsernameEditable(false);
+            startServiceBtn.setEnabled(true);
+        }else
+        if (!starting){
+            changeUsernameEditable(true);
+            startServiceBtn.setEnabled(true);
+        }
+        if (starting) {
+            changeUsernameEditable(false);
             startServiceBtn.setEnabled(false);
-        }else if (!tryStarting){
+        }
+        changeStartStopBtns(running);
+    }
+
+    private void setNewUsername(String name) {
+        if (name.equals("") || name.equals(" ")) {
+            startServiceBtn.setEnabled(false);
+        } else if (!mPersistenceService.getTryStarting()) {
             startServiceBtn.setEnabled(true);
         }
         if (mPersistenceService != null) {
             mPersistenceService.setUsername(name);
-           }
         }
+    }
+
+    private void changeUsernameEditable(boolean editable) {
+        usernameLabel.setText(usernameInput.getText());
+        if (editable) {
+            usernameLabel.setVisibility(View.INVISIBLE);
+            usernameInput.setVisibility(View.VISIBLE);
+        }else{
+            usernameLabel.setVisibility(View.VISIBLE);
+            usernameInput.setVisibility(View.INVISIBLE);
+        }
+    }
 
     private void checkBluethoothActive() {
         // Check and Log BT
@@ -163,17 +190,15 @@ public class MainActivity extends GenericBaseActivity {
     // old:start BT service
     // new: stop all Running Services
     public void startService(View v) {
-        tryStarting = true;
+        mPersistenceService.setTryStarting(true);
         try {
-            startServiceBtn.setEnabled(false);
             Intent intent = new Intent(this, BluetoothBackgroundService.class);
             Intent intent2 = new Intent(this, EvaluationBackgroundService.class);
             InitThread init = new InitThread(intent, intent2);
             init.start();
             Toast.makeText(getApplicationContext(), "Start Services", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
-            startServiceBtn.setEnabled(false);
-            changeStartStopBtns(mPersistenceService != null && mPersistenceService.getIsRunning());
+            mPersistenceService.setTryStarting(false);
             Toast.makeText(getApplicationContext(), "Cannot start Services", Toast.LENGTH_LONG).show();
         }
     }
@@ -197,7 +222,7 @@ public class MainActivity extends GenericBaseActivity {
 
     // stop all Running Services
     public void stopService(View v) {
-        tryStarting = false;
+        mPersistenceService.setTryStarting(false);
         try {
             // stop BT
             Intent intent = new Intent(this, BluetoothBackgroundService.class);
@@ -210,7 +235,7 @@ public class MainActivity extends GenericBaseActivity {
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "already stopped", Toast.LENGTH_LONG).show();
         }
-        changeStartStopBtns(false);
+        mPersistenceService.setIsRunning(false);
     }
 
     @Deprecated
@@ -228,7 +253,6 @@ public class MainActivity extends GenericBaseActivity {
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mPostureReceiver);
-
     }
 
     private void checkPermissions() {
@@ -256,7 +280,6 @@ public class MainActivity extends GenericBaseActivity {
     }
 
     private void changeStartStopBtns (boolean isRunning) {
-        startServiceBtn.setEnabled(true);
         if (isRunning) {
             startServiceBtn.setVisibility(View.INVISIBLE);
             stopServiceBtn.setVisibility(View.VISIBLE);
