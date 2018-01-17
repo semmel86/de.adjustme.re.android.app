@@ -104,7 +104,8 @@ public class DashboardDayActivity extends GenericBaseActivity {
     protected void afterServiceConnection() {
         dashboardData = mPersistenceService.getDashboardData();
         radioGroupCheckedChanged();
-        setTitle(mPersistenceService.getUsername() + "s " + getResources().getString(R.string.title_dashboard));
+        String username = mPersistenceService.getUsername();
+        setTitle((username.equals("") || username.equals(" ")) ? getResources().getString(R.string.title_dashboard) : (username  + "'s " + getResources().getString(R.string.title_dashboard)));
     }
 
     private void addDataToChart(PieChart pieChart, HashMap<Label, Long> hashMap, String label) {

@@ -48,7 +48,7 @@
                 android:layout_marginTop="10dp"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Name"
+                android:hint="@string/mainActivity_usernameHint"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"

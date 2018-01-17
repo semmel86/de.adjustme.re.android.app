@@ -36,6 +36,7 @@ public class MainActivity extends GenericBaseActivity {
     private TextView shoulder_posture;
     private TextView bws_posture;
     private TextView lws_posture;
+    private boolean tryStarting = false;
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
         public void onReceive(final Context context, Intent intent) {
@@ -60,6 +61,9 @@ public class MainActivity extends GenericBaseActivity {
                 }
             } else if (action.equals("AppEvent")) {
                 String s = intent.getStringExtra("Running");
+                if (s.equals("true")) {
+                    tryStarting = false;
+                }
                 changeStartStopBtns(s.equals("true"));
             }
         }
@@ -98,8 +102,7 @@ public class MainActivity extends GenericBaseActivity {
             @Override
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
-                if(s.length() != 0)
-                    setNewUsername(s.toString());
+                setNewUsername(s.toString());
             }
         });
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -136,8 +139,13 @@ public class MainActivity extends GenericBaseActivity {
     }
 
     private void setNewUsername(String name){
+        if ( name.equals("") || name.equals(" ")) {
+            startServiceBtn.setEnabled(false);
+        }else if (!tryStarting){
+            startServiceBtn.setEnabled(true);
+        }
         if (mPersistenceService != null) {
-            mPersistenceService.setUsername(usernameInput.getText().toString());
+            mPersistenceService.setUsername(name);
            }
         }
 
@@ -155,6 +163,7 @@ public class MainActivity extends GenericBaseActivity {
     // old:start BT service
     // new: stop all Running Services
     public void startService(View v) {
+        tryStarting = true;
         try {
             startServiceBtn.setEnabled(false);
             Intent intent = new Intent(this, BluetoothBackgroundService.class);
@@ -188,6 +197,7 @@ public class MainActivity extends GenericBaseActivity {
 
     // stop all Running Services
     public void stopService(View v) {
+        tryStarting = false;
         try {
             // stop BT
             Intent intent = new Intent(this, BluetoothBackgroundService.class);

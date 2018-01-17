@@ -13,6 +13,7 @@
     <string name="mainActivity_shoulder">Shoulder</string>
     <string name="mainActivity_bws">BWS</string>
     <string name="mainActivity_lws">LWS</string>
+    <string name="mainActivity_usernameHint">Enter username</string>
 
     <string name="spline_dashboard">spline dashboard</string>
     <string name="shoulder_dashboard">shoulder dashboard</string>
