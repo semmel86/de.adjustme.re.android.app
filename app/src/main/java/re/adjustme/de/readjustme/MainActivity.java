@@ -28,7 +28,8 @@ import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 
 public class MainActivity extends GenericBaseActivity {
-    Button bluttoothButton, b2;
+    private Button startServiceBtn;
+    private Button stopServiceBtn;
     private EditText usernameInput;
     private ProgressBar progressBar;
     private TextView hws_posture;
@@ -57,6 +58,9 @@ public class MainActivity extends GenericBaseActivity {
                         lws_posture.setText(s);
                         break;
                 }
+            } else if (action.equals("AppEvent")) {
+                String s = intent.getStringExtra("Running");
+                changeStartStopBtns(s.equals("true"));
             }
         }
 
@@ -98,13 +102,15 @@ public class MainActivity extends GenericBaseActivity {
                     setNewUsername(s.toString());
             }
         });
-        bluttoothButton = (Button) findViewById(R.id.button);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
         mainLayout = (LinearLayout) findViewById(R.id.mainLayout);
         mainLayout.setVisibility(View.INVISIBLE);
-        b2 = (Button) findViewById(R.id.button2);
+        startServiceBtn = (Button) findViewById(R.id.startService);
+        stopServiceBtn = (Button) findViewById(R.id.stopService);
         BA = BluetoothAdapter.getDefaultAdapter();
+        startServiceBtn.setEnabled(true);
+        changeStartStopBtns(mPersistenceService != null && mPersistenceService.getIsRunning());
         checkBluethoothActive();
         checkPermissions();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -116,8 +122,9 @@ public class MainActivity extends GenericBaseActivity {
         lws_posture = (TextView) findViewById(R.id.lws_posture);
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mPostureReceiver, new IntentFilter("Posture"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mPostureReceiver, new IntentFilter("AppEvent"));
     }
-
 
     protected void afterServiceConnection() {
         progressBar.setVisibility(View.INVISIBLE);
@@ -125,6 +132,7 @@ public class MainActivity extends GenericBaseActivity {
         if(mPersistenceService.getUsername()!=null){
             usernameInput.setText(mPersistenceService.getUsername());
         }
+        changeStartStopBtns(mPersistenceService.getIsRunning());
     }
 
     private void setNewUsername(String name){
@@ -148,12 +156,15 @@ public class MainActivity extends GenericBaseActivity {
     // new: stop all Running Services
     public void startService(View v) {
         try {
+            startServiceBtn.setEnabled(false);
             Intent intent = new Intent(this, BluetoothBackgroundService.class);
             Intent intent2 = new Intent(this, EvaluationBackgroundService.class);
             InitThread init = new InitThread(intent, intent2);
             init.start();
             Toast.makeText(getApplicationContext(), "Start Services", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
+            startServiceBtn.setEnabled(false);
+            changeStartStopBtns(mPersistenceService != null && mPersistenceService.getIsRunning());
             Toast.makeText(getApplicationContext(), "Cannot start Services", Toast.LENGTH_LONG).show();
         }
     }
@@ -189,6 +200,7 @@ public class MainActivity extends GenericBaseActivity {
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "already stopped", Toast.LENGTH_LONG).show();
         }
+        changeStartStopBtns(false);
     }
 
     @Deprecated
@@ -230,6 +242,17 @@ public class MainActivity extends GenericBaseActivity {
 
                 }
             }
+        }
+    }
+
+    private void changeStartStopBtns (boolean isRunning) {
+        startServiceBtn.setEnabled(true);
+        if (isRunning) {
+            startServiceBtn.setVisibility(View.INVISIBLE);
+            stopServiceBtn.setVisibility(View.VISIBLE);
+        } else {
+            startServiceBtn.setVisibility(View.VISIBLE);
+            stopServiceBtn.setVisibility(View.INVISIBLE);
         }
     }
 

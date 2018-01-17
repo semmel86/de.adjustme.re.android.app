@@ -80,6 +80,7 @@ public class EvaluationBackgroundService extends Service {
     @Override
     public void onDestroy() {
         mEvalThread.killMe();
+        sendStatusToPersistenceService(false);
         mEvalThread = null;
         stopSelf();
     }
@@ -152,6 +153,13 @@ public class EvaluationBackgroundService extends Service {
             }
             // start the thread
             mEvalThread.start();
+            sendStatusToPersistenceService(true);
+        }
+    }
+
+    private void sendStatusToPersistenceService (boolean status) {
+        if (mPersistenceService != null) {
+            mPersistenceService.setIsRunning(status);
         }
     }
 

@@ -44,12 +44,6 @@ public abstract class GenericBaseActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                     return true;
-                case R.id.navigation_bluetooth:
-                    if (!this.getClass().equals(TrainModelActivity.class)) {
-                        intent = new Intent(getApplicationContext(), TrainModelActivity.class);
-                        startActivity(intent);
-                    }
-                    return true;
             }
             return false;
         }

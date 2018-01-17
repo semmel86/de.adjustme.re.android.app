@@ -56,6 +56,7 @@ public class PersistenceService extends Service {
     private BackendConnection backend = new BackendConnection();
     private DashboardData dashboardData;
     private String username;
+    private boolean isRunning = false;
 
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
@@ -64,12 +65,11 @@ public class PersistenceService extends Service {
         private int sendNotification = 1;
 
         public void onReceive(final Context context, Intent intent) {
-
             String action = intent.getAction();
-            if (dashboardData == null) {
-                dashboardData = new DashboardData();
-            }
             if (action.equals("Posture")) {
+                if (dashboardData == null) {
+                    dashboardData = new DashboardData();
+                }
                 String s = intent.getStringExtra("PostureName");
                 BodyArea bodyarea = BodyArea.valueOf(intent.getStringExtra("Area"));
                 Label label = bodyarea.getLableByDescription(intent.getStringExtra("PostureName"));
@@ -194,9 +194,18 @@ public class PersistenceService extends Service {
         for (MotionData m : currentRawMotionData.values()) {
             save(m);
         }
+        setIsRunning(false);
         save(dashboardData);
     }
 
+    public void setIsRunning(Boolean running) {
+        this.isRunning = running;
+        sendAppEventBroadcast(running);
+    }
+
+    public boolean getIsRunning() {
+        return this.isRunning;
+    }
     // sets the current raw Motion Data as calibrated 0-values and all following
     // motions are calculated related to these
     public void calibrate() {
@@ -389,5 +398,11 @@ public class PersistenceService extends Service {
                 stopSelf();
             }
         }
+    }
+
+    private void sendAppEventBroadcast(boolean running) {
+        Intent intent = new Intent("AppEvent");
+        intent.putExtra("Running", running ? "true" : "false");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

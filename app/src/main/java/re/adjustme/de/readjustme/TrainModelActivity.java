@@ -48,7 +48,7 @@ public class TrainModelActivity extends GenericBaseActivity {
         setContentView(R.layout.activity_bluetooth_data);
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setSelectedItemId(R.id.navigation_bluetooth);
+        //navigation.setSelectedItemId(R.id.navigation_bluetooth);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         labelTxt = (EditText) findViewById(R.id.editText2);
