@@ -83,7 +83,7 @@
                             android:layout_marginEnd="12dp"
                             android:layout_marginStart="24dp"
                             android:layout_marginTop="0dp"
-                            android:drawableStart="@android:drawable/ic_media_play"
+                            android:drawableTop="@drawable/ic_play"
                             android:drawableTint="@color/textColorHighlight"
                             android:onClick="startService"
                             android:text="Start Service"
@@ -97,7 +97,7 @@
                             android:layout_height="match_parent"
                             android:layout_marginEnd="12dp"
                             android:layout_marginStart="24dp"
-                            android:drawableLeft="@android:drawable/ic_media_pause"
+                            android:drawableTop="@drawable/ic_pause"
                             android:drawableTint="@color/colorPrimaryDark"
                             android:onClick="stopService"
                             android:text="Stop Service" />
@@ -111,7 +111,7 @@
                         android:layout_marginStart="0dp"
                         android:layout_weight="2"
                         android:drawableTint="@color/textColorPrimary"
-                        android:drawableTop="@drawable/ruler"
+                        android:drawableTop="@drawable/ic_ruler"
                         android:onClick="calibrate"
                         android:text="Calibrate"
                         android:visibility="visible" />
