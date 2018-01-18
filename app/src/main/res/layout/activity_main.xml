@@ -19,11 +19,10 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="392dp"
-            android:layout_weight="2"
-            android:orientation="vertical">
+            android:layout_height="417dp"
+            android:layout_weight="2">
 
             <ImageView
                 android:id="@+id/imageView"
@@ -39,21 +38,46 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <EditText
-                android:id="@+id/editText"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="10dp"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:text="Name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </LinearLayout>
+                android:layout_height="48dp"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/imageView"
+                android:layout_marginTop="23dp">
+
+                <EditText
+                    android:id="@+id/editUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="24dp"
+                    android:height="24dp"
+                    android:ems="10"
+                    android:hint="@string/mainActivity_usernameHint"
+                    android:inputType="textPersonName"
+                    tools:layout_editor_absoluteX="8dp"
+                    tools:layout_editor_absoluteY="106dp" />
+
+                <TextView
+                    android:id="@+id/usernameTextview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="24dp"
+                    android:height="24dp"
+                    android:ems="10"
+                    android:gravity="left|center"
+                    android:paddingBottom="2dp"
+                    android:paddingLeft="4dp"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="18sp"
+                    app:layout_constraintTop_toTopOf="@+id/editUsername"
+                    tools:layout_editor_absoluteX="8dp" />
+
+            </RelativeLayout>
+        </RelativeLayout>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -65,42 +89,59 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/button"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/imageView"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginEnd="24dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="0dp"
-                    android:onClick="startService"
-                    android:text="Start Service"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/button2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/button"
-                    android:layout_marginEnd="24dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="12dp"
-                    android:onClick="stopService"
-                    android:text="Stop Service"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/button" />
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <Button
+                            android:id="@+id/startService"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="12dp"
+                            android:layout_marginStart="24dp"
+                            android:drawableTint="@color/textColorHighlight"
+                            android:drawableTop="@drawable/ic_play"
+                            android:onClick="startService"
+                            android:text="@string/mainActivity_start" />
+
+                        <Button
+                            android:id="@+id/stopService"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="12dp"
+                            android:layout_marginStart="24dp"
+                            android:drawableTint="@color/colorPrimaryDark"
+                            android:drawableTop="@drawable/ic_pause"
+                            android:onClick="stopService"
+                            android:text="@string/mainActivity_stop" />
+                    </RelativeLayout>
+
+                    <Button
+                        android:id="@+id/btnCalibrate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="24dp"
+                        android:layout_weight="2"
+                        android:drawableTint="@color/textColorPrimary"
+                        android:drawableTop="@drawable/ic_ruler"
+                        android:onClick="calibrate"
+                        android:text="@string/mainActivity_calibrate" />
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="12dp"
                     android:layout_marginLeft="24dp"
                     android:layout_marginRight="24dp"
+                    android:layout_marginTop="40dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -108,7 +149,7 @@
                         android:layout_width="77dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="HWS" />
+                        android:text="@string/mainActivity_hws" />
 
                     <TextView
                         android:id="@+id/hws_posture"
@@ -125,6 +166,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="12dp"
                     android:layout_marginLeft="24dp"
                     android:layout_marginRight="24dp"
                     android:orientation="horizontal">
@@ -134,7 +176,7 @@
                         android:layout_width="77dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="shoulder" />
+                        android:text="@string/mainActivity_shoulder" />
 
                     <TextView
                         android:id="@+id/shoulder_posture"
@@ -151,6 +193,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="12dp"
                     android:layout_marginLeft="24dp"
                     android:layout_marginRight="24dp"
                     android:orientation="horizontal">
@@ -160,7 +203,7 @@
                         android:layout_width="77dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="BWS" />
+                        android:text="@string/mainActivity_bws" />
 
                     <TextView
                         android:id="@+id/bws_posture"
@@ -173,6 +216,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/button6" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -185,7 +229,7 @@
                         android:layout_width="77dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="LWS" />
+                        android:text="@string/mainActivity_lws" />
 
                     <TextView
                         android:id="@+id/lws_posture"
@@ -198,60 +242,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/button6" />
                 </LinearLayout>
-                <Button
-                    android:id="@+id/button5"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="32dp"
-                    android:onClick="calibrate"
-                    android:text="Calibrate"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toEndOf="@+id/button3"
-                    app:layout_constraintTop_toBottomOf="@+id/btnCalibrate" />
 
-                <Button
-                    android:id="@+id/button6"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="24dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="40dp"
-                    android:onClick="calculateClassifier"
-                    android:text="Calculate Classifier"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/button3" />
-
-                <Button
-                    android:id="@+id/button3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="32dp"
-                    android:onClick="StartEvalService"
-                    android:text="Start Evaluation"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/btnCalibrate" />
-
-                <Button
-                    android:id="@+id/btnCalibrate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/button2"
-                    android:layout_marginEnd="24dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="20dp"
-                    android:onClick="calibrate"
-                    android:text="Calibrate"
-                    android:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/button2" />
             </LinearLayout>
         </ScrollView>
 
@@ -263,7 +254,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/btnCalibrate"
         android:background="@color/colorBackground"
         android:visibility="visible"
         app:itemIconTint="@color/bottom_nav_colors"

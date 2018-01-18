@@ -23,28 +23,17 @@
             android:gravity="center_vertical|center_horizontal"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
-                android:src="@mipmap/logo7"
-                android:theme="@style/Base.TextAppearance.AppCompat"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="24dp"
                 android:text="@string/daily_posture_profile"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView" />
@@ -55,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/text"
                 android:layout_gravity="fill_horizontal"
-                android:background="@color/colorBackground"
+                android:background="@color/colorForeground"
                 android:checkedButton="@+id/radio_all"
                 android:gravity="fill_horizontal"
                 android:orientation="horizontal">
@@ -65,41 +54,49 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
+                    android:background="@drawable/radio_button_selector"
                     android:button="@null"
                     android:gravity="center_horizontal"
-                    android:padding="24px"
-                    android:text="@string/dashboard_radio_all" />
+                    android:padding="12dp"
+                    android:text="@string/dashboard_radio_all"
+                    android:textColor="@drawable/radio_button_text_selector" />
 
                 <RadioButton
                     android:id="@+id/radio_week"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
+                    android:background="@drawable/radio_button_selector"
                     android:button="@null"
                     android:checked="true"
                     android:gravity="center_horizontal"
-                    android:padding="24px"
-                    android:text="@string/dashboard_radio_week" />
+                    android:padding="12dp"
+                    android:text="@string/dashboard_radio_week"
+                    android:textColor="@drawable/radio_button_text_selector" />
 
                 <RadioButton
                     android:id="@+id/radio_day"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
+                    android:background="@drawable/radio_button_selector"
                     android:button="@null"
                     android:gravity="center_horizontal"
-                    android:padding="24px"
-                    android:text="@string/dashboard_radio_day" />
+                    android:padding="12dp"
+                    android:text="@string/dashboard_radio_day"
+                    android:textColor="@drawable/radio_button_text_selector" />
 
                 <RadioButton
                     android:id="@+id/radio_hour"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
+                    android:background="@drawable/radio_button_selector"
                     android:button="@null"
                     android:gravity="center_horizontal"
-                    android:padding="24px"
-                    android:text="@string/dashboard_radio_hour" />
+                    android:padding="12dp"
+                    android:text="@string/dashboard_radio_hour"
+                    android:textColor="@drawable/radio_button_text_selector" />
 
             </RadioGroup>
 
@@ -120,6 +117,7 @@
                     android:id="@+id/shoulderPieChart"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:minHeight="200dp"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="108dp" />
@@ -128,6 +126,7 @@
                     android:id="@+id/splinePieChart"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:minHeight="200dp"/>
 
 
@@ -135,6 +134,7 @@
                     android:id="@+id/hwsPieChart"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:minHeight="200dp"/>
 
 
@@ -142,6 +142,7 @@
                     android:id="@+id/lwsPieChart"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:minHeight="200dp"/>
 
             </LinearLayout>

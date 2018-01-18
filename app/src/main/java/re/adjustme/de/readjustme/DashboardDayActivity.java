@@ -13,6 +13,7 @@ import android.widget.RadioGroup;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.IMarker;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -43,6 +44,7 @@ public class DashboardDayActivity extends GenericBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.title_dashboard);
         PersistenceConfiguration.setPersistenceDirectory(this.getApplicationContext().getFilesDir());
         // get Persistence Service Binder
         setPersistenceConnection();
@@ -66,35 +68,6 @@ public class DashboardDayActivity extends GenericBaseActivity {
                 radioGroupCheckedChanged();
             }
         });
-        RadioButton all = (RadioButton) findViewById(R.id.radio_all);
-        all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                radioButtonChangedListener(compoundButton, b);
-            }
-        });
-        RadioButton week = (RadioButton) findViewById(R.id.radio_week);
-        week.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                radioButtonChangedListener(compoundButton, b);
-            }
-        });
-        RadioButton day = (RadioButton) findViewById(R.id.radio_day);
-        day.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                radioButtonChangedListener(compoundButton, b);
-            }
-        });
-        RadioButton hour = (RadioButton) findViewById(R.id.radio_hour);
-        hour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                radioButtonChangedListener(compoundButton, b);
-            }
-        });
-
         radioGroup.check(R.id.radio_all);
 
     }
@@ -131,21 +104,8 @@ public class DashboardDayActivity extends GenericBaseActivity {
     protected void afterServiceConnection() {
         dashboardData = mPersistenceService.getDashboardData();
         radioGroupCheckedChanged();
-    }
-
-    private void radioButtonChangedListener(CompoundButton button, boolean isChecked) {
-        if (isChecked) {
-
-            //Make the text underlined
-            SpannableString content = new SpannableString(button.getText());
-            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-            button.setText(content);
-        } else {
-            //Change the color here and make the Text bold
-            SpannableString content = new SpannableString(button.getText().toString());
-            content.setSpan(null, 0, content.length(), 0);
-            button.setText(content);
-        }
+        String username = mPersistenceService.getUsername();
+        setTitle((username.equals("") || username.equals(" ")) ? getResources().getString(R.string.title_dashboard) : (username  + "'s " + getResources().getString(R.string.title_dashboard)));
     }
 
     private void addDataToChart(PieChart pieChart, HashMap<Label, Long> hashMap, String label) {
@@ -195,5 +155,11 @@ public class DashboardDayActivity extends GenericBaseActivity {
         pieChart.getLegend().setEnabled(false);
         pieChart.setCenterText(label);
         pieChart.invalidate();
+
+        IMarker marker = new MyMarkerView(this, R.layout.custom_marker_view);
+        pieChart.setMarker(marker);
+        /*MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
+        mv.setChartView(pieChart);
+        */
     }
 }

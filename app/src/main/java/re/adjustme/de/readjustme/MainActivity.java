@@ -28,9 +28,11 @@ import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 
 public class MainActivity extends GenericBaseActivity {
-    Button bluttoothButton, b2;
+    private Button startServiceBtn;
+    private Button stopServiceBtn;
     private EditText usernameInput;
     private ProgressBar progressBar;
+    private TextView usernameLabel;
     private TextView hws_posture;
     private TextView shoulder_posture;
     private TextView bws_posture;
@@ -57,6 +59,10 @@ public class MainActivity extends GenericBaseActivity {
                         lws_posture.setText(s);
                         break;
                 }
+            } else if (action.equals("AppEvent")) {
+                String running = intent.getStringExtra("Running");
+                String starting = intent.getStringExtra("Starting");
+                setButtons(running.equals("true"),starting.equals("true"));
             }
         }
 
@@ -80,7 +86,7 @@ public class MainActivity extends GenericBaseActivity {
         boolean b = bindService(intent, mPersistenceConnection, Context.BIND_AUTO_CREATE);
 
         setContentView(R.layout.activity_main);
-        usernameInput = (EditText) findViewById(R.id.editText);
+        usernameInput = (EditText) findViewById(R.id.editUsername);
         usernameInput.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -94,17 +100,19 @@ public class MainActivity extends GenericBaseActivity {
             @Override
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
-                if(s.length() != 0)
-                    setNewUsername(s.toString());
+                setNewUsername(s.toString());
             }
         });
-        bluttoothButton = (Button) findViewById(R.id.button);
+        usernameLabel = (TextView) findViewById(R.id.usernameTextview);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
         mainLayout = (LinearLayout) findViewById(R.id.mainLayout);
         mainLayout.setVisibility(View.INVISIBLE);
-        b2 = (Button) findViewById(R.id.button2);
+        startServiceBtn = (Button) findViewById(R.id.startService);
+        stopServiceBtn = (Button) findViewById(R.id.stopService);
         BA = BluetoothAdapter.getDefaultAdapter();
+        startServiceBtn.setEnabled(true);
+        changeStartStopBtns(mPersistenceService != null && mPersistenceService.getIsRunning());
         checkBluethoothActive();
         checkPermissions();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -116,8 +124,9 @@ public class MainActivity extends GenericBaseActivity {
         lws_posture = (TextView) findViewById(R.id.lws_posture);
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mPostureReceiver, new IntentFilter("Posture"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mPostureReceiver, new IntentFilter("AppEvent"));
     }
-
 
     protected void afterServiceConnection() {
         progressBar.setVisibility(View.INVISIBLE);
@@ -125,13 +134,47 @@ public class MainActivity extends GenericBaseActivity {
         if(mPersistenceService.getUsername()!=null){
             usernameInput.setText(mPersistenceService.getUsername());
         }
+        setButtons(mPersistenceService.getIsRunning(),mPersistenceService.getTryStarting());
     }
 
-    private void setNewUsername(String name){
-        if (mPersistenceService != null) {
-            mPersistenceService.setUsername(usernameInput.getText().toString());
-           }
+    private void setButtons (boolean running, boolean starting) {
+        if (running) {
+            mPersistenceService.setTryStarting(false);
+            changeUsernameEditable(false);
+            startServiceBtn.setEnabled(true);
+        }else
+        if (!starting){
+            changeUsernameEditable(true);
+            startServiceBtn.setEnabled(true);
         }
+        if (starting) {
+            changeUsernameEditable(false);
+            startServiceBtn.setEnabled(false);
+        }
+        changeStartStopBtns(running);
+    }
+
+    private void setNewUsername(String name) {
+        if (name.equals("") || name.equals(" ")) {
+            startServiceBtn.setEnabled(false);
+        } else if (!mPersistenceService.getTryStarting()) {
+            startServiceBtn.setEnabled(true);
+        }
+        if (mPersistenceService != null) {
+            mPersistenceService.setUsername(name);
+        }
+    }
+
+    private void changeUsernameEditable(boolean editable) {
+        usernameLabel.setText(usernameInput.getText());
+        if (editable) {
+            usernameLabel.setVisibility(View.INVISIBLE);
+            usernameInput.setVisibility(View.VISIBLE);
+        }else{
+            usernameLabel.setVisibility(View.VISIBLE);
+            usernameInput.setVisibility(View.INVISIBLE);
+        }
+    }
 
     private void checkBluethoothActive() {
         // Check and Log BT
@@ -147,6 +190,7 @@ public class MainActivity extends GenericBaseActivity {
     // old:start BT service
     // new: stop all Running Services
     public void startService(View v) {
+        mPersistenceService.setTryStarting(true);
         try {
             Intent intent = new Intent(this, BluetoothBackgroundService.class);
             Intent intent2 = new Intent(this, EvaluationBackgroundService.class);
@@ -154,6 +198,7 @@ public class MainActivity extends GenericBaseActivity {
             init.start();
             Toast.makeText(getApplicationContext(), "Start Services", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
+            mPersistenceService.setTryStarting(false);
             Toast.makeText(getApplicationContext(), "Cannot start Services", Toast.LENGTH_LONG).show();
         }
     }
@@ -177,6 +222,7 @@ public class MainActivity extends GenericBaseActivity {
 
     // stop all Running Services
     public void stopService(View v) {
+        mPersistenceService.setTryStarting(false);
         try {
             // stop BT
             Intent intent = new Intent(this, BluetoothBackgroundService.class);
@@ -189,6 +235,7 @@ public class MainActivity extends GenericBaseActivity {
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "already stopped", Toast.LENGTH_LONG).show();
         }
+        mPersistenceService.setIsRunning(false);
     }
 
     @Deprecated
@@ -206,7 +253,6 @@ public class MainActivity extends GenericBaseActivity {
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mPostureReceiver);
-
     }
 
     private void checkPermissions() {
@@ -230,6 +276,16 @@ public class MainActivity extends GenericBaseActivity {
 
                 }
             }
+        }
+    }
+
+    private void changeStartStopBtns (boolean isRunning) {
+        if (isRunning) {
+            startServiceBtn.setVisibility(View.INVISIBLE);
+            stopServiceBtn.setVisibility(View.VISIBLE);
+        } else {
+            startServiceBtn.setVisibility(View.VISIBLE);
+            stopServiceBtn.setVisibility(View.INVISIBLE);
         }
     }
 
