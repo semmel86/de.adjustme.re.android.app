@@ -44,12 +44,6 @@ public abstract class GenericBaseActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                     return true;
-                case R.id.navigation_bluetooth:
-                    if (!this.getClass().equals(TrainModelActivity.class)) {
-                        intent = new Intent(getApplicationContext(), TrainModelActivity.class);
-                        startActivity(intent);
-                    }
-                    return true;
             }
             return false;
         }
@@ -94,6 +88,11 @@ public abstract class GenericBaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setLogo(R.drawable.ic_logo_nuricon);
+            getSupportActionBar().setDisplayUseLogoEnabled(true);
+        }
         PersistenceConfiguration.setPersistenceDirectory(this.getApplicationContext().getFilesDir());
         // get Persistence Service Binder
         setPersistenceConnection();

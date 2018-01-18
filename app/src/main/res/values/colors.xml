@@ -8,5 +8,6 @@
     <color name="textColorHighlight">#45e052</color>
     <color name="textColorTertiary">#818181</color>
     <color name="colorBackground">#ececec</color>
+    <color name="colorForeground">#d1d1d1</color>
     <color name="keyTextColor">#2fa638</color>
 </resources>
