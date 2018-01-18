@@ -255,7 +255,7 @@ public class PersistenceService extends Service {
             } catch (Exception e) {
                 //Log.e("Error Persistence", "Error on parsing Json");
             }
-            //Log.i("SEND-JSON",motionData.toString());
+            Log.i("SEND-JSON",motionData.toString());
             backend.sendRequest(motionData, this.getApplicationContext());
         }
     }
