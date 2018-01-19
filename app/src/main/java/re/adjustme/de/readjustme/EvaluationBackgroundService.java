@@ -121,14 +121,18 @@ public class EvaluationBackgroundService extends Service {
         if (ClassificationConfiguration.USE_SVM_MODEL) {
             svmMotionclassifier = persistor.loadSVM();
             if (svmMotionclassifier == null || svmMotionclassifier.isEmpty()) {
-                unzipClassificator();
+                unzipClassificator("classificationHashMap.md");
+                unzipClassificator("svmClassificationMap.md");
+                unzipClassificator("FullMotionDataSet.csv");
                 svmMotionclassifier = persistor.loadSVM();
             }
             // load simple model
         } else {
             motionclassifier = persistor.loadClassificationMap();
             if (motionclassifier == null || motionclassifier.isEmpty()) {
-                unzipClassificator();
+                unzipClassificator("classificationHashMap.md");
+                unzipClassificator("svmClassificationMap.md");
+                unzipClassificator("FullMotionDataSet.csv");
                 motionclassifier = persistor.loadClassificationMap();
             }
         }
@@ -164,11 +168,11 @@ public class EvaluationBackgroundService extends Service {
     }
 
     // write the classificator object to /data/..persistence to load it from there
-    private void unzipClassificator() {
-        File f = new File(PersistenceConfiguration.getPersistenceDirectory() + "classificationHashMap.md");
+    private void unzipClassificator(String name) {
+        File f = new File(PersistenceConfiguration.getPersistenceDirectory() + name);
         if (!f.exists()) try {
 
-            InputStream is = getAssets().open("classificationHashMap.md");
+            InputStream is = getAssets().open(name);
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
@@ -177,9 +181,9 @@ public class EvaluationBackgroundService extends Service {
             FileOutputStream fos = new FileOutputStream(f);
             fos.write(buffer);
             fos.close();
-            Log.i("Info", "Unzipped classifiactionHashMap.md from assets.");
+            Log.i("Info", "Unzipped "+name+" from assets.");
         } catch (Exception e) {
-            Log.e("Error", "Cannot unzip classifiactionHashMap.md from assets.");
+            Log.e("Error", "Cannot unzip "+name+" from assets.");
         }
     }
 
@@ -208,7 +212,7 @@ public class EvaluationBackgroundService extends Service {
         // 3- build the model for each Bodyarea
         for (BodyArea area : BodyArea.values()) {
             SvmPredictor predictor = new SvmPredictor();
-            predictor.trainModel(sortedMap.get(area));
+            predictor.trainModel(sortedMap.get(area),area);
             svmMotionclassifier.put(area, predictor);
         }
 
@@ -312,7 +316,7 @@ public class EvaluationBackgroundService extends Service {
         if (mPersistenceService.receivesLiveData()) {
             for (BodyArea area : BodyArea.values()) {
                 if (ClassificationConfiguration.USE_SVM_MODEL) {
-                    double classification = svmMotionclassifier.get(area).predict(motionDataSet);
+                    double classification = svmMotionclassifier.get(area).predict(motionDataSet,area);
                     Label l = area.getLable(Math.round(classification));
                     this.sendPostureBroadcast(l.getDescription(), area.name());
                     Log.i("Info", "Classification: " + area.name() + "  " + l.getDescription());
@@ -355,8 +359,9 @@ public class EvaluationBackgroundService extends Service {
     private class EvalThread extends Thread {
 
         private MotionDataSetDto motionDataSet;
-
+        private boolean runThreadrun=true;
         public void killMe() {
+            this.runThreadrun=false;
             this.destroy();
         }
 
@@ -364,7 +369,7 @@ public class EvaluationBackgroundService extends Service {
         public void run() {
 
             // Evaluate Posture
-            while (true) {
+            while (runThreadrun) {
                 try {
 
                     sleep(ClassificationConfiguration.EVALUATION_TIME);
@@ -372,7 +377,7 @@ public class EvaluationBackgroundService extends Service {
                     evaluateMotionData(motionDataSet);
 
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
             }
         }

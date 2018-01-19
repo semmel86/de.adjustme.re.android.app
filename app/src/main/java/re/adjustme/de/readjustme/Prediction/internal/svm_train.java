@@ -8,6 +8,8 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
+import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
+import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 
 public class svm_train {
     private static svm_print_interface svm_print_null = new svm_print_interface() {
@@ -137,8 +139,8 @@ public class svm_train {
     // t.run(argv);
     // }
 
-    public svm_model train(List<MotionDataSetDto> motionDataSetDtos) {
-        this.read_problem(motionDataSetDtos);
+    public svm_model train(List<MotionDataSetDto> motionDataSetDtos,BodyArea area) {
+        this.read_problem(motionDataSetDtos,area);
         if (this.cross_validation != 0) {
             this.do_cross_validation();
         } else {
@@ -184,24 +186,24 @@ public class svm_train {
         final int i;
         final svm_print_interface print_func = null; // default printing to stdout
 
-        this.param = new svm_parameter();
+        this.param = ClassificationConfiguration.getSVMParams();
         // default values
-        this.param.svm_type = svm_parameter.C_SVC;
-        this.param.kernel_type = svm_parameter.POLY;
-        this.param.degree = 3;
-        this.param.gamma = 0; // 1/num_features
-        this.param.coef0 = 0;
-        this.param.nu = 0.5;
-        this.param.cache_size = 100;
-        this.param.C = 1;
-        this.param.eps = 1e-3;
-        this.param.p = 0.1;
-        this.param.shrinking = 1;
-        this.param.probability = 0;
-        this.param.nr_weight = 0;
-        this.param.weight_label = new int[0];
-        this.param.weight = new double[0];
-        this.cross_validation = 0;
+//        this.param.svm_type = svm_parameter.C_SVC;
+//        this.param.kernel_type = svm_parameter.POLY;
+//        this.param.degree = 3;
+//        this.param.gamma = 0; // 1/num_features
+//        this.param.coef0 = 0;
+//        this.param.nu = 0.5;
+//        this.param.cache_size = 100;
+//        this.param.C = 1;
+//        this.param.eps = 1e-3;
+//        this.param.p = 0.1;
+//        this.param.shrinking = 1;
+//        this.param.probability = 0;
+//        this.param.nr_weight = 0;
+//        this.param.weight_label = new int[0];
+//        this.param.weight = new double[0];
+        this.cross_validation = ClassificationConfiguration.CROSS_VALIDATION;
 
         // // parse options
         // for(i = 0; i < argv.length; i++){
@@ -301,7 +303,7 @@ public class svm_train {
         // }
     }
 
-    void read_problem(List<MotionDataSetDto> motionDataSetDtos) {
+    void read_problem(List<MotionDataSetDto> motionDataSetDtos,BodyArea area) {
 
         final Vector<Double> vy = new Vector<Double>();
         final Vector<svm_node[]> vx = new Vector<svm_node[]>();
@@ -310,7 +312,7 @@ public class svm_train {
         for (MotionDataSetDto currentMotion : motionDataSetDtos) {
             // while(true){
             if (motionDataSetDtos != null) {
-                final String line = currentMotion.toSVMLightStr();
+                final String line = currentMotion.toSVMLightStr(area);
                 if (line == null) {
                     break;
                 }

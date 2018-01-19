@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
+import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Predefined.Sensor;
 import re.adjustme.de.readjustme.Prediction.internal.svm;
 import re.adjustme.de.readjustme.Prediction.internal.svm_model;
@@ -50,16 +51,17 @@ public class SvmPredictor implements Serializable {
         }
     }
 
-    public double predict(MotionDataSetDto md) {
+    public double predict(MotionDataSetDto md, BodyArea area) {
         //final int svm_type = svm.svm_get_svm_type(model);
         final int nr_class = svm.svm_get_nr_class(model);
 
         // Data for prediction
         double[] prob_estimates = new double[nr_class];
 
-// calc amount of features -> one node for each feature
+        // calc amount of features -> one node for each feature
         int c = 0;
         for (Sensor s : Sensor.values()) {
+//            if(area.containsSensors(s)){
             if (!s.isExclude_x()) {
                 c++;
             }
@@ -68,8 +70,8 @@ public class SvmPredictor implements Serializable {
             }
             if (!s.isExclude_z()) {
                 c++;
-            }
-        }
+            }}
+//        }
         final svm_node[] x = new svm_node[c];
         c = 0;
 
@@ -100,8 +102,8 @@ public class SvmPredictor implements Serializable {
         return v;
     }
 
-    public void trainModel(List<MotionDataSetDto> motionDataSetDtos) {
+    public void trainModel(List<MotionDataSetDto> motionDataSetDtos,BodyArea area) {
         final svm_train train = new svm_train();
-        model = train.train(motionDataSetDtos);
+        model = train.train(motionDataSetDtos,area);
     }
 }

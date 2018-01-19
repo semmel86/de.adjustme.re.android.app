@@ -9,7 +9,7 @@ import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
  */
 
 public enum ShoulderLabel implements Label {
-    A("A", "Neutral Position", "1"),
+    A("A","Neutral Position", "1"),
     AK("AK", "Anteversion links", "2"), // je eine Schulterseite ausserhalb d. neutr. pos
     AL("AL", "Anteversion rechts", "3"),
     AM("AM", "Anteversion links & rechts", "4"),

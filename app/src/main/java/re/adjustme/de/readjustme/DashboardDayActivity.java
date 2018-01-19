@@ -41,6 +41,11 @@ public class DashboardDayActivity extends GenericBaseActivity {
     private PieChart lwsPie;
     private RadioGroup radioGroup;
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

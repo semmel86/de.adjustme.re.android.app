@@ -6,6 +6,7 @@ import java.util.List;
 
 import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
+import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Persistence.MotionDataPersistor;
 import re.adjustme.de.readjustme.Predefined.Sensor;
@@ -16,13 +17,14 @@ import re.adjustme.de.readjustme.Predefined.Sensor;
 
 public class MotionDataTextFilePersistor extends TextFilePersistor implements MotionDataPersistor {
 
+    private String motionDataSetFile= ClassificationConfiguration.motionDataSetFile;
     @Override
     public void saveMotion(MotionData data) {
         this.save(data, data.getSensor().name());
     }
 
     public void saveMotionSet(MotionDataSetDto m) {
-        this.save(m, "FullMotionDataSet.csv");
+        this.save(m, motionDataSetFile);
     }
 
     @Override
@@ -105,7 +107,7 @@ public class MotionDataTextFilePersistor extends TextFilePersistor implements Mo
     }
 
     public List<MotionDataSetDto> getMotionDataSetDtos() {
-        final List<String> motions = this.loadFullLines();
+        final List<String> motions = this.loadFullLines(motionDataSetFile);
         final List<MotionDataSetDto> list = new ArrayList<>();
 
         for (final String s : motions) {

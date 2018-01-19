@@ -55,6 +55,7 @@
                     android:ems="10"
                     android:hint="@string/mainActivity_usernameHint"
                     android:inputType="textPersonName"
+                    android:focusedByDefault="false"
                     tools:layout_editor_absoluteX="8dp"
                     tools:layout_editor_absoluteY="106dp" />
 
@@ -73,6 +74,7 @@
                     android:paddingLeft="4dp"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="18sp"
+                    android:focusedByDefault="false"
                     app:layout_constraintTop_toTopOf="@+id/editUsername"
                     tools:layout_editor_absoluteX="8dp" />
 

@@ -1,29 +1,44 @@
 package re.adjustme.de.readjustme.Predefined.Classification;
 
+import re.adjustme.de.readjustme.Predefined.Sensor;
+
 /**
  * Defines the different Body Areas and the referring labeled Motions
+ * <p>
+ * // long duration -> 600000 = 10 min;
  * <p>
  * Created by Semmel on 18.11.2017.
  */
 
 public enum BodyArea {
-    SHOULDER("shoulder", ShoulderLabel.values(), 300000L), // 300000 = 5min;
-    SPLINE("bws", BwsLabel.values(), 600000L),// 600000 = 10 min;
-    HWS("hws", HwsLabel.values(), 600000L),
-    LWS("lws", LwsLabel.values(), 600000L);
+    SHOULDER("shoulder", ShoulderLabel.values(), 300000L, new Sensor[]{Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK}),
+    SPLINE("bws", BwsLabel.values(), 600000L, new Sensor[]{Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK, Sensor.SENSOR_LOWER_BACK}),
+    HWS("hws", HwsLabel.values(), 600000L, new Sensor[]{Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK}),
+    LWS("lws", LwsLabel.values(), 600000L, new Sensor[]{Sensor.SENSOR_LOWER_BACK});
 
-    private String areaType;
+    private String areaName;
     private Label[] label;
     private long notificationDuration;
+    private Sensor[] sensors;
 
-    BodyArea(String areaType, Label[] label, Long l) {
-        this.areaType = areaType;
+    BodyArea(String areaName, Label[] label, Long l, Sensor[] sensors) {
+        this.areaName = areaName;
         this.label = label;
         this.notificationDuration = l;
+        this.sensors = sensors;
     }
 
     public long getMaxDuration() {
         return this.notificationDuration;
+    }
+
+    public boolean containsSensors(Sensor sensor) {
+        for(Sensor s:sensors){
+            if(s.equals(sensor)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean contains(String label) {

@@ -45,10 +45,10 @@ public class TrainModelActivity extends GenericBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         // set fields
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bluetooth_data);
+        setContentView(R.layout.activity_train);
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        //navigation.setSelectedItemId(R.id.navigation_bluetooth);
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation_developer);
+        navigation.setSelectedItemId(R.id.navigation_train);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         labelTxt = (EditText) findViewById(R.id.editText2);

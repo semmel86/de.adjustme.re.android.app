@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
+import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 
 public class MainActivity extends GenericBaseActivity {
     private Button startServiceBtn;

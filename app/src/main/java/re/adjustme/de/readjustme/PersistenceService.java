@@ -274,7 +274,7 @@ public class PersistenceService extends Service {
                 motionData.put("user", this.username.toString());
                 for (BodyArea b : BodyArea.values()) {
                     if(dashboardData.getlast(b)!=null) {
-                        motionData.put(b.name(), dashboardData.getlast(b).getLabel().getDescription());
+                        motionData.put(b.name(), dashboardData.getlast(b).getLabel().getLabel());
                     }
                 }
             } catch (Exception e) {
@@ -405,10 +405,8 @@ public class PersistenceService extends Service {
     }
 
     public class NotifyServiceReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context arg0, Intent arg1) {
-            // TODO Auto-generated method stub
             int rqs = arg1.getIntExtra("RQS", 0);
             if (rqs == 1) {
                 stopSelf();
