@@ -61,7 +61,7 @@ public class SvmPredictor implements Serializable {
         // calc amount of features -> one node for each feature
         int c = 0;
         for (Sensor s : Sensor.values()) {
-//            if(area.containsSensors(s)){
+            if(area.containsSensors(s)){
             if (!s.isExclude_x()) {
                 c++;
             }
@@ -71,34 +71,37 @@ public class SvmPredictor implements Serializable {
             if (!s.isExclude_z()) {
                 c++;
             }}
-//        }
+        }
         final svm_node[] x = new svm_node[c];
         c = 0;
 
         for (Sensor s : Sensor.values()) {
             // x
-            if (!s.isExclude_x()) {
-                x[c] = new svm_node();
-                x[c].index = c;
-                x[c].value = md.getMotion(s).getX();
-                c++;
-            }
-            // y
-            if (!s.isExclude_y()) {
-                x[c] = new svm_node();
-                x[c].index = c;
-                x[c].value = md.getMotion(s).getY();
-                c++;
-            }
-            // z
-            if (!s.isExclude_z()) {
-                x[c] = new svm_node();
-                x[c].index = c;
-                x[c].value = md.getMotion(s).getZ();
-                c++;
+            if (area.containsSensors(s)) {
+                if (!s.isExclude_x()) {
+                    x[c] = new svm_node();
+                    x[c].index = c;
+                    x[c].value = md.getMotion(s).getX();
+                    c++;
+                }
+                // y
+                if (!s.isExclude_y()) {
+                    x[c] = new svm_node();
+                    x[c].index = c;
+                    x[c].value = md.getMotion(s).getY();
+                    c++;
+                }
+                // z
+                if (!s.isExclude_z()) {
+                    x[c] = new svm_node();
+                    x[c].index = c;
+                    x[c].value = md.getMotion(s).getZ();
+                    c++;
+                }
             }
         }
         double v = svm.svm_predict_probability(model, x, prob_estimates); // internal prediction
+        System.out.println(prob_estimates);
         return v;
     }
 

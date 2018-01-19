@@ -136,7 +136,7 @@ public class MotionDataSetDto implements Serializable {
             s.append(sep);
             int i = 1;
             for (final Sensor sensor : Sensor.values()) {
-//                if(area.containsSensors(sensor)){
+                if(area.containsSensors(sensor)){
                 final MotionData md = this.motionDataSet[sensor.getSensorNumber() - 1];
                 if (!sensor.isExclude_x()) {
                     // x
@@ -148,7 +148,7 @@ public class MotionDataSetDto implements Serializable {
                 }
                 if (!sensor.isExclude_y()) {
                     // y
-                    s.append(i + 1);
+                    s.append(i);
                     s.append(pair);
                     s.append(md.getY());
                     s.append(sep);
@@ -156,13 +156,13 @@ public class MotionDataSetDto implements Serializable {
                 }
                 if (!sensor.isExclude_z()) {
                     // z
-                    s.append(i + 2);
+                    s.append(i);
                     s.append(pair);
                     s.append(md.getZ());
                     s.append(sep);
                     i++;
                 }
-//            }
+            }
 }
             return s.toString();
         } else {
