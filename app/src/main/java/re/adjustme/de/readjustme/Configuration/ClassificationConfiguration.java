@@ -17,7 +17,7 @@ public class ClassificationConfiguration {
     public static final String UNKNOWN_POSITION = "Unknown";
     // if true the model will be calculated
     // else load from APK
-    public static final boolean CALCULATE_MODEL = true;
+    public static final boolean CALCULATE_MODEL = false;
 
     /*
     // SVM model settings
@@ -25,6 +25,10 @@ public class ClassificationConfiguration {
     public static final boolean USE_SVM_MODEL = true;
     public static int CROSS_VALIDATION=0;
     public static String motionDataSetFile="FullMotionDataSet.csv";
+
+    // Svm feauters
+    public static final boolean RAW_VALUES=true;
+    public static final boolean DISTANCE_VALUES=true;
 
     // default values for SVM training
     public final static svm_parameter getSVMParams(){

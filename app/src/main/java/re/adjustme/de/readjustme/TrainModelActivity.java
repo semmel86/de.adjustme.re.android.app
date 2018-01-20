@@ -9,6 +9,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
+
 /**
  * Created by Semmel on 12.11.2017.
  */
@@ -47,9 +49,8 @@ public class TrainModelActivity extends GenericBaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_train);
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation_developer);
-        navigation.setSelectedItemId(R.id.navigation_train);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        // set navigation bar
+         setNavigationBar();
 
         labelTxt = (EditText) findViewById(R.id.editText2);
         isInLabeledPostion = (ToggleButton) findViewById(R.id.toggleButton2);

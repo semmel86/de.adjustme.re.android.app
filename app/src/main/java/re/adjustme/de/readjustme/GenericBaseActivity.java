@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 
@@ -23,7 +24,6 @@ public abstract class GenericBaseActivity extends AppCompatActivity {
     protected EvaluationBackgroundService mEvaluationBackgroundService = null;
     protected ServiceConnection mEvaluationConnection = null;
     protected ServiceConnection mPersistenceConnection = null;
-
     protected BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -108,6 +108,32 @@ public abstract class GenericBaseActivity extends AppCompatActivity {
         setClassificationConnection();
         Intent intent2 = new Intent(this, EvaluationBackgroundService.class);
         boolean d = bindService(intent2, mEvaluationConnection, Context.BIND_AUTO_CREATE);
+
+    }
+
+    protected void setNavigationBar(){
+        BottomNavigationView navigation =null;
+        BottomNavigationView deactivatedNavigation =null;
+        if(PersistenceConfiguration.MODE_DEVELOPMENT) {
+            navigation = (BottomNavigationView) findViewById(R.id.navigation_developer);
+            navigation.setVisibility(View.VISIBLE);
+            deactivatedNavigation = (BottomNavigationView) findViewById(R.id.navigation);
+            deactivatedNavigation.setVisibility(View.INVISIBLE);
+        }else{
+            navigation = (BottomNavigationView) findViewById(R.id.navigation);
+            navigation.setVisibility(View.VISIBLE);
+            deactivatedNavigation = (BottomNavigationView) findViewById(R.id.navigation_developer);
+            deactivatedNavigation.setVisibility(View.INVISIBLE);
+        }
+
+        if(this.getClass().equals(MainActivity.class)) {
+            navigation.setSelectedItemId(R.id.navigation_home);
+        }else if(this.getClass().equals(DashboardDayActivity.class)) {
+            navigation.setSelectedItemId(R.id.navigation_dashboard);
+        }else if(this.getClass().equals(TrainModelActivity.class)) {
+            navigation.setSelectedItemId(R.id.navigation_train);
+        }
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
 }

@@ -28,28 +28,8 @@ public class SvmPredictor implements Serializable {
     }
 
     private void init() {
-        if (model == null) {
-            this.loadModel();
-        }
     }
 
-    private void loadModel() {
-        // TODO Auto-generated method stub
-    }
-
-    private void saveModel(svm_model model) {
-        // TODO Auto-generated method stub
-    }
-
-    private void trainModel(File trainingsData) {
-
-        final svm_train train = new svm_train();
-        if (trainingsData == null) {
-            model = train.train(System.getProperty("user.dir") + "/FullMotionDataSet2.svm");
-        } else {
-            model = train.train(System.getProperty(trainingsData.getAbsolutePath()));
-        }
-    }
 
     public double predict(MotionDataSetDto md, BodyArea area) {
         //final int svm_type = svm.svm_get_svm_type(model);
@@ -58,48 +38,49 @@ public class SvmPredictor implements Serializable {
         // Data for prediction
         double[] prob_estimates = new double[nr_class];
 
-        // calc amount of features -> one node for each feature
-        int c = 0;
-        for (Sensor s : Sensor.values()) {
-            if(area.containsSensors(s)){
-            if (!s.isExclude_x()) {
-                c++;
-            }
-            if (!s.isExclude_y()) {
-                c++;
-            }
-            if (!s.isExclude_z()) {
-                c++;
-            }}
-        }
-        final svm_node[] x = new svm_node[c];
-        c = 0;
-
-        for (Sensor s : Sensor.values()) {
-            // x
-            if (area.containsSensors(s)) {
-                if (!s.isExclude_x()) {
-                    x[c] = new svm_node();
-                    x[c].index = c;
-                    x[c].value = md.getMotion(s).getX();
-                    c++;
-                }
-                // y
-                if (!s.isExclude_y()) {
-                    x[c] = new svm_node();
-                    x[c].index = c;
-                    x[c].value = md.getMotion(s).getY();
-                    c++;
-                }
-                // z
-                if (!s.isExclude_z()) {
-                    x[c] = new svm_node();
-                    x[c].index = c;
-                    x[c].value = md.getMotion(s).getZ();
-                    c++;
-                }
-            }
-        }
+//        // calc amount of features -> one node for each feature
+//        int c = 0;
+//        for (Sensor s : Sensor.values()) {
+//            if(area.containsSensors(s)){
+//            if (!s.isExclude_x()) {
+//                c++;
+//            }
+//            if (!s.isExclude_y()) {
+//                c++;
+//            }
+//            if (!s.isExclude_z()) {
+//                c++;
+//            }}
+//        }
+//        final svm_node[] x = new svm_node[c];
+//        c = 0;
+//
+//        for (Sensor s : Sensor.values()) {
+//            // x
+//            if (area.containsSensors(s)) {
+//                if (!s.isExclude_x()) {
+//                    x[c] = new svm_node();
+//                    x[c].index = c;
+//                    x[c].value = md.getMotion(s).getX();
+//                    c++;
+//                }
+//                // y
+//                if (!s.isExclude_y()) {
+//                    x[c] = new svm_node();
+//                    x[c].index = c;
+//                    x[c].value = md.getMotion(s).getY();
+//                    c++;
+//                }
+//                // z
+//                if (!s.isExclude_z()) {
+//                    x[c] = new svm_node();
+//                    x[c].index = c;
+//                    x[c].value = md.getMotion(s).getZ();
+//                    c++;
+//                }
+//            }
+//        }
+        final svm_node[] x = md.getsvmNodes(area);
         double v = svm.svm_predict_probability(model, x, prob_estimates); // internal prediction
         System.out.println(prob_estimates);
         return v;

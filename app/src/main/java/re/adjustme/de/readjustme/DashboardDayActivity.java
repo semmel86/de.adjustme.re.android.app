@@ -57,9 +57,7 @@ public class DashboardDayActivity extends GenericBaseActivity {
         boolean b = bindService(intent, mPersistenceConnection, Context.BIND_AUTO_CREATE);
         setContentView(R.layout.activity_dashboard_day);
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setSelectedItemId(R.id.navigation_dashboard);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
 
         splinePie = (PieChart) findViewById(R.id.splinePieChart);
         shoulderPie = (PieChart) findViewById(R.id.shoulderPieChart);
@@ -75,6 +73,8 @@ public class DashboardDayActivity extends GenericBaseActivity {
         });
         radioGroup.check(R.id.radio_all);
 
+        // set navigation bar
+        setNavigationBar();
     }
 
     private void radioGroupCheckedChanged() {

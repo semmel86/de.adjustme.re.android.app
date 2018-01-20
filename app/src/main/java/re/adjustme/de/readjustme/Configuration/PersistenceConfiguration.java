@@ -10,6 +10,8 @@ import re.adjustme.de.readjustme.Predefined.PersistenceType;
 
 public class PersistenceConfiguration {
 
+public final static boolean MODE_DEVELOPMENT=true;
+
     public static final String CSV_SEPARATOR = ";";
     public static final PersistenceType DEFAULT_PERSISTOR = PersistenceType.FILE;
     public static final boolean SAVE_LOCAL = true;

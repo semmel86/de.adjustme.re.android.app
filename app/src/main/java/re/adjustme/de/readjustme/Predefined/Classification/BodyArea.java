@@ -77,4 +77,8 @@ public enum BodyArea {
         }
         return null;
     }
+
+    public Sensor[] getSensorSet(){
+        return  sensors;
+    }
 }

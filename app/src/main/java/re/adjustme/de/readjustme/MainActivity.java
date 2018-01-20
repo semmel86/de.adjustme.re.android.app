@@ -116,9 +116,10 @@ public class MainActivity extends GenericBaseActivity {
         changeStartStopBtns(mPersistenceService != null && mPersistenceService.getIsRunning());
         checkBluethoothActive();
         checkPermissions();
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setSelectedItemId(R.id.navigation_home);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        // set navigation bar
+        setNavigationBar();
+
         hws_posture = (TextView) findViewById(R.id.hws_posture);
         shoulder_posture = (TextView) findViewById(R.id.shoulder_posture);
         bws_posture = (TextView) findViewById(R.id.bws_posture);
@@ -127,6 +128,7 @@ public class MainActivity extends GenericBaseActivity {
                 mPostureReceiver, new IntentFilter("Posture"));
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mPostureReceiver, new IntentFilter("AppEvent"));
+
     }
 
     protected void afterServiceConnection() {
