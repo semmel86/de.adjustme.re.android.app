@@ -50,15 +50,7 @@ public class DashboardDayActivity extends GenericBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(R.string.title_dashboard);
-        PersistenceConfiguration.setPersistenceDirectory(this.getApplicationContext().getFilesDir());
-        // get Persistence Service Binder
-        setPersistenceConnection();
-        Intent intent = new Intent(this, PersistenceService.class);
-        boolean b = bindService(intent, mPersistenceConnection, Context.BIND_AUTO_CREATE);
         setContentView(R.layout.activity_dashboard_day);
-
-
-
         splinePie = (PieChart) findViewById(R.id.splinePieChart);
         shoulderPie = (PieChart) findViewById(R.id.shoulderPieChart);
         hwsPie = (PieChart) findViewById(R.id.hwsPieChart);

@@ -14,7 +14,7 @@ public final static boolean MODE_DEVELOPMENT=true;
 
     public static final String CSV_SEPARATOR = ";";
     public static final PersistenceType DEFAULT_PERSISTOR = PersistenceType.FILE;
-    public static final boolean SAVE_LOCAL = true;
+    public static final boolean SAVE_LOCAL = MODE_DEVELOPMENT;
     public static final boolean SAVE_BACKEND = true;
     public static final boolean ENABLE_CALIBRATION = true;
     private static String PERSISTENCE_DIRECTORY = System.getProperty("user.dir") + "/persistence/";

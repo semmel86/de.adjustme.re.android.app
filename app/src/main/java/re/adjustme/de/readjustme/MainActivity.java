@@ -80,12 +80,6 @@ public class MainActivity extends GenericBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PersistenceConfiguration.setPersistenceDirectory(this.getApplicationContext().getFilesDir());
-        // get Persistence Service Binder
-        setPersistenceConnection();
-        Intent intent = new Intent(this, PersistenceService.class);
-        boolean b = bindService(intent, mPersistenceConnection, Context.BIND_AUTO_CREATE);
-
         setContentView(R.layout.activity_main);
         usernameInput = (EditText) findViewById(R.id.editUsername);
         usernameInput.addTextChangedListener(new TextWatcher() {
