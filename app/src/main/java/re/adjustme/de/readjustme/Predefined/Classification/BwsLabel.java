@@ -9,13 +9,13 @@ import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
  */
 
 public enum BwsLabel implements Label {
-    A("A", "Neutral Position", "1"),
-    H("H", "Rotation rechts", "29"),
-    J("J", "Rotation links", "30"),
-    K("K", "Lateralflexion rechts", "31"),
-    L("L", "Lateralflexion links", "32"),
-    M("M", "Extension", "33"),
-    N("N", "Flexion", "34"), //
+    A("A", "neutrale Haltung", "1"),
+    H("H", "nach rechts gedreht", "29"),
+    J("J", "nach links gedreht", "30"),
+    K("K", "nach rechts gebeugt", "31"),
+    L("L", "nach links gebeugt", "32"),
+    M("M", "gestreckt", "33"),
+    N("N", "vorgebeugt", "34"), //
     O("O", "Rotation rechts & Lateralflexion rechts", "35"),
     P("P", "Rotation links & Lateralflexion rechts", "36"),
     Q("Q", "Rotation rechts & Lateralflexion links", "37"),
@@ -36,7 +36,7 @@ public enum BwsLabel implements Label {
     AF("AF", "Flexion & Lateralflexion rechts & Rotation links", "52"),
     AG("AG", "Flexion & Lateralflexion links & Rotation rechts", "53"),
     AH("AH", "Flexion & Lateralflexion + Rotation links", "54"),
-    UNLABELED(ClassificationConfiguration.UNKNOWN_POSITION, "Unbekannte Position", "0");
+    UNLABELED(ClassificationConfiguration.UNKNOWN_POSITION, "unbekannte Haltung", "0");
 
 
     private String label;

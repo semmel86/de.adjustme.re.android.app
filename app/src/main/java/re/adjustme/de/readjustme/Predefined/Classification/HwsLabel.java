@@ -9,14 +9,14 @@ import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
  */
 
 public enum HwsLabel implements Label {
-    A("A", "Neutral Position", "1"),
-    H("B", "Rotation rechts", "55"),
-    J("C", "Rotation links", "56"),
-    K("D", "Lateralflexion rechts", "57"), // raus
-    L("E", "Lateralflexion links", "58"), // raus
-    M("F", "Extension", "59"), // turtle neck
-    N("G", "Flexion", "60"), // tech-neck
-    UNLABELED(ClassificationConfiguration.UNKNOWN_POSITION, "Unbekannte Position", "0");
+    A("A", "neutrale Haltung", "1"),
+    H("B", "nach rechts gedreht", "55"),
+    J("C", "nach links gedreht", "56"),
+    K("D", "nach rechts gebeugt", "57"), // raus
+    L("E", "nach links gebeugt", "58"), // raus
+    M("F", "gestreckt", "59"), // turtle neck
+    N("G", "vorgebeugt", "60"), // tech-neck
+    UNLABELED(ClassificationConfiguration.UNKNOWN_POSITION, "unbekannte Haltung", "0");
 
 
     private String label;

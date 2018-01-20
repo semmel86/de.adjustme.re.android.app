@@ -5,23 +5,47 @@
     <string name="train">Train</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <string name="daily_posture_profile">Your posture profile</string>
+    <string name="daily_posture_profile">Dein Haltungsprofil</string>
 
     <string name="mainActivity_start">Start</string>
     <string name="mainActivity_stop">Stop</string>
-    <string name="mainActivity_calibrate">Calibrate</string>
+    <string name="mainActivity_calibrate">Kalibrieren</string>
     <string name="mainActivity_hws">HWS</string>
-    <string name="mainActivity_shoulder">Shoulder</string>
+    <string name="mainActivity_shoulder">Schulter</string>
     <string name="mainActivity_bws">BWS</string>
     <string name="mainActivity_lws">LWS</string>
-    <string name="mainActivity_usernameHint">Enter username</string>
+    <string name="mainActivity_usernameHint">Benutzernamen eingeben</string>
 
-    <string name="spline_dashboard">BWS dashboard</string>
-    <string name="shoulder_dashboard">shoulder dashboard</string>
-    <string name="lws_dashboard">LWS dashboard</string>
-    <string name="hws_dashboard">HWS dashboard</string>
-    <string name="dashboard_radio_all">Entire</string>
-    <string name="dashboard_radio_week">This week</string>
-    <string name="dashboard_radio_day">Today</string>
-    <string name="dashboard_radio_hour">Current Hour</string>
+    <string name="spline_dashboard">Übersicht Brustwirbelsäule</string>
+    <string name="shoulder_dashboard">Übersicht Schultern</string>
+    <string name="lws_dashboard">Übersicht Lendenwirbelsäule</string>
+    <string name="hws_dashboard">Übersicht Halswirbelsäule</string>
+    <string name="dashboard_radio_all">gesamt</string>
+    <string name="dashboard_radio_week">aktuelle Woche</string>
+    <string name="dashboard_radio_day">Heute</string>
+    <string name="dashboard_radio_hour">aktuelle Stunde</string>
+
+    <!-- areas -->
+    <string name="hws">Halswirbelsäule</string>
+    <string name="bws">Brustwirbelsäule</string>
+    <string name="lws">Lendenwirbelsäule</string>
+    <string name="shoulder">Schultern</string>
+
+    <!-- postures -->
+    <string name="neutral_posture">neutrale Haltung</string>
+    <string name="unknown">unbekannt</string>
+    <string name="posture">Haltung</string>
+    <string name="extension">gestreckt</string>
+    <string name="flexion">gebeugt</string>
+    <string name="latflex_right">nach rechts gebeugt</string>
+    <string name="latflex_left">nach links gebeugt</string>
+    <string name="rotation_right">nach rechts gedreht</string>
+    <string name="rotation_left">nach links gedreht</string>
+    <string name="elevation">hochgezogen</string>
+    <string name="retroversion">zurückgezogen</string>
+    <string name="anteversion">vorgestreckt</string>
+    <string name="depression">runtergezogen</string>
+    <string name="left_shoulder">linke Schulter</string>
+    <string name="right_shoulder">rechte Schulter</string>
+    <string name="both_shoulders">beide Schultern</string>
 </resources>

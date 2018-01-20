@@ -9,9 +9,9 @@ import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
  */
 
 public enum LwsLabel implements Label {
-    A("A", "Neutral Position", "1"),
-    M("AJ", "Extension", "61"),
-    N("AI", "Flexion", "62"),
+    A("A", "neutrale Haltung", "1"),
+    M("AJ", "gestreckt", "61"),
+    N("AI", "vorgebeugt", "62"),
     UNLABELED(ClassificationConfiguration.UNKNOWN_POSITION, "Unbekannte Position", "0");
 
     private String label;

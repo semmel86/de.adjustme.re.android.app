@@ -28,7 +28,7 @@ public class ClassificationConfiguration {
 
     // Svm feauters
     public static final boolean RAW_VALUES=true;
-    public static final boolean DISTANCE_VALUES=true;
+    public static final boolean DISTANCE_VALUES=false;
 
     // default values for SVM training
     public final static svm_parameter getSVMParams(){

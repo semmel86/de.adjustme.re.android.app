@@ -1,6 +1,7 @@
 package re.adjustme.de.readjustme.Predefined.Classification;
 
 import re.adjustme.de.readjustme.Predefined.Sensor;
+import re.adjustme.de.readjustme.R;
 
 /**
  * Defines the different Body Areas and the referring labeled Motions
@@ -11,10 +12,10 @@ import re.adjustme.de.readjustme.Predefined.Sensor;
  */
 
 public enum BodyArea {
-    SHOULDER("shoulder", ShoulderLabel.values(), 300000L, new Sensor[]{Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK,Sensor.SENSOR_FRONT}),
-    SPLINE("bws", BwsLabel.values(), 600000L, new Sensor[]{Sensor.SENSOR_LOWER_BACK,Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK}),
-    HWS("hws", HwsLabel.values(), 600000L, new Sensor[]{Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK}),
-    LWS("lws", LwsLabel.values(), 6000000L, new Sensor[]{Sensor.SENSOR_LOWER_BACK,Sensor.SENSOR_UPPER_BACK,Sensor.SENSOR_FRONT});
+    SHOULDER("Schultern", ShoulderLabel.values(), 300000L, new Sensor[]{Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK,Sensor.SENSOR_FRONT,Sensor.SENSOR_LOWER_BACK}),
+    SPLINE("Brustwirbelsäule", BwsLabel.values(), 600000L, new Sensor[]{Sensor.SENSOR_LOWER_BACK,Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK}),
+    HWS("Halswirbelsäule", HwsLabel.values(), 600000L, new Sensor[]{Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK,Sensor.SENSOR_LOWER_BACK}),
+    LWS("Lendenwirbelsäule", LwsLabel.values(), 6000000L, new Sensor[]{Sensor.SENSOR_LOWER_BACK,Sensor.SENSOR_UPPER_BACK,Sensor.SENSOR_FRONT,Sensor.SENSOR_LEFT_SHOULDER,Sensor.SENSOR_RIGHT_SHOULDER});
 
     private String areaName;
     private Label[] label;
@@ -80,5 +81,9 @@ public enum BodyArea {
 
     public Sensor[] getSensorSet(){
         return  sensors;
+    }
+
+    public String getAreaName(){
+        return this.areaName;
     }
 }

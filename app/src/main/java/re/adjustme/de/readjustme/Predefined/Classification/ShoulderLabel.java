@@ -9,19 +9,19 @@ import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
  */
 
 public enum ShoulderLabel implements Label {
-    A("A","Neutral Position", "1"),
-    AK("AK", "Anteversion links", "2"), // je eine Schulterseite ausserhalb d. neutr. pos
-    AL("AL", "Anteversion rechts", "3"),
-    AM("AM", "Anteversion links & rechts", "4"),
-    AN("AN", "Retroversion links", "5"),
-    AO("AO", "Retroversion rechts", "6"),
-    AP("AP", "Retroversion links & rechts", "7"),
-    AQ("AQ", "Elevation links", "8"),
-    AR("AR", "Elevation rechts", "9"),
-    AS("AS", "Elevation links & rechts", "10"),
-    AT("AT", "Depression links", "11"),
-    AU("AU", "Depression rechts", "12"),
-    AV("AV", "Depression links & rechts", "13"),
+    A("A","neutrale Haltung", "1"),
+    AK("AK", "links vorgezogen", "2"), // je eine Schulterseite ausserhalb d. neutr. pos
+    AL("AL", "rechts vorgezogen", "3"),
+    AM("AM", "links & rechts vorgezogen", "4"),
+    AN("AN", "links zurückgezogen", "5"),
+    AO("AO", "rechts zurückgezogen", "6"),
+    AP("AP", "links & rechts zurückgezogen", "7"),
+    AQ("AQ", "links hochgezogen", "8"),
+    AR("AR", "rechts hochgezogen", "9"),
+    AS("AS", "links & rechts hochgezogen", "10"),
+    AT("AT", "links runtergezogen", "11"),
+    AU("AU", "rechts runtergezogen", "12"),
+    AV("AV", "links & rechts runtergezogen", "13"),
     //try simple model
     AW("AW", "Anteversion links & Elevation links", "14"),
     AX("AX", "Anteversion rechts & Elevation rechts", "15"),
@@ -35,12 +35,12 @@ public enum ShoulderLabel implements Label {
     AAH("AAH", "Retroversion links & Depression links", "23"),
     AAI("AAI", "Retroversion rechts & Depression rechts", "24"),
 
-    AAJ("AAJ", "Anteversion links & Retroversion rechts", "25"), // ab hier Diagonalen über beide Schultern
-    AAK("AAK", "Anteversion rechts & Retroversion links", "26"),
+    AAJ("AAJ", "links vorgezogen & rechts zurückgezogen", "25"), // ab hier Diagonalen über beide Schultern
+    AAK("AAK", "rechts vorgezogen & links zurückgezogen", "26"),
     //
-    AAL("AAL", "Elevation links & Depression rechts", "27"),
-    AAM("AAM", "Elevation rechts & Depression links", "28"),
-    UNLABELED(ClassificationConfiguration.UNKNOWN_POSITION, "Unbekannte Position", "0");
+    AAL("AAL", "links hochgezogen & rechts runtergezogen", "27"),
+    AAM("AAM", "rechts hochgezogen & links runtergezogen", "28"),
+    UNLABELED(ClassificationConfiguration.UNKNOWN_POSITION, "unbekannte Haltung", "0");
 
 
     private String label;

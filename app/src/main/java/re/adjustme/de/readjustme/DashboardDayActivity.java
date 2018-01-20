@@ -139,6 +139,7 @@ public class DashboardDayActivity extends GenericBaseActivity {
         colors.add(ResourcesCompat.getColor(getResources(), R.color.colorAccent, null));
         colors.add(ResourcesCompat.getColor(getResources(), R.color.textColorPrimary, null));
         colors.add(ResourcesCompat.getColor(getResources(), R.color.textColorTertiary, null));
+
         //TODO add list
         pieDataSet.setColors(colors);
 
