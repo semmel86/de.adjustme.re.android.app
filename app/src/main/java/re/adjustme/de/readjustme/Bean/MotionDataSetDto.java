@@ -81,49 +81,6 @@ public class MotionDataSetDto implements Serializable {
         return s.toString();
     }
 
-    // this method sets the features for svm!
-    public String toSVMLightStr() {
-        // only if we are in position!
-        if (this.isInLabeledPostion) {
-            final String sep = " ";
-            final String pair = ":";
-            final StringBuilder s = new StringBuilder();
-            s.append(svmClass);
-            s.append(sep);
-            int i = 1;
-            for (final Sensor sensor : Sensor.values()) {
-
-                final MotionData md = this.motionDataSet[sensor.getSensorNumber() - 1];
-                if (!sensor.isExclude_x()) {
-                    // x
-                    s.append(i);
-                    s.append(pair);
-                    s.append(md.getX());
-                    s.append(sep);
-                    i++;
-                }
-                if (!sensor.isExclude_y()) {
-                    // y
-                    s.append(i + 1);
-                    s.append(pair);
-                    s.append(md.getY());
-                    s.append(sep);
-                    i++;
-                }
-                if (!sensor.isExclude_z()) {
-                    // z
-                    s.append(i + 2);
-                    s.append(pair);
-                    s.append(md.getZ());
-                    s.append(sep);
-                    i++;
-                }
-            }
-            return s.toString();
-        } else {
-            return "";
-        }
-    }
 
     // this method sets the features for svm!
     public String toSVMLightStr(BodyArea area) {

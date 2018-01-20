@@ -6,6 +6,7 @@ import java.util.Set;
 
 import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
 import re.adjustme.de.readjustme.Predefined.Sensor;
+import re.adjustme.de.readjustme.Util.Distance;
 
 /**
  * Created by semmel on 16.12.2017.
@@ -171,8 +172,7 @@ public class MotionClassificator implements Serializable {
 
         // calculate probability
         // 1 - distance
-        double distance = Math.sqrt(Math.pow(meanX - x, 2) + Math.pow(meanY - y, 2) + Math.pow(meanZ - z, 2));
-
+        double distance = Distance.getEuclideanDistance(meanX,x,meanY,y,meanZ,z);
         // 2 - get Probability from distance/maxDistance*100
         return (1 - (distance / maxDist)) * 100;
     }
@@ -181,7 +181,7 @@ public class MotionClassificator implements Serializable {
 
         // calculate probability
         // 1 - distance
-        double distance = Math.sqrt(Math.pow(meanX - x, 2) + Math.pow(meanY - y, 2));
+        double distance = Distance.getEuclideanDistance(meanX,x,meanY,y);
 
         // 2 - get Probability from distance/maxDistance*100
         return (1 - (distance / maxDist)) * 100;

@@ -11,10 +11,10 @@ import re.adjustme.de.readjustme.Predefined.Sensor;
  */
 
 public enum BodyArea {
-    SHOULDER("shoulder", ShoulderLabel.values(), 300000L, new Sensor[]{Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK}),
-    SPLINE("bws", BwsLabel.values(), 600000L, new Sensor[]{Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK, Sensor.SENSOR_LOWER_BACK}),
+    SHOULDER("shoulder", ShoulderLabel.values(), 300000L, new Sensor[]{Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK,Sensor.SENSOR_FRONT}),
+    SPLINE("bws", BwsLabel.values(), 600000L, new Sensor[]{Sensor.SENSOR_LOWER_BACK,Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK}),
     HWS("hws", HwsLabel.values(), 600000L, new Sensor[]{Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK}),
-    LWS("lws", LwsLabel.values(), 6000000L, new Sensor[]{Sensor.SENSOR_LOWER_BACK});
+    LWS("lws", LwsLabel.values(), 6000000L, new Sensor[]{Sensor.SENSOR_LOWER_BACK,Sensor.SENSOR_UPPER_BACK,Sensor.SENSOR_FRONT});
 
     private String areaName;
     private Label[] label;
