@@ -98,7 +98,7 @@ public class PersistenceService extends Service {
                         }
                         dashboardData.getSum(bodyarea).put(lastLabel.getLabel(), sumDuration);
                         if (dur >= lastLabel.getArea().getMaxDuration() * sendNotification) {
-                            sendNotification(lastLabel.getArea().name());
+                            sendNotification(lastLabel.getArea().getAreaName(),lastLabel.getLabel().getDescription(),dur);
                             sendNotification++;
                         }
                     } else {
@@ -367,25 +367,29 @@ public class PersistenceService extends Service {
         this.receivesLiveData = false;
     }
 
-    protected void sendNotification(String text) {
+    protected void sendNotification(String area,String posture,long dur) {
         // prepare intent which is triggered if the
         // notification is selected
 
         Intent intent = new Intent(this, NotifyServiceReceiver.class);
         PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
+        String s = "Wir haben dich in den letzen "+Long.toString(dur/60000L)+" Minuten sehr lange in " +
+                area.toString()+" - "+posture.toString()+" gesehen. Du solltest dich bewegen oder deine Position ändern um Verspannungen vorzubeugen.";
+//        s = String.format(s, ,area.toString(),posture.toString());
         // build notification
         // the addAction re-use the same intent to keep the example short
         Notification n = new Notification.Builder(this)
                 .setContentTitle("re.adjustme")
-                .setContentText("Please change your " + text + " posture")
+
+                // Du bist in der letzten zeit sehr lange (time)%d in folgender Haltung gewesen:
+                //  @ Area%s - Haltung%s
+                // Es wird zeit dich zu bewegen
+                .setContentText(s)
                 .setSmallIcon(R.drawable.ic_logo_nuricon)
                 .setContentIntent(pIntent)
+                .setVibrate(new long[]{200L, 200L, 200L, 200L, 200L})
                 .setAutoCancel(true).build();
-        // .addAction(R.drawable.icon, "Call", pIntent)
-        // .addAction(R.drawable.icon, "More", pIntent)
-        // .addAction(R.drawable.icon, "And more", pIntent).build();
-
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

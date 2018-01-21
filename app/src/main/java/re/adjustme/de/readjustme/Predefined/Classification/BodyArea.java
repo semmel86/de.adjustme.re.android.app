@@ -12,7 +12,7 @@ import re.adjustme.de.readjustme.R;
  */
 
 public enum BodyArea {
-    SHOULDER("Schultern", ShoulderLabel.values(), 300000L, new Sensor[]{Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK,Sensor.SENSOR_FRONT,Sensor.SENSOR_LOWER_BACK}),
+    SHOULDER("Schultern", ShoulderLabel.values(), 600000L, new Sensor[]{Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK,Sensor.SENSOR_FRONT,Sensor.SENSOR_LOWER_BACK}),
     SPLINE("Brustwirbelsäule", BwsLabel.values(), 600000L, new Sensor[]{Sensor.SENSOR_LOWER_BACK,Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK}),
     HWS("Halswirbelsäule", HwsLabel.values(), 600000L, new Sensor[]{Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK,Sensor.SENSOR_LOWER_BACK}),
     LWS("Lendenwirbelsäule", LwsLabel.values(), 6000000L, new Sensor[]{Sensor.SENSOR_LOWER_BACK,Sensor.SENSOR_UPPER_BACK,Sensor.SENSOR_FRONT,Sensor.SENSOR_LEFT_SHOULDER,Sensor.SENSOR_RIGHT_SHOULDER});
