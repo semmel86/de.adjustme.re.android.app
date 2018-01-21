@@ -110,7 +110,6 @@ public class MainActivity extends GenericBaseActivity {
         changeStartStopBtns(mPersistenceService != null && mPersistenceService.getIsRunning());
         checkBluethoothActive();
         checkPermissions();
-
         // set navigation bar
         setNavigationBar();
 

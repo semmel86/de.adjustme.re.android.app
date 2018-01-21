@@ -26,9 +26,9 @@ public class ClassificationConfiguration {
     public static int CROSS_VALIDATION=0;
     public static String motionDataSetFile="FullMotionDataSet.csv";
 
-    // Svm feauters
+    // Svm featuers
     public static final boolean RAW_VALUES=true;
-    public static final boolean DISTANCE_VALUES=false;
+    public static final boolean DISTANCE_VALUES=true;
 
     // default values for SVM training
     public final static svm_parameter getSVMParams(){

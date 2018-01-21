@@ -60,12 +60,13 @@ public class BluetoothBackgroundService extends Service {
         getBondedDevice();
         // connect to device
         startConnection();
-        return super.onStartCommand(intent, flags, startId);
+        //return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        destroyed = true;
+       destroyed = true;
         mPersistenceService.unsetReceivesLiveData();
         if (mSocket != null && mSocket.isConnected()) {
             try {

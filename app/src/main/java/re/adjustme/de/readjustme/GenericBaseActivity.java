@@ -21,8 +21,8 @@ import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 public abstract class GenericBaseActivity extends AppCompatActivity {
 
     protected PersistenceService mPersistenceService = null;
-    protected EvaluationBackgroundService mEvaluationBackgroundService = null;
-    protected ServiceConnection mEvaluationConnection = null;
+//    protected EvaluationBackgroundService mEvaluationBackgroundService = null;
+    //protected ServiceConnection mEvaluationConnection = null;
     protected ServiceConnection mPersistenceConnection = null;
     protected BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -71,24 +71,9 @@ public abstract class GenericBaseActivity extends AppCompatActivity {
         };
     }
 
-    protected void setClassificationConnection() {
-        mEvaluationConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                EvaluationBackgroundService.EvaluationBackgroundServiceBinder b = (EvaluationBackgroundService.EvaluationBackgroundServiceBinder) iBinder;
-                mEvaluationBackgroundService = b.getService();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName componentName) {
-                mPersistenceService = null;
-            }
-        };
-    }
-
-
     protected void afterServiceConnection() {
-
+    // declare methods that should be called after persitence connection here
+        // in derived classes
     }
 
     @Override
@@ -99,18 +84,16 @@ public abstract class GenericBaseActivity extends AppCompatActivity {
             getSupportActionBar().setLogo(R.drawable.ic_logo_nuricon);
             getSupportActionBar().setDisplayUseLogoEnabled(true);
         }
+        addPersistence();
+    }
+
+    protected void addPersistence(){
         PersistenceConfiguration.setPersistenceDirectory(this.getApplicationContext().getFilesDir());
         // get Persistence Service Binder
         setPersistenceConnection();
         Intent intent = new Intent(this, PersistenceService.class);
         boolean b = bindService(intent, mPersistenceConnection, Context.BIND_AUTO_CREATE);
-
-        setClassificationConnection();
-        Intent intent2 = new Intent(this, EvaluationBackgroundService.class);
-        boolean d = bindService(intent2, mEvaluationConnection, Context.BIND_AUTO_CREATE);
-
     }
-
     protected void setNavigationBar(){
         BottomNavigationView navigation =null;
         BottomNavigationView deactivatedNavigation =null;
@@ -134,6 +117,6 @@ public abstract class GenericBaseActivity extends AppCompatActivity {
             navigation.setSelectedItemId(R.id.navigation_train);
         }
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-    }
+}
 
 }

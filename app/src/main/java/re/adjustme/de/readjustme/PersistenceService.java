@@ -20,7 +20,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Stack;
 
 import re.adjustme.de.readjustme.Bean.DashboardData;
 import re.adjustme.de.readjustme.Bean.LabelData;
@@ -31,7 +30,6 @@ import re.adjustme.de.readjustme.Persistence.BackendConnection;
 import re.adjustme.de.readjustme.Persistence.MotionDataPersistor;
 import re.adjustme.de.readjustme.Persistence.PersistorFactory;
 import re.adjustme.de.readjustme.Persistence.internal.ObjectPersistor;
-import re.adjustme.de.readjustme.Persistence.internal.TextFilePersistor;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Predefined.Classification.Label;
 import re.adjustme.de.readjustme.Predefined.Sensor;
@@ -371,30 +369,43 @@ public class PersistenceService extends Service {
         // prepare intent which is triggered if the
         // notification is selected
 
-        Intent intent = new Intent(this, NotifyServiceReceiver.class);
+        Intent intent = new Intent(this, DashboardDayActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-        String s = "Wir haben dich in den letzen "+Long.toString(dur/60000L)+" Minuten sehr lange in " +
-                area.toString()+" - "+posture.toString()+" gesehen. Du solltest dich bewegen oder deine Position ändern um Verspannungen vorzubeugen.";
-//        s = String.format(s, ,area.toString(),posture.toString());
+        String s ="Zeit zu handeln.";
+        // large notification layout
+        Notification.InboxStyle inboxStyle =
+                new Notification.InboxStyle();
+        inboxStyle.addLine("Du warst jetzt schon "+Long.toString(dur/60000L)+" Minuten lang in") ;
+//        inboxStyle.addLine(" ");
+        inboxStyle.addLine("    Haltung: "+area.toString()+" - "+posture.toString());
+//        inboxStyle.addLine(" ");
+        inboxStyle.addLine("Du solltest dich bewegen oder deine Position");
+        inboxStyle.addLine("ändern um Verspannungen vorzubeugen.");
+
+
+        // Sets a title for the Inbox in expanded layout
+        inboxStyle.setBigContentTitle("Haltungswarnung");
+
         // build notification
         // the addAction re-use the same intent to keep the example short
         Notification n = new Notification.Builder(this)
                 .setContentTitle("re.adjustme")
-
-                // Du bist in der letzten zeit sehr lange (time)%d in folgender Haltung gewesen:
-                //  @ Area%s - Haltung%s
-                // Es wird zeit dich zu bewegen
                 .setContentText(s)
                 .setSmallIcon(R.drawable.ic_logo_nuricon)
                 .setContentIntent(pIntent)
                 .setVibrate(new long[]{200L, 200L, 200L, 200L, 200L})
+                .setStyle(inboxStyle)
                 .setAutoCancel(true).build();
+
+
+
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         notificationManager.notify(0, n);
+
     }
 
     /**
@@ -405,16 +416,6 @@ public class PersistenceService extends Service {
         PersistenceService getService() {
             // Return this instance of LocalService so clients can call public methods
             return PersistenceService.this;
-        }
-    }
-
-    public class NotifyServiceReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context arg0, Intent arg1) {
-            int rqs = arg1.getIntExtra("RQS", 0);
-            if (rqs == 1) {
-                stopSelf();
-            }
         }
     }
 

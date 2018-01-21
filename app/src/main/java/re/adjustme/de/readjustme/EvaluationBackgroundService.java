@@ -64,7 +64,7 @@ public class EvaluationBackgroundService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return mBinder;
+        return null;//mBinder;
     }
 
     @Override
@@ -88,7 +88,8 @@ public class EvaluationBackgroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         this.init();
-        return super.onStartCommand(intent, flags, startId);
+        //return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     private void init() {

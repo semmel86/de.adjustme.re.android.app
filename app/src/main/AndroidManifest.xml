@@ -36,9 +36,10 @@
 
         <service
             android:name=".PersistenceService"
-            android:exported="false" />
+            android:exported="false"
+           />
         <service
-            android:name=".BluetoothBackgroundService"
+            android:name="re.adjustme.de.readjustme.BluetoothBackgroundService"
             android:exported="false" />
         <service
             android:name=".EvaluationBackgroundService"
