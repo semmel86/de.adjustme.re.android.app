@@ -30,6 +30,11 @@
             android:configChanges="keyboardHidden|orientation|screenSize"></activity>
 
         <activity
+            android:name=".TimelineActivity"
+            android:label="@string/title_timeline"
+            android:configChanges="keyboardHidden|orientation|screenSize"></activity>
+
+        <activity
             android:name=".TrainModelActivity"
             android:label="BluetoothActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"></activity>

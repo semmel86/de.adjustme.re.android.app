@@ -50,6 +50,12 @@ public abstract class GenericBaseActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                     return true;
+                case R.id.navigation_timeline:
+                    if (!this.getClass().equals(TimelineActivity.class)){
+                        intent = new Intent(getApplicationContext(), TimelineActivity.class);
+                        startActivity(intent);
+                    }
+                    return true;
             }
             return false;
         }
@@ -115,6 +121,8 @@ public abstract class GenericBaseActivity extends AppCompatActivity {
             navigation.setSelectedItemId(R.id.navigation_dashboard);
         }else if(this.getClass().equals(TrainModelActivity.class)) {
             navigation.setSelectedItemId(R.id.navigation_train);
+        } else if(this.getClass().equals(TimelineActivity.class)) {
+            navigation.setSelectedItemId(R.id.navigation_timeline);
         }
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 }

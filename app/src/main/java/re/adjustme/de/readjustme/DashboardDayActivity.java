@@ -101,8 +101,6 @@ public class DashboardDayActivity extends GenericBaseActivity {
     protected void afterServiceConnection() {
         dashboardData = mPersistenceService.getDashboardData();
         radioGroupCheckedChanged();
-        String username = mPersistenceService.getUsername();
-        setTitle((username.equals("") || username.equals(" ")) ? getResources().getString(R.string.title_dashboard) : (username  + "'s " + getResources().getString(R.string.title_dashboard)));
     }
 
     private void addDataToChart(PieChart pieChart, HashMap<Label, Long> hashMap, String label) {
@@ -140,7 +138,6 @@ public class DashboardDayActivity extends GenericBaseActivity {
         colors.add(ResourcesCompat.getColor(getResources(), R.color.textColorPrimary, null));
         colors.add(ResourcesCompat.getColor(getResources(), R.color.textColorTertiary, null));
 
-        //TODO add list
         pieDataSet.setColors(colors);
 
         pieChart.setEntryLabelTextSize(7f);
@@ -156,8 +153,5 @@ public class DashboardDayActivity extends GenericBaseActivity {
 
         IMarker marker = new MyMarkerView(this, R.layout.custom_marker_view);
         pieChart.setMarker(marker);
-        /*MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
-        mv.setChartView(pieChart);
-        */
     }
 }

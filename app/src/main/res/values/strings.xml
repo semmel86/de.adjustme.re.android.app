@@ -4,6 +4,7 @@
     <string name="title_home">Home</string>
     <string name="train">Train</string>
     <string name="title_dashboard">Dashboard</string>
+    <string name="title_timeline">Zeitstrahl</string>
     <string name="title_notifications">Notifications</string>
     <string name="daily_posture_profile">Dein Haltungsprofil</string>
 
@@ -20,10 +21,10 @@
     <string name="shoulder_dashboard">Übersicht Schultern</string>
     <string name="lws_dashboard">Übersicht Lendenwirbelsäule</string>
     <string name="hws_dashboard">Übersicht Halswirbelsäule</string>
-    <string name="dashboard_radio_all">gesamt</string>
-    <string name="dashboard_radio_week">aktuelle Woche</string>
+    <string name="dashboard_radio_all">Gesamt</string>
+    <string name="dashboard_radio_week">Aktuelle Woche</string>
     <string name="dashboard_radio_day">Heute</string>
-    <string name="dashboard_radio_hour">aktuelle Stunde</string>
+    <string name="dashboard_radio_hour">Aktuelle Stunde</string>
 
     <!-- areas -->
     <string name="hws">Halswirbelsäule</string>

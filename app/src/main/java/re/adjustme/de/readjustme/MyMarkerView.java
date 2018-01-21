@@ -9,6 +9,13 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.MPPointF;
 
+import org.w3c.dom.Text;
+
+import java.text.SimpleDateFormat;
+
+import re.adjustme.de.readjustme.Bean.LabelData;
+import re.adjustme.de.readjustme.Util.Duration;
+
 public class MyMarkerView extends MarkerView {
 
     private TextView tvContent;
@@ -26,23 +33,14 @@ public class MyMarkerView extends MarkerView {
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
         long millis = (long) e.getY();
-        long second = (millis / 1000) % 60;
-        long minute = (millis / (1000 * 60)) % 60;
-        long hour = (millis / (1000 * 60 * 60)) % 24;
-
-
-        String time = "";
-
-        if (hour > 0) {
-            time = String.format("%02d h %02d min", hour, minute);
-        } else {
-            if (minute > 0) {
-                time = String.format("%02d min %02d sec", minute, second);
-            } else{
-                time = String.format("%02d sec", second);
-            }
+        String s = "";
+        if (e.getData() instanceof LabelData) {
+            SimpleDateFormat format = new SimpleDateFormat("d MMMM - HH:mm");
+            s = format.format(((LabelData) e.getData()).getBegin());
+            s += " - ";
         }
-        tvContent.setText(time);
+        s += Duration.millisToDuration(millis);
+        tvContent.setText(s);
 
         // this will perform necessary layouting
         super.refreshContent(e, highlight);

@@ -13,6 +13,8 @@
         <item name="android:textColorTertiary">@color/textColorTertiary</item>
         <item name="android:colorBackground">@color/colorBackground</item>
         <item name="android:keyTextColor">@color/keyTextColor</item>
+        <item name="colorError">@color/colorError</item>
+        <item name="android:textColorHint">@color/textColorHint</item>
     </style>
 
 </resources>

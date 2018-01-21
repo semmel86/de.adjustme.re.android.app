@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    tools:context="re.adjustme.de.readjustme.DashboardDayActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:foregroundGravity="fill_vertical"
+        android:orientation="vertical"
+        android:weightSum="3">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:scrollbarStyle="insideOverlay">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:gravity="center"
+                    android:text="@string/shoulder_dashboard"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="18sp" />
+
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/shoulderBarChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:minHeight="200dp"
+                    tools:layout_editor_absoluteX="16dp"
+                    tools:layout_editor_absoluteY="108dp" >
+
+                </com.github.mikephil.charting.charts.BarChart>
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textColorPrimary"
+                    android:layout_marginTop="24dp"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:text="@string/spline_dashboard" />
+
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/splineBarChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:minHeight="200dp"/>
+
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textColorPrimary"
+                    android:layout_marginTop="24dp"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:text="@string/hws_dashboard" />
+
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/hwsBarChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:minHeight="200dp"/>
+
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textColorPrimary"
+                    android:layout_marginTop="24dp"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:text="@string/lws_dashboard" />
+
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/lwsBarChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="48dp"
+                    android:layout_marginTop="10dp"
+                    android:minHeight="200dp">
+
+                </com.github.mikephil.charting.charts.BarChart>
+
+            </LinearLayout>
+        </ScrollView>
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@color/colorAccent"-->
+            <!--android:baselineAligned="false"-->
+            <!--android:gravity="bottom"-->
+            <!--android:orientation="vertical">-->
+
+
+        <!--</LinearLayout>-->
+
+
+    </LinearLayout>
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/colorBackground"
+        android:foregroundGravity="bottom"
+        android:visibility="visible"
+        app:itemIconTint="@color/bottom_nav_colors"
+        app:itemTextColor="@color/bottom_nav_colors"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:menu="@menu/navigation"/>
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/navigation_developer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/colorBackground"
+        android:foregroundGravity="bottom"
+        android:visibility="visible"
+        app:itemIconTint="@color/bottom_nav_colors"
+        app:itemTextColor="@color/bottom_nav_colors"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:menu="@menu/navigation_developer"/>
+
+</android.support.constraint.ConstraintLayout>

@@ -10,4 +10,6 @@
     <color name="colorBackground">#ececec</color>
     <color name="colorForeground">#d1d1d1</color>
     <color name="keyTextColor">#2fa638</color>
+    <color name="textColorHint">#ffd600</color>
+    <color name="colorError">#d50000</color>
 </resources>
