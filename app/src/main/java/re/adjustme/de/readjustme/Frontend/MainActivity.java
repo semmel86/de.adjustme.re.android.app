@@ -31,6 +31,7 @@ import re.adjustme.de.readjustme.R;
 public class MainActivity extends GenericBaseActivity {
     private Button startServiceBtn;
     private Button stopServiceBtn;
+    private Button calibrateBtn;
     private EditText usernameInput;
     private ProgressBar progressBar;
     private TextView usernameLabel;
@@ -103,6 +104,7 @@ public class MainActivity extends GenericBaseActivity {
         progressBar.setVisibility(View.VISIBLE);
         mainLayout = (LinearLayout) findViewById(R.id.mainLayout);
         mainLayout.setVisibility(View.INVISIBLE);
+        calibrateBtn = (Button) findViewById(R.id.btnCalibrate);
         startServiceBtn = (Button) findViewById(R.id.startService);
         stopServiceBtn = (Button) findViewById(R.id.stopService);
         BA = BluetoothAdapter.getDefaultAdapter();
@@ -213,7 +215,17 @@ public class MainActivity extends GenericBaseActivity {
 
     // set current posture as (0,0,0) for each sensor
     public void calibrate(View v) {
-        mPersistenceService.calibrate();
+        new AlertDialog.Builder(this)
+                .setMessage("re.adjustme wirklich kalibrieren?")
+                .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPersistenceService.calibrate();
+                    }
+                })
+                .setNegativeButton("Nein", null) // nothing to do
+                .show();
+
     }
 
     // stop all Running Services
@@ -297,9 +309,11 @@ public class MainActivity extends GenericBaseActivity {
         if (isRunning) {
             startServiceBtn.setVisibility(View.INVISIBLE);
             stopServiceBtn.setVisibility(View.VISIBLE);
+            calibrateBtn.setEnabled(true);
         } else {
             startServiceBtn.setVisibility(View.VISIBLE);
             stopServiceBtn.setVisibility(View.INVISIBLE);
+            calibrateBtn.setEnabled(false);
         }
     }
 

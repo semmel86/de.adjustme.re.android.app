@@ -82,35 +82,25 @@ public class TimelineActivity extends GenericBaseActivity {
 
     }
     private void addDataToChart(BarChart barChart, Stack<LabelData> timeline, String label) {
-//        Stack<LabelData> timeline = new Stack<>();
-      //  Stack<LabelData> adjustedTimelineHelper = new Stack<>();
-//        if (timeline != null) {
-//            for (LabelData l : timeline) {
-//                if (l.getDuration() > PersistenceConfiguration.MIN_POSTURE_DURATION) {
-//                    // >2.5 sec
-//                    timeline.add(l);
-//                }
-//            }
-//        }
-//        while (!timeline.empty()) {
-//            LabelData currentData = timeline.peek();
-//            if (adjustedTimelineHelper.size() > 0 && adjustedTimelineHelper.peek().getLabel().getLabel().equals(currentData.getLabel().getLabel())){
-//                LabelData dataHelper = adjustedTimelineHelper.peek();
-//                dataHelper.setDuration(dataHelper.getDuration() + currentData.getDuration());
-//                timeline.pop();
-//            }else{
-//                adjustedTimelineHelper.add(timeline.pop());
-//            }
-//        }
-//
-//        for (int i= adjustedTimelineHelper.size() - 1; i>-1; i--){
-//            timeline.add(adjustedTimelineHelper.get(i));
-//        }
+        Stack<LabelData> adjustedTimelineHelper = new Stack<>();
+
+        int timelineSize = timeline.size();
+        for (int i = 0; i < timelineSize; i++) {
+            if (i == 0) {
+                adjustedTimelineHelper.push(timeline.get(i));
+            }else{
+                if (adjustedTimelineHelper.peek().getLabel().getLabel().equals(timeline.get(i).getLabel().getLabel())){
+                    adjustedTimelineHelper.peek().setDuration(adjustedTimelineHelper.peek().getDuration() + timeline.get(i).getDuration());
+                }else {
+                    adjustedTimelineHelper.push(timeline.get(i));
+                }
+            }
+        }
 
         ArrayList<BarEntry> entries = new ArrayList<>();
         ArrayList<Integer> colors = new ArrayList<>();
         Long xAxisCounter = 0L;
-        for (LabelData l : timeline) {
+        for (LabelData l : adjustedTimelineHelper) {
             entries.add(new BarEntry(xAxisCounter, l.getDuration(), l));
 
             //add color
@@ -132,10 +122,10 @@ public class TimelineActivity extends GenericBaseActivity {
 
         BarDataSet dataset = new BarDataSet(entries, label);
         //ToDo fix labels
-        String[] labels = new String[timeline.size()];
+        String[] labels = new String[adjustedTimelineHelper.size()];
         Timestamp lastTime = null;
-        int currentPosition = timeline.size() - 1;
-        for (LabelData l : timeline){
+        int currentPosition = adjustedTimelineHelper.size() - 1;
+        for (LabelData l : adjustedTimelineHelper){
             if (lastTime == null){
                 labels[currentPosition] = getDate(l);
                 lastTime = l.getEnd();
@@ -172,7 +162,7 @@ public class TimelineActivity extends GenericBaseActivity {
         barChart.setScaleYEnabled(false);
         barChart.setVisibleXRangeMaximum(10);
         barChart.setVisibleXRangeMinimum(4);
-        barChart.moveViewToX(timeline.size());
+        barChart.moveViewToX(adjustedTimelineHelper.size());
         barChart.getLegend().setEnabled(false);
         barChart.getDescription().setEnabled(false);
         IMarker marker = new MyMarkerView(this, R.layout.custom_marker_view);
