@@ -44,7 +44,7 @@ public class TimelineActivity extends GenericBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(R.string.title_dashboard);
+        setTitle(R.string.title_timeline);
         setContentView(R.layout.activity_timeline_day);
         splineBar = (BarChart) findViewById(R.id.splineBarChart);
         shoulderBar = (BarChart) findViewById(R.id.shoulderBarChart);

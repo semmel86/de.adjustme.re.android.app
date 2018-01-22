@@ -69,12 +69,13 @@
                     android:layout_marginRight="24dp"
                     android:height="24dp"
                     android:ems="10"
+                    android:focusedByDefault="false"
                     android:gravity="left|center"
                     android:paddingBottom="2dp"
                     android:paddingLeft="4dp"
                     android:textColor="@color/textColorPrimary"
+                    android:textColorHint="@color/textColorHighlight"
                     android:textSize="18sp"
-                    android:focusedByDefault="false"
                     app:layout_constraintTop_toTopOf="@+id/editUsername"
                     tools:layout_editor_absoluteX="8dp" />
 
@@ -148,7 +149,7 @@
 
                     <TextView
                         android:id="@+id/hws_label"
-                        android:layout_width="100dp"
+                        android:layout_width="200dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/mainActivity_hws" />
@@ -175,7 +176,7 @@
 
                     <TextView
                         android:id="@+id/shoulder_label"
-                        android:layout_width="100dp"
+                        android:layout_width="200dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/mainActivity_shoulder" />
@@ -202,7 +203,7 @@
 
                     <TextView
                         android:id="@+id/bws_label"
-                        android:layout_width="100dp"
+                        android:layout_width="200dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/mainActivity_bws" />
@@ -228,7 +229,7 @@
 
                     <TextView
                         android:id="@+id/lws_label"
-                        android:layout_width="100dp"
+                        android:layout_width="200dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/mainActivity_lws" />

@@ -3,18 +3,21 @@
     <string name="title_activity_dashboard_day">DashboardDayActivity</string>
     <string name="title_home">Home</string>
     <string name="train">Train</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_timeline">Zeitstrahl</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="title_dashboard">Mein Dashboard</string>
+    <string name="timeline">Zeitstrahl</string>
+    <string name="title_timeline">Mein Zeitstrahl</string>
     <string name="title_notifications">Notifications</string>
     <string name="daily_posture_profile">Dein Haltungsprofil</string>
+    <string name="dashboard_rest">Andere Haltungen</string>
 
     <string name="mainActivity_start">Start</string>
     <string name="mainActivity_stop">Stop</string>
     <string name="mainActivity_calibrate">Kalibrieren</string>
-    <string name="mainActivity_hws">HWS</string>
+    <string name="mainActivity_hws">Halswirbelsäule</string>
     <string name="mainActivity_shoulder">Schulter</string>
-    <string name="mainActivity_bws">BWS</string>
-    <string name="mainActivity_lws">LWS</string>
+    <string name="mainActivity_bws">Brustwirbelsäule</string>
+    <string name="mainActivity_lws">Lendenwirbelsäule</string>
     <string name="mainActivity_usernameHint">Benutzernamen eingeben</string>
 
     <string name="spline_dashboard">Übersicht Brustwirbelsäule</string>

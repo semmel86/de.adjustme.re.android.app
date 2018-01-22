@@ -103,7 +103,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:minHeight="200dp"
+                    android:minHeight="225dp"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="108dp" />
 
@@ -112,7 +112,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:minHeight="200dp"/>
+                    android:minHeight="225dp" />
 
 
                 <com.github.mikephil.charting.charts.PieChart
@@ -120,7 +120,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:minHeight="200dp"/>
+                    android:minHeight="225dp" />
 
 
                 <com.github.mikephil.charting.charts.PieChart
@@ -128,7 +128,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:minHeight="200dp"/>
+                    android:minHeight="225dp" />
 
             </LinearLayout>
         </ScrollView>

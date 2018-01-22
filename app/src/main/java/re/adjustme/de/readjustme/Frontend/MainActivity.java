@@ -151,12 +151,12 @@ public class MainActivity extends GenericBaseActivity {
     }
 
     private void setNewUsername(String name) {
-        if (name.equals("") || name.equals(" ")) {
-            startServiceBtn.setEnabled(false);
-        } else if (!mPersistenceService.getTryStarting()) {
-            startServiceBtn.setEnabled(true);
-        }
         if (mPersistenceService != null) {
+            if (name.equals("") || name.equals(" ")) {
+                startServiceBtn.setEnabled(false);
+            } else if (!mPersistenceService.getTryStarting()) {
+                startServiceBtn.setEnabled(true);
+            }
             mPersistenceService.setUsername(name);
         }
     }

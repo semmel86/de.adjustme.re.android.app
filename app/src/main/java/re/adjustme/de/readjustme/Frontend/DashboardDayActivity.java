@@ -104,16 +104,27 @@ public class DashboardDayActivity extends GenericBaseActivity {
             //sort HashMap
             Set<Map.Entry<Label, Long>> set = hashMap.entrySet();
             List<Map.Entry<Label, Long>> list = new ArrayList<Map.Entry<Label, Long>>(set);
+            Long overallDuration = 0L;
+            for (Map.Entry<Label, Long> l : list) {
+                overallDuration+= l.getValue();
+            }
             Collections.sort(list, new Comparator<Map.Entry<Label, Long>>() {
                 public int compare(Map.Entry<Label, Long> o1, Map.Entry<Label, Long> o2) {
                     return (o2.getValue()).compareTo(o1.getValue());
                 }
             });
 
+
+            Long restDuration = 0L;
             for (Map.Entry<Label, Long> l : list) {
-                if (l.getValue() > 0) {
+                if (l.getValue() > ((overallDuration * 5) / 100)) {
                     entries.add(new PieEntry(l.getValue(), l.getKey().getDescription()));
+                }else {
+                    restDuration += l.getValue();
                 }
+            }
+            if (restDuration.compareTo(0L) > 0) {
+                entries.add(new PieEntry(restDuration, getResources().getString(R.string.dashboard_rest)));
             }
         }
 
