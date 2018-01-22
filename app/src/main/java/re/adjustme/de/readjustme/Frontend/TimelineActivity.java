@@ -83,20 +83,21 @@ public class TimelineActivity extends GenericBaseActivity {
     }
     private void addDataToChart(BarChart barChart, Stack<LabelData> timeline, String label) {
         Stack<LabelData> adjustedTimelineHelper = new Stack<>();
-
+/*
         int timelineSize = timeline.size();
         for (int i = 0; i < timelineSize; i++) {
             if (i == 0) {
                 adjustedTimelineHelper.push(timeline.get(i));
             }else{
                 if (adjustedTimelineHelper.peek().getLabel().getLabel().equals(timeline.get(i).getLabel().getLabel())){
-                    adjustedTimelineHelper.peek().setDuration(adjustedTimelineHelper.peek().getDuration() + timeline.get(i).getDuration());
+                    adjustedTimelineHelper.peek().setDuration((Long) (adjustedTimelineHelper.peek().getDuration() + timeline.get(i).getDuration()));
                 }else {
                     adjustedTimelineHelper.push(timeline.get(i));
                 }
             }
         }
-
+        */
+        adjustedTimelineHelper = timeline;
         ArrayList<BarEntry> entries = new ArrayList<>();
         ArrayList<Integer> colors = new ArrayList<>();
         Long xAxisCounter = 0L;
