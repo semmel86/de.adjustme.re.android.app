@@ -20,23 +20,25 @@
             android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".Frontend.DashboardDayActivity"
             android:label="@string/title_activity_dashboard_day"
+            android:parentActivityName=".Frontend.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"></activity>
 
         <activity
             android:name=".Frontend.TimelineActivity"
             android:label="@string/title_timeline"
+            android:parentActivityName=".Frontend.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"></activity>
 
         <activity
             android:name=".Frontend.TrainModelActivity"
             android:label="BluetoothActivity"
+            android:parentActivityName=".Frontend.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"></activity>
 
         <service

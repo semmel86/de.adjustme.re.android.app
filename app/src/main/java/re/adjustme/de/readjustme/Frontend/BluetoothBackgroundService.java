@@ -400,7 +400,7 @@ public class BluetoothBackgroundService extends Service {
                 } catch (IOException e) {
                     Log.d("Info", "Input stream was disconnected", e);
                     mPersistenceService.unsetReceivesLiveData();
-                    if (!mmSocket.isConnected()) {
+                    if (mmSocket!=null && !mmSocket.isConnected()) {
                         // lost connection, close and destroy this socket,
                         mConnected = false;
                         try {

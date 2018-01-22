@@ -1,8 +1,10 @@
 package re.adjustme.de.readjustme.Frontend;
 
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
@@ -246,9 +248,27 @@ public class MainActivity extends GenericBaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mPostureReceiver);
     }
 
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setMessage("re.adjustme wirklich schließen?")
+                .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // unbind service
+                        unbindService(mPersistenceConnection);
+                        // finish activity
+                        finish();
+
+                    }
+                })
+                .setNegativeButton("Nein", null) // nothing to do
+                .show();
+
+
+    }
     private void checkPermissions() {
         for (String currentPerm : BluetoothConfiguration.permissionsToRequest) {
 

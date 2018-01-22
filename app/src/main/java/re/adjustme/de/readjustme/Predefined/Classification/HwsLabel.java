@@ -14,8 +14,8 @@ public enum HwsLabel implements Label {
     J("C", "nach links gedreht", "56"),
     K("D", "nach rechts gebeugt", "57"), // raus
     L("E", "nach links gebeugt", "58"), // raus
-    M("F", "gestreckt", "59"), // turtle neck
-    N("G", "vorgebeugt", "60"), // tech-neck
+    F("F", "gestreckt", "59"), // turtle neck
+    G("G", "vorgebeugt", "60"), // tech-neck
     UNLABELED(ClassificationConfiguration.UNKNOWN_POSITION, "unbekannte Haltung", "0");
 
 

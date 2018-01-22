@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -248,6 +249,23 @@ public class PersistenceService extends Service {
         MotionData calibration = calibrationMotionData.get(md.getSensor());
         Log.d("Info Persistence", "Before Calibration: " + md.toString());
         // CALIBRATION
+//        if((md.getX() - calibration.getX()) >=(-180)){
+//            md.setX(md.getX() - calibration.getX());}
+//        else{
+//            md.setX(180+calibration.getX() - md.getX());
+//        }
+//
+//        if((md.getY() - calibration.getY()) >=(-180)){
+//            md.setY(md.getY() - calibration.getY());}
+//        else{
+//            md.setY(180+calibration.getY() - md.getY());
+//        }
+//
+//        if((md.getZ() - calibration.getZ()) >=(-180)){
+//            md.setZ(md.getZ() - calibration.getZ());}
+//        else{
+//            md.setZ(180+calibration.getZ() - md.getZ());
+//        }
         md.setX(md.getX() - calibration.getX());
         md.setY(md.getY() - calibration.getY());
         md.setZ(md.getZ() - calibration.getZ());
@@ -371,14 +389,23 @@ public class PersistenceService extends Service {
         // prepare intent which is triggered if the
         // notification is selected
 
-        Intent intent = new Intent(this, DashboardDayActivity.class);
-        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        Intent dash = new Intent(this, DashboardDayActivity.class);
+        Intent parent = new Intent(this, DashboardDayActivity.class);
+        PendingIntent pendingIntent =
+                TaskStackBuilder.create(this)
+                        // add all of DetailsActivity's parents to the stack,
+                        // followed by DetailsActivity itself
+                        .addNextIntent(parent)
+                        .addNextIntentWithParentStack(dash)
+                        .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+      //  PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
         String s ="Zeit zu handeln.";
         // large notification layout
         Notification.InboxStyle inboxStyle =
                 new Notification.InboxStyle();
-        inboxStyle.addLine("Du warst jetzt schon über"+Long.toString(dur/60000L)+" Minuten lang in") ;
+        inboxStyle.addLine("Du warst jetzt schon über "+Long.toString(dur/60000L)+" Minuten in") ;
 //        inboxStyle.addLine(" ");
         inboxStyle.addLine("dieser Haltung:     "+area.toString()+" - "+posture.toString());
 //        inboxStyle.addLine(" ");
@@ -395,7 +422,7 @@ public class PersistenceService extends Service {
                 .setContentTitle("re.adjustme")
                 .setContentText(s)
                 .setSmallIcon(R.drawable.ic_logo_nuricon)
-                .setContentIntent(pIntent)
+                .setContentIntent(pendingIntent)
                 .setVibrate(new long[]{200L, 200L, 200L, 200L, 200L})
                 .setStyle(inboxStyle)
                 .setAutoCancel(true).build();
