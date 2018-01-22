@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Stack;
 import java.util.TimeZone;
 
+import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Predefined.Classification.Label;
 
@@ -37,12 +38,25 @@ public class DashboardData implements Serializable {
         lws_timeline= new Stack<>();
         shoulder_timeline = new Stack<>();
     }
+    private void checkDurationRestriction(LabelData l){
+        // check if the duration of the last lable > minDuration
+        // if not, delete it from stack
+        LabelData lastLabel=this.getlast(l.getArea());
+        if(lastLabel!=null) {
+            if (lastLabel.getDuration() < PersistenceConfiguration.MIN_POSTURE_DURATION) {
+                deleteLast(l.getArea());
+            }
+        };
+    }
 
     public void addLabelData(LabelData l) {
         BodyArea area = l.getArea();
         if (posture_sum.get(area) == null) {
             posture_sum.put(area, new HashMap<Label, Long>());
         }
+
+        checkDurationRestriction(l);
+
         switch (area) {
             case SHOULDER:
                 addArea(area, shoulder_timeline, l);
@@ -143,10 +157,35 @@ public class DashboardData implements Serializable {
                 } else{
                     return null;
                 }
+            default:
+                return null;
         }
-        return null;
     }
 
+    public void deleteLast(BodyArea b){
+        switch (b) {
+            case SHOULDER:
+                if (shoulder_timeline.size() > 0) {
+                    shoulder_timeline.pop();
+                    break;
+                }
+            case SPLINE:
+                if (bws_timeline.size() > 0) {
+                    bws_timeline.pop();
+                    break;
+                }
+            case HWS:
+                if (hws_timeline.size() > 0) {
+                    hws_timeline.pop();
+                    break;
+                }
+            case LWS:
+                if (lws_timeline.size() > 0) {
+                    lws_timeline.pop();
+                    break;
+                }
+        }
+    }
     public DashboardData getDashboardDataSubset(TimeSpan timeSpan) {
         DashboardData newDashboardData = new DashboardData();
         newDashboardData.setBws_timeline(adjusteTimeline(this.getBws_timeline(), timeSpan));

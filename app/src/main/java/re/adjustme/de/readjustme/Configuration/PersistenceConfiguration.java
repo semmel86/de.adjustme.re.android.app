@@ -10,11 +10,13 @@ import re.adjustme.de.readjustme.Predefined.PersistenceType;
 
 public class PersistenceConfiguration {
 
-public final static boolean MODE_DEVELOPMENT=true;
+public final static boolean MODE_DEVELOPMENT=false;
 
+ // DEFINES THE MINIMAL DURATION FOR A POSTURE, ALL SMALLER Postures where dismissed
+    public static final long MIN_POSTURE_DURATION = 5000L;
     public static final String CSV_SEPARATOR = ";";
     public static final PersistenceType DEFAULT_PERSISTOR = PersistenceType.FILE;
-    public static final boolean SAVE_LOCAL = MODE_DEVELOPMENT;
+    public static final boolean SAVE_LOCAL = true;//MODE_DEVELOPMENT;
     public static final boolean SAVE_BACKEND = true;
     public static final boolean ENABLE_CALIBRATION = true;
     private static String PERSISTENCE_DIRECTORY = System.getProperty("user.dir") + "/persistence/";

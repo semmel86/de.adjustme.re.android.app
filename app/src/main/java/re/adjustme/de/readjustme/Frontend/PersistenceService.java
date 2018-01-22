@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme;
+package re.adjustme.de.readjustme.Frontend;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -33,6 +33,7 @@ import re.adjustme.de.readjustme.Persistence.internal.ObjectPersistor;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Predefined.Classification.Label;
 import re.adjustme.de.readjustme.Predefined.Sensor;
+import re.adjustme.de.readjustme.R;
 
 /**
  * Created by semmel on 25.11.2017.
@@ -72,7 +73,8 @@ public class PersistenceService extends Service {
                 String s = intent.getStringExtra("PostureName");
                 BodyArea bodyarea = BodyArea.valueOf(intent.getStringExtra("Area"));
                 Label label = bodyarea.getLableByDescription(intent.getStringExtra("PostureName"));
-                // put to Dashboard
+                // put on Dashboard stack
+                // get last stacked object
                 LabelData lastLabel = dashboardData.getlast(bodyarea);
                 if (label != null) {
                     if (lastLabel != null && lastLabel.getLabel().equals(label)) {
@@ -101,7 +103,7 @@ public class PersistenceService extends Service {
                         }
                     } else {
                         // other label -> new LabelData object
-                        Log.i("New Posture detected", bodyarea.name() + " - " + label.getDescription());
+                        Log.d("New Posture detected", bodyarea.name() + " - " + label.getDescription());
                         LabelData newLabel = new LabelData(label, bodyarea);
                         dashboardData.addLabelData(newLabel);
                         save(dashboardData);
@@ -233,7 +235,7 @@ public class PersistenceService extends Service {
                     oldCalibration.setX(newMd.getX());// + oldCalibration.getX());
                     oldCalibration.setY(newMd.getY());// + oldCalibration.getY());
                     oldCalibration.setZ(newMd.getZ());// + oldCalibration.getZ());
-                    Log.i("Info", "Calibrated to" + newMd.toString());
+                    Log.d("Info", "Calibrated to" + newMd.toString());
                     // set as new calibration
                 }
             }
@@ -244,7 +246,7 @@ public class PersistenceService extends Service {
 
     private void doCalibration(MotionData md) {
         MotionData calibration = calibrationMotionData.get(md.getSensor());
-        Log.i("Info Persistence", "Before Calibration: " + md.toString());
+        Log.d("Info Persistence", "Before Calibration: " + md.toString());
         // CALIBRATION
         md.setX(md.getX() - calibration.getX());
         md.setY(md.getY() - calibration.getY());
@@ -264,7 +266,7 @@ public class PersistenceService extends Service {
             persistor.saveMotion(md);
             motionDataSet.update(md);
             persistor.saveMotionSet(motionDataSet);
-            Log.i("Info Persistence", "Saved Motion Data: " + md.toString());
+            Log.d("Info Persistence", "Saved Motion Data: " + md.toString());
         }
         if (PersistenceConfiguration.SAVE_BACKEND) {
             JSONObject motionData = motionDataSet.getJson();
@@ -278,7 +280,7 @@ public class PersistenceService extends Service {
             } catch (Exception e) {
                 //Log.e("Error Persistence", "Error on parsing Json");
             }
-            Log.i("SEND-JSON",motionData.toString());
+            Log.d("SEND-JSON",motionData.toString());
             backend.sendRequest(motionData, this.getApplicationContext());
         }
     }
@@ -298,7 +300,7 @@ public class PersistenceService extends Service {
                 long duration = currentRawMotionData.get(md.getSensor()).getDuration();
                 duration = md.getBegin().getTime() - currentRawMotionData.get(md.getSensor()).getBegin().getTime();
                 currentRawMotionData.get(md.getSensor()).setDuration(duration);
-                // Log.i("Info", "Enlarged duration to: " + duration + " it's " + duration / 1000 + " sek");
+                // Log.d("Info", "Enlarged duration to: " + duration + " it's " + duration / 1000 + " sek");
             } else {
                 // there is a difference, change md to current and persist old current
                 save(currentRawMotionData.get(md.getSensor()));
@@ -306,7 +308,7 @@ public class PersistenceService extends Service {
             }
 
         } else {
-            Log.i("Info", "Set first entry for this Sensor as current");
+            Log.d("Info", "Set first entry for this Sensor as current");
             currentRawMotionData.put(md.getSensor(), md);
         }
     }
@@ -376,9 +378,9 @@ public class PersistenceService extends Service {
         // large notification layout
         Notification.InboxStyle inboxStyle =
                 new Notification.InboxStyle();
-        inboxStyle.addLine("Du warst jetzt schon "+Long.toString(dur/60000L)+" Minuten lang in") ;
+        inboxStyle.addLine("Du warst jetzt schon über"+Long.toString(dur/60000L)+" Minuten lang in") ;
 //        inboxStyle.addLine(" ");
-        inboxStyle.addLine("    Haltung: "+area.toString()+" - "+posture.toString());
+        inboxStyle.addLine("dieser Haltung:     "+area.toString()+" - "+posture.toString());
 //        inboxStyle.addLine(" ");
         inboxStyle.addLine("Du solltest dich bewegen oder deine Position");
         inboxStyle.addLine("ändern um Verspannungen vorzubeugen.");

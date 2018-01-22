@@ -1,7 +1,6 @@
-package re.adjustme.de.readjustme;
+package re.adjustme.de.readjustme.Frontend;
 
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -9,7 +8,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
+import re.adjustme.de.readjustme.R;
 
 /**
  * Created by Semmel on 12.11.2017.

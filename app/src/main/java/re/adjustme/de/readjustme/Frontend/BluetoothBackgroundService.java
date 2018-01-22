@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme;
+package re.adjustme.de.readjustme.Frontend;
 
 
 import android.app.Service;
@@ -344,7 +344,7 @@ public class BluetoothBackgroundService extends Service {
         private byte[] mmBuffer; // mmBuffer store for the stream
 
         public ConnectedThread(BluetoothSocket socket) {
-            Log.i("info", "Init ConnectThread");
+            Log.d("info", "Init ConnectThread");
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
@@ -366,7 +366,7 @@ public class BluetoothBackgroundService extends Service {
         }
 
         public synchronized void run() {
-            Log.i("Info", "Connection status:" + mmSocket.isConnected());
+            Log.d("Info", "Connection status:" + mmSocket.isConnected());
             mmBuffer = new byte[1024];
             Integer numBytes = null; // bytes returned from read()
 
@@ -383,10 +383,10 @@ public class BluetoothBackgroundService extends Service {
                                     BluetoothConfiguration.MESSAGE_READ, numBytes, -1,
                                     s2);
                             readMsg.sendToTarget();
-//                            Log.i("Debug", "BT received Input.");
+//                            Log.d("Debug", "BT received Input.");
                         } else {
                             try {
-//                                Log.i("Debug", "BT Inputstream empty.");
+//                                Log.d("Debug", "BT Inputstream empty.");
                                 sleep(BluetoothConfiguration.CONNECTION_DELAY);
                             } catch (Exception e) {
                             }
@@ -394,6 +394,7 @@ public class BluetoothBackgroundService extends Service {
                         }
                     } else {
                         // get in the except block and restart
+                        mmSocket=null;
                         throw new IOException();
                     }
                 } catch (IOException e) {
@@ -408,7 +409,7 @@ public class BluetoothBackgroundService extends Service {
                         } catch (IOException e2) {
                         }
                         // restart connection
-                        startConnection();
+                         startConnection();
                     }
                     break;
                 }

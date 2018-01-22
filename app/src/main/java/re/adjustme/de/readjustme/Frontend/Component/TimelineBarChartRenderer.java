@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme;
+package re.adjustme.de.readjustme.Frontend.Component;
 
 import android.graphics.Canvas;
 import android.util.Log;
@@ -16,10 +16,10 @@ import com.github.mikephil.charting.utils.ViewPortHandler;
  * Created by Stefan on 21.01.2018.
  */
 
-public class CustomBarChartsRenderer extends BarChartRenderer {
+public class TimelineBarChartRenderer extends BarChartRenderer {
 
 
-    public CustomBarChartsRenderer(BarDataProvider chart, ChartAnimator animator, ViewPortHandler viewPortHandler) {
+    public TimelineBarChartRenderer(BarDataProvider chart, ChartAnimator animator, ViewPortHandler viewPortHandler) {
         super(chart, animator, viewPortHandler);
     }
 

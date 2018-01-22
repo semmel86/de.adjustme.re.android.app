@@ -1,14 +1,7 @@
-package re.adjustme.de.readjustme;
+package re.adjustme.de.readjustme.Frontend;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.content.res.ResourcesCompat;
-import android.text.SpannableString;
-import android.text.style.UnderlineSpan;
-import android.widget.CompoundButton;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.github.mikephil.charting.charts.PieChart;
@@ -28,9 +21,10 @@ import java.util.Map;
 import java.util.Set;
 
 import re.adjustme.de.readjustme.Bean.DashboardData;
-import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
+import re.adjustme.de.readjustme.Frontend.Component.MyMarkerView;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Predefined.Classification.Label;
+import re.adjustme.de.readjustme.R;
 
 public class DashboardDayActivity extends GenericBaseActivity {
 

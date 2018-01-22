@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme;
+package re.adjustme.de.readjustme.Frontend.Component;
 
 import android.util.Log;
 
@@ -13,11 +13,11 @@ import re.adjustme.de.readjustme.Bean.LabelData;
  */
 
 
-public class MyBarChartXAxisValueFormatter implements IValueFormatter {
+public class TimelineBarChartValueFormatter implements IValueFormatter {
 
     private String[] mValues;
 
-    public MyBarChartXAxisValueFormatter(String[] values) {
+    public TimelineBarChartValueFormatter(String[] values) {
         this.mValues = values;
     }
 

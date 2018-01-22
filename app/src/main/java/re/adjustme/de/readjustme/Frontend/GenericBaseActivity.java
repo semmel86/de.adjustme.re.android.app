@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme;
+package re.adjustme.de.readjustme.Frontend;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
+import re.adjustme.de.readjustme.R;
 
 /**
  * Created by Semmel on 13.11.2017.

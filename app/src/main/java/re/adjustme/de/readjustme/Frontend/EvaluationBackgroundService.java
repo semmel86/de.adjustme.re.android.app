@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme;
+package re.adjustme.de.readjustme.Frontend;
 
 import android.app.Service;
 import android.content.ComponentName;
@@ -79,10 +79,15 @@ public class EvaluationBackgroundService extends Service {
 
     @Override
     public void onDestroy() {
-        mEvalThread.killMe();
-        sendStatusToPersistenceService(false);
-        mEvalThread = null;
-        stopSelf();
+        try {
+            mEvalThread.killMe();
+            unbindService(mPersistenceConnection);
+            sendStatusToPersistenceService(false);
+            mEvalThread = null;
+            stopSelf();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -182,7 +187,7 @@ public class EvaluationBackgroundService extends Service {
             FileOutputStream fos = new FileOutputStream(f);
             fos.write(buffer);
             fos.close();
-            Log.i("Info", "Unzipped "+name+" from assets.");
+            Log.d("Info", "Unzipped "+name+" from assets.");
         } catch (Exception e) {
             Log.e("Error", "Cannot unzip "+name+" from assets.");
         }
@@ -296,7 +301,7 @@ public class EvaluationBackgroundService extends Service {
                     if (result.containsKey(b)) {
                         result.get(b).add(c);
                         if (c != null && !(c.getName().equals("") || c.getName().equals("unknown"))) {
-                            Log.i("MotionClass", c.toString());
+                            Log.d("MotionClass", c.toString());
                         }
                     } else {
                         List<MotionClassificator> l = new ArrayList<>();
@@ -320,7 +325,7 @@ public class EvaluationBackgroundService extends Service {
                     double classification = svmMotionclassifier.get(area).predict(motionDataSet,area);
                     Label l = area.getLable(Math.round(classification));
                     this.sendPostureBroadcast(l.getDescription(), area.name());
-                    Log.i("Info", "Classification: " + area.name() + "  " + l.getDescription());
+                    Log.d("Info", "Classification: " + area.name() + "  " + l.getDescription());
                 } else {
                     double probability = 0;
                     MotionClassificator classificator = new MotionClassificator("");
@@ -330,7 +335,7 @@ public class EvaluationBackgroundService extends Service {
                         if (Double.compare(currProbability, probability) > 0) {
                             classificator = m;
                             probability = currProbability;
-                            Log.i("Info", "Classification: " + area.name() + " "+area.getLable(classificator.getName()).getDescription() + " " + currProbability);
+                            Log.d("Info", "Classification: " + area.name() + " "+area.getLable(classificator.getName()).getDescription() + " " + currProbability);
                         }
                     }
 
@@ -363,7 +368,6 @@ public class EvaluationBackgroundService extends Service {
         private boolean runThreadrun=true;
         public void killMe() {
             this.runThreadrun=false;
-            this.destroy();
         }
 
         @Override

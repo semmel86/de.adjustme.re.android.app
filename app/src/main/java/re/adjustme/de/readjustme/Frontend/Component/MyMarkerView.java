@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme;
+package re.adjustme.de.readjustme.Frontend.Component;
 
 
 import android.content.Context;
@@ -14,6 +14,7 @@ import org.w3c.dom.Text;
 import java.text.SimpleDateFormat;
 
 import re.adjustme.de.readjustme.Bean.LabelData;
+import re.adjustme.de.readjustme.R;
 import re.adjustme.de.readjustme.Util.Duration;
 
 public class MyMarkerView extends MarkerView {

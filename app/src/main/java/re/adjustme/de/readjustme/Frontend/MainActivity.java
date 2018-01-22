@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme;
+package re.adjustme.de.readjustme.Frontend;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
@@ -9,7 +9,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -25,8 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
-import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
+import re.adjustme.de.readjustme.R;
 
 public class MainActivity extends GenericBaseActivity {
     private Button startServiceBtn;
@@ -178,7 +176,7 @@ public class MainActivity extends GenericBaseActivity {
             Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(turnOn, 0);
             Toast.makeText(getApplicationContext(), "Turned on", Toast.LENGTH_LONG).show();
-            Log.i("info", "Enabled Bluetooth!");
+            Log.d("info", "Enabled Bluetooth!");
         }
     }
 
@@ -265,7 +263,7 @@ public class MainActivity extends GenericBaseActivity {
                 } else {
 
                     // No explanation needed, we can request the permission.
-                    Log.i("info", "Have to enable Permission: " + currentPerm);
+                    Log.d("info", "Have to enable Permission: " + currentPerm);
                     ActivityCompat.requestPermissions(this,
                             new String[]{currentPerm},
                             1);
