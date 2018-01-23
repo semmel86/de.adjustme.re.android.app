@@ -111,7 +111,7 @@ public class TimelineActivity extends GenericBaseActivity {
                 colors.add(ResourcesCompat.getColor(getResources(), R.color.colorError, null));
             }else if (duration > 600000) {
                 // >10min
-                colors.add(ResourcesCompat.getColor(getResources(), R.color.textColorHint, null));
+                colors.add(ResourcesCompat.getColor(getResources(), R.color.calendarTextColor, null));
             } else {
                 // <10min
                 colors.add(ResourcesCompat.getColor(getResources(), R.color.textColorHighlight, null));

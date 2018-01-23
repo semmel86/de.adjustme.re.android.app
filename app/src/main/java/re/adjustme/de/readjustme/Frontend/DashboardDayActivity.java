@@ -98,8 +98,8 @@ public class DashboardDayActivity extends GenericBaseActivity {
     }
 
     private void addDataToChart(PieChart pieChart, HashMap<Label, Long> hashMap, String label) {
+        pieChart.highlightValue(0, -1);
         List<PieEntry> entries = new ArrayList<>();
-
         if (hashMap != null && !hashMap.isEmpty()) {
             //sort HashMap
             Set<Map.Entry<Label, Long>> set = hashMap.entrySet();
@@ -139,11 +139,14 @@ public class DashboardDayActivity extends GenericBaseActivity {
         ArrayList<Integer> colors = new ArrayList<>();
         colors.add(ResourcesCompat.getColor(getResources(), R.color.textColorHighlight, null));
         colors.add(ResourcesCompat.getColor(getResources(), R.color.keyTextColor, null));
-        colors.add(ResourcesCompat.getColor(getResources(), R.color.colorAccent, null));
+        colors.add(ResourcesCompat.getColor(getResources(), R.color.activatedHighlight, null));
         colors.add(ResourcesCompat.getColor(getResources(), R.color.textColorPrimary, null));
         colors.add(ResourcesCompat.getColor(getResources(), R.color.textColorTertiary, null));
 
         pieDataSet.setColors(colors);
+
+        IMarker marker = new MyMarkerView(this, R.layout.custom_marker_view);
+        pieChart.setMarker(marker);
 
         pieChart.setEntryLabelTextSize(7f);
         Description desc = new Description();
@@ -155,8 +158,5 @@ public class DashboardDayActivity extends GenericBaseActivity {
         pieChart.getLegend().setEnabled(false);
         pieChart.setCenterText(label);
         pieChart.invalidate();
-
-        IMarker marker = new MyMarkerView(this, R.layout.custom_marker_view);
-        pieChart.setMarker(marker);
     }
 }

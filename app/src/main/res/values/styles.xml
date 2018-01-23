@@ -5,7 +5,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:calendarTextColor">@color/calendarTextColor</item>
         <item name="android:colorForeground">@color/colorForeground</item>
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
@@ -15,6 +15,7 @@
         <item name="android:keyTextColor">@color/keyTextColor</item>
         <item name="colorError">@color/colorError</item>
         <item name="android:textColorHint">@color/textColorHint</item>
+        <item name="android:colorActivatedHighlight">@color/activatedHighlight</item>
     </style>
 
 </resources>

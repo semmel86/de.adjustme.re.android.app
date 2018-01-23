@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#a7a7a7</color>
     <color name="colorPrimaryDark">#717171</color>
-    <color name="colorAccent">#5b9bd5</color>
+    <color name="calendarTextColor">#ffd600</color>
     <color name="textColorPrimary">#3f3f3f</color>
     <color name="textColorSecondary">#ececec</color>
     <color name="textColorHighlight">#45e052</color>
@@ -10,6 +10,7 @@
     <color name="colorBackground">#ececec</color>
     <color name="colorForeground">#d1d1d1</color>
     <color name="keyTextColor">#2fa638</color>
-    <color name="textColorHint">#ffd600</color>
+    <color name="textColorHint">#45e052</color>
     <color name="colorError">#d50000</color>
+    <color name="activatedHighlight">#5b9bd5</color>
 </resources>
