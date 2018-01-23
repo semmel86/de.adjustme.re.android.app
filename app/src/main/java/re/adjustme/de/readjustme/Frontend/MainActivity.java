@@ -11,12 +11,14 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,6 +41,9 @@ public class MainActivity extends GenericBaseActivity {
     private TextView shoulder_posture;
     private TextView bws_posture;
     private TextView lws_posture;
+    private AlertDialog alertDialog;
+    private TextView calibrationTextView;
+
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
         public void onReceive(final Context context, Intent intent) {
@@ -108,7 +113,7 @@ public class MainActivity extends GenericBaseActivity {
         startServiceBtn = (Button) findViewById(R.id.startService);
         stopServiceBtn = (Button) findViewById(R.id.stopService);
         BA = BluetoothAdapter.getDefaultAdapter();
-        startServiceBtn.setEnabled(true);
+        enableButton(startServiceBtn, true);
         changeStartStopBtns(mPersistenceService != null && mPersistenceService.getIsRunning());
         checkBluethoothActive();
         checkPermissions();
@@ -139,15 +144,15 @@ public class MainActivity extends GenericBaseActivity {
         if (running) {
             mPersistenceService.setTryStarting(false);
             changeUsernameEditable(false);
-            startServiceBtn.setEnabled(true);
+            enableButton(startServiceBtn, true);
         }else
         if (!starting){
             changeUsernameEditable(true);
-            startServiceBtn.setEnabled(true);
+            enableButton(startServiceBtn, true);
         }
         if (starting) {
             changeUsernameEditable(false);
-            startServiceBtn.setEnabled(false);
+            enableButton(startServiceBtn, false);
         }
         changeStartStopBtns(running);
     }
@@ -155,9 +160,10 @@ public class MainActivity extends GenericBaseActivity {
     private void setNewUsername(String name) {
         if (mPersistenceService != null) {
             if (name.equals("") || name.equals(" ")) {
-                startServiceBtn.setEnabled(false);
+                enableButton(startServiceBtn, false);
             } else if (!mPersistenceService.getTryStarting()) {
-                startServiceBtn.setEnabled(true);
+                enableButton(startServiceBtn, true);
+
             }
             mPersistenceService.setUsername(name);
         }
@@ -172,6 +178,11 @@ public class MainActivity extends GenericBaseActivity {
             usernameLabel.setVisibility(View.VISIBLE);
             usernameInput.setVisibility(View.INVISIBLE);
         }
+    }
+
+    private void enableButton(Button btn, Boolean enabled) {
+        btn.setAlpha(enabled ? 1 : .5f);
+        btn.setClickable(enabled);
     }
 
     private void checkBluethoothActive() {
@@ -220,7 +231,7 @@ public class MainActivity extends GenericBaseActivity {
                 .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mPersistenceService.calibrate();
+                       startCalibrationAlert();
                     }
                 })
                 .setNegativeButton("Nein", null) // nothing to do
@@ -228,6 +239,30 @@ public class MainActivity extends GenericBaseActivity {
 
     }
 
+    private void startCalibrationAlert() {
+        alertDialog = new AlertDialog.Builder(this).setMessage("5").show();   //
+        calibrationTextView = (TextView) alertDialog.findViewById(android.R.id.message);
+        calibrationTextView.setTextSize(30);
+        calibrationTextView.setGravity(Gravity.CENTER);
+
+        new CountDownTimer(10000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                if (millisUntilFinished > 7000) {
+                    alertDialog.setMessage(getResources().getString(R.string.calibrationMessage));
+                } else {
+                    calibrationTextView.setTextSize(60);
+                    alertDialog.setMessage("" + ((millisUntilFinished / 1000) - 1));
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                mPersistenceService.calibrate();
+                alertDialog.hide();
+            }
+        }.start();
+    }
     // stop all Running Services
     public void stopService(View v) {
         mPersistenceService.setTryStarting(false);
@@ -309,11 +344,11 @@ public class MainActivity extends GenericBaseActivity {
         if (isRunning) {
             startServiceBtn.setVisibility(View.INVISIBLE);
             stopServiceBtn.setVisibility(View.VISIBLE);
-            calibrateBtn.setEnabled(true);
+            enableButton(calibrateBtn, true);
         } else {
             startServiceBtn.setVisibility(View.VISIBLE);
             stopServiceBtn.setVisibility(View.INVISIBLE);
-            calibrateBtn.setEnabled(false);
+            enableButton(calibrateBtn, false);
         }
     }
 

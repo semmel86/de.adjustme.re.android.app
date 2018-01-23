@@ -77,18 +77,21 @@ public class DashboardData implements Serializable {
     }
 
     private void addArea(BodyArea b, Stack<LabelData> stack, LabelData l) {
-        if (stack.size() > 0) {
+        if (posture_sum.get(b).get(l.getLabel()) != null) {
             // accumulate old to sum
-            Label old = stack.peek().getLabel();
-            Long currentDuration = posture_sum.get(b).get(old);
+            Long currentDuration = posture_sum.get(b).get(l.getLabel());
             currentDuration = currentDuration == null ? 0L : currentDuration;
             Long sumDuration = currentDuration + l.getDuration();
-            posture_sum.get(b).put(old, sumDuration);
+            posture_sum.get(b).put(l.getLabel(), sumDuration);
         } else {
             posture_sum.get(b).put(l.getLabel(), l.getDuration());
         }
-        // add new
-        stack.push(l);
+        if (stack.size() > 0 && stack.peek().getLabel().getLabel().equals(l.getLabel().getLabel())){
+            stack.peek().setDuration(stack.peek().getDuration() + l.getDuration());
+        }else{
+            // add new
+            stack.push(l);
+        }
     }
 
     public HashMap<Label, Long> getSum(BodyArea b) {

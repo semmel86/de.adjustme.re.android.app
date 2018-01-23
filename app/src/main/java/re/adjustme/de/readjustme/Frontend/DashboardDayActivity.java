@@ -140,8 +140,12 @@ public class DashboardDayActivity extends GenericBaseActivity {
         colors.add(ResourcesCompat.getColor(getResources(), R.color.textColorHighlight, null));
         colors.add(ResourcesCompat.getColor(getResources(), R.color.keyTextColor, null));
         colors.add(ResourcesCompat.getColor(getResources(), R.color.activatedHighlight, null));
-        colors.add(ResourcesCompat.getColor(getResources(), R.color.textColorPrimary, null));
+        colors.add(ResourcesCompat.getColor(getResources(), R.color.colorPrimaryDark, null));
+        colors.add(ResourcesCompat.getColor(getResources(), R.color.textColorSecondary, null));
         colors.add(ResourcesCompat.getColor(getResources(), R.color.textColorTertiary, null));
+        colors.add(ResourcesCompat.getColor(getResources(), R.color.calendarTextColor, null));
+        colors.add(ResourcesCompat.getColor(getResources(), R.color.colorForeground, null));
+        colors.add(ResourcesCompat.getColor(getResources(), R.color.activatedHighlight, null));
 
         pieDataSet.setColors(colors);
 

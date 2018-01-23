@@ -19,6 +19,7 @@
     <string name="mainActivity_bws">Brustwirbelsäule</string>
     <string name="mainActivity_lws">Lendenwirbelsäule</string>
     <string name="mainActivity_usernameHint">Benutzernamen eingeben</string>
+    <string name="calibrationMessage">Nehmen Sie bitte eine aufrechte Haltung ein (Nullposition)</string>
 
     <string name="spline_dashboard">Übersicht Brustwirbelsäule</string>
     <string name="shoulder_dashboard">Übersicht Schultern</string>

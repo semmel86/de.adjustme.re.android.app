@@ -111,6 +111,7 @@
                             android:drawableTint="@color/textColorHighlight"
                             android:drawableTop="@drawable/ic_play"
                             android:onClick="startService"
+                            android:clickable="false"
                             android:text="@string/mainActivity_start" />
 
                         <Button
@@ -122,6 +123,7 @@
                             android:drawableTint="@color/colorPrimaryDark"
                             android:drawableTop="@drawable/ic_pause"
                             android:onClick="stopService"
+                            android:clickable="false"
                             android:text="@string/mainActivity_stop" />
                     </RelativeLayout>
 
@@ -134,6 +136,7 @@
                         android:drawableTint="@color/textColorPrimary"
                         android:drawableTop="@drawable/ic_ruler"
                         android:onClick="calibrate"
+                        android:clickable="false"
                         android:text="@string/mainActivity_calibrate" />
 
                 </LinearLayout>
