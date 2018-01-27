@@ -1,7 +1,6 @@
 package re.adjustme.de.readjustme.Predefined.Classification;
 
 import re.adjustme.de.readjustme.Predefined.Sensor;
-import re.adjustme.de.readjustme.R;
 
 /**
  * Defines the different Body Areas and the referring labeled Motions
@@ -12,10 +11,10 @@ import re.adjustme.de.readjustme.R;
  */
 
 public enum BodyArea {
-    SHOULDER("Schultern", ShoulderLabel.values(), 600000L, new Sensor[]{Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK,Sensor.SENSOR_FRONT,Sensor.SENSOR_LOWER_BACK}),
-    SPLINE("Brustwirbelsäule", BwsLabel.values(), 600000L, new Sensor[]{Sensor.SENSOR_LOWER_BACK,Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK}),
-    HWS("Halswirbelsäule", HwsLabel.values(), 600000L, new Sensor[]{Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK,Sensor.SENSOR_LOWER_BACK}),
-    LWS("Lendenwirbelsäule", LwsLabel.values(), 6000000L, new Sensor[]{Sensor.SENSOR_LOWER_BACK,Sensor.SENSOR_UPPER_BACK,Sensor.SENSOR_FRONT,Sensor.SENSOR_LEFT_SHOULDER,Sensor.SENSOR_RIGHT_SHOULDER});
+    SHOULDER("Schultern", ShoulderPosture.values(), 600000L, new Sensor[]{Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK, Sensor.SENSOR_FRONT, Sensor.SENSOR_LOWER_BACK}),
+    SPINE("Brustwirbelsäule", BwsPosture.values(), 600000L, new Sensor[]{Sensor.SENSOR_LOWER_BACK, Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK}),
+    HWS("Halswirbelsäule", HwsPosture.values(), 600000L, new Sensor[]{Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK, Sensor.SENSOR_LOWER_BACK}),
+    LWS("Lendenwirbelsäule", LwsPosture.values(), 6000000L, new Sensor[]{Sensor.SENSOR_LOWER_BACK, Sensor.SENSOR_UPPER_BACK, Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER});
 
     private String areaName;
     private Label[] label;
@@ -34,8 +33,8 @@ public enum BodyArea {
     }
 
     public boolean containsSensors(Sensor sensor) {
-        for(Sensor s:sensors){
-            if(s.equals(sensor)){
+        for (Sensor s : sensors) {
+            if (s.equals(sensor)) {
                 return true;
             }
         }
@@ -79,11 +78,11 @@ public enum BodyArea {
         return null;
     }
 
-    public Sensor[] getSensorSet(){
-        return  sensors;
+    public Sensor[] getSensorSet() {
+        return sensors;
     }
 
-    public String getAreaName(){
+    public String getAreaName() {
         return this.areaName;
     }
 }

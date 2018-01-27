@@ -42,7 +42,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"></activity>
 
         <service
-            android:name=".Frontend.PersistenceService"
+            android:name=".Frontend.DataAccessService"
             android:exported="false"
            />
         <service

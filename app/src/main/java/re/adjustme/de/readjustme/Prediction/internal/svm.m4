@@ -2625,7 +2625,7 @@ public class svm {
 					model.label = new int[n];
 					StringTokenizer st = new StringTokenizer(arg);
 					for(int i=0;i<n;i++)
-						model.label[i] = atoi(st.nextToken());					
+						model.label[i] = atoi(st.nextToken());
 				}
 				else if(cmd.startsWith("probA"))
 				{

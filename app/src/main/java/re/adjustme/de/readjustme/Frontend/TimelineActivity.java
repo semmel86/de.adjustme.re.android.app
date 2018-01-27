@@ -20,18 +20,17 @@ import java.util.Calendar;
 import java.util.Stack;
 import java.util.TimeZone;
 
-import re.adjustme.de.readjustme.Bean.DashboardData;
-import re.adjustme.de.readjustme.Bean.LabelData;
-import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
+import re.adjustme.de.readjustme.Bean.Posture;
+import re.adjustme.de.readjustme.Persistence.Entity.DashboardDataEntity;
+import re.adjustme.de.readjustme.Frontend.Component.MyMarkerView;
 import re.adjustme.de.readjustme.Frontend.Component.TimelineBarChartRenderer;
 import re.adjustme.de.readjustme.Frontend.Component.TimelineBarChartValueFormatter;
-import re.adjustme.de.readjustme.Frontend.Component.MyMarkerView;
 import re.adjustme.de.readjustme.R;
 import re.adjustme.de.readjustme.Util.Duration;
 
 public class TimelineActivity extends GenericBaseActivity {
 
-    private DashboardData dashboardData = new DashboardData();
+    private DashboardDataEntity dashboardData = new DashboardDataEntity();
     private BarChart splineBar;
     private BarChart shoulderBar;
     private BarChart hwsBar;
@@ -41,6 +40,7 @@ public class TimelineActivity extends GenericBaseActivity {
     public void onDestroy() {
         super.onDestroy();
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,20 +59,20 @@ public class TimelineActivity extends GenericBaseActivity {
 
     @Override
     protected void afterServiceConnection() {
-        dashboardData = mPersistenceService.getDashboardData();
+        dashboardData = mDataAccessService.getDashboardData();
         addDataToBarCharts();
     }
 
     private void addDataToBarCharts() {
-        String splineBarTitle =  getResources().getString(R.string.spline_dashboard);
-        String shoulderBarTitle =  getResources().getString(R.string.shoulder_dashboard);
-        String hwsBarTitle =  getResources().getString(R.string.hws_dashboard);
-        String lwsBarTitle =  getResources().getString(R.string.lws_dashboard);
+        String splineBarTitle = getResources().getString(R.string.spline_dashboard);
+        String shoulderBarTitle = getResources().getString(R.string.shoulder_dashboard);
+        String hwsBarTitle = getResources().getString(R.string.hws_dashboard);
+        String lwsBarTitle = getResources().getString(R.string.lws_dashboard);
         if (dashboardData == null) {
-            addDataToChart(splineBar, new Stack<LabelData>(), splineBarTitle);
-            addDataToChart(shoulderBar, new Stack<LabelData>(), shoulderBarTitle);
-            addDataToChart(hwsBar, new Stack<LabelData>(), hwsBarTitle);
-            addDataToChart(lwsBar, new Stack<LabelData>(), lwsBarTitle);
+            addDataToChart(splineBar, new Stack<Posture>(), splineBarTitle);
+            addDataToChart(shoulderBar, new Stack<Posture>(), shoulderBarTitle);
+            addDataToChart(hwsBar, new Stack<Posture>(), hwsBarTitle);
+            addDataToChart(lwsBar, new Stack<Posture>(), lwsBarTitle);
             return;
         }
         addDataToChart(splineBar, dashboardData.getBws_timeline(), splineBarTitle);
@@ -81,27 +81,15 @@ public class TimelineActivity extends GenericBaseActivity {
         addDataToChart(lwsBar, dashboardData.getLws_timeline(), lwsBarTitle);
 
     }
-    private void addDataToChart(BarChart barChart, Stack<LabelData> timeline, String label) {
-        Stack<LabelData> adjustedTimelineHelper = new Stack<>();
-/*
-        int timelineSize = timeline.size();
-        for (int i = 0; i < timelineSize; i++) {
-            if (i == 0) {
-                adjustedTimelineHelper.push(timeline.get(i));
-            }else{
-                if (adjustedTimelineHelper.peek().getLabel().getLabel().equals(timeline.get(i).getLabel().getLabel())){
-                    adjustedTimelineHelper.peek().setDuration((Long) (adjustedTimelineHelper.peek().getDuration() + timeline.get(i).getDuration()));
-                }else {
-                    adjustedTimelineHelper.push(timeline.get(i));
-                }
-            }
-        }
-        */
+
+    private void addDataToChart(BarChart barChart, Stack<Posture> timeline, String label) {
+        Stack<Posture> adjustedTimelineHelper = new Stack<>();
+
         adjustedTimelineHelper = timeline;
         ArrayList<BarEntry> entries = new ArrayList<>();
         ArrayList<Integer> colors = new ArrayList<>();
         Long xAxisCounter = 0L;
-        for (LabelData l : adjustedTimelineHelper) {
+        for (Posture l : adjustedTimelineHelper) {
             entries.add(new BarEntry(xAxisCounter, l.getDuration(), l));
 
             //add color
@@ -109,7 +97,7 @@ public class TimelineActivity extends GenericBaseActivity {
             if (duration > 3600000) {
                 // >60min
                 colors.add(ResourcesCompat.getColor(getResources(), R.color.colorError, null));
-            }else if (duration > 600000) {
+            } else if (duration > 600000) {
                 // >10min
                 colors.add(ResourcesCompat.getColor(getResources(), R.color.calendarTextColor, null));
             } else {
@@ -120,20 +108,19 @@ public class TimelineActivity extends GenericBaseActivity {
         }
 
 
-
         BarDataSet dataset = new BarDataSet(entries, label);
         //ToDo fix labels
         String[] labels = new String[adjustedTimelineHelper.size()];
         Timestamp lastTime = null;
         int currentPosition = adjustedTimelineHelper.size() - 1;
-        for (LabelData l : adjustedTimelineHelper){
-            if (lastTime == null){
+        for (Posture l : adjustedTimelineHelper) {
+            if (lastTime == null) {
                 labels[currentPosition] = getDate(l);
                 lastTime = l.getEnd();
-            } else if (isNewDate(lastTime, l.getEnd())){
+            } else if (isNewDate(lastTime, l.getEnd())) {
                 labels[currentPosition] = getDate(l);
                 lastTime = l.getEnd();
-            }else{
+            } else {
                 labels[currentPosition] = " ";
             }
             currentPosition--;
@@ -175,7 +162,7 @@ public class TimelineActivity extends GenericBaseActivity {
         return lastTime.getTime() - currentEnd.getTime() > 3600000;
     }
 
-    private String getDate(LabelData l) {
+    private String getDate(Posture l) {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         cal.setTime(l.getBegin());
         SimpleDateFormat format = new SimpleDateFormat("d MMMM - HH");

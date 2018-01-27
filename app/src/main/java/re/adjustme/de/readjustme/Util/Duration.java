@@ -18,7 +18,7 @@ public class Duration {
         } else {
             if (minute > 0) {
                 time = String.format("%02d min %02d sec", minute, second);
-            } else{
+            } else {
                 time = String.format("%02d sec", second);
             }
         }

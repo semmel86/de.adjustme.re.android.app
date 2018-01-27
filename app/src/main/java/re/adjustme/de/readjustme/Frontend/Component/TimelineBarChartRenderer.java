@@ -1,7 +1,6 @@
 package re.adjustme.de.readjustme.Frontend.Component;
 
 import android.graphics.Canvas;
-import android.util.Log;
 
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.data.Entry;
@@ -27,17 +26,16 @@ public class TimelineBarChartRenderer extends BarChartRenderer {
     public void drawValue(Canvas c, IValueFormatter formatter, float value, Entry entry, int dataSetIndex, float x, float y, int color) {
         mValuePaint.setColor(color);
         mValuePaint.setTextSize(28);
-        MPPointF pointF = MPPointF.getInstance(0,0);
-        //Log.i("Info", "Draw Values - " + x + " - " + y);
+        MPPointF pointF = MPPointF.getInstance(0, 0);
         String text = formatter.getFormattedValue(value, entry, dataSetIndex, mViewPortHandler);
         if (text.contains("\n")) {
             String[] separated = text.split("\n");
             int currentPosition = 0;
-            for (String s: separated) {
+            for (String s : separated) {
                 Utils.drawXAxisValue(c, s.trim(), x + (currentPosition * 30), 100, mValuePaint, pointF, 90);
-                currentPosition ++;
+                currentPosition++;
             }
-        }else {
+        } else {
             Utils.drawXAxisValue(c, text, x, 120, mValuePaint, pointF, 90);
         }
     }

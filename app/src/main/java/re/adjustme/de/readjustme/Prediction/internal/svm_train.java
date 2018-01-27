@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
 import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
+import re.adjustme.de.readjustme.Persistence.Entity.MotionDataSetDto;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 
 public class svm_train {
@@ -139,8 +139,8 @@ public class svm_train {
     // t.run(argv);
     // }
 
-    public svm_model train(List<MotionDataSetDto> motionDataSetDtos,BodyArea area) {
-        this.read_problem(motionDataSetDtos,area);
+    public svm_model train(List<MotionDataSetDto> motionDataSetDtos, BodyArea area) {
+        this.read_problem(motionDataSetDtos, area);
         if (this.cross_validation != 0) {
             this.do_cross_validation();
         } else {
@@ -303,7 +303,7 @@ public class svm_train {
         // }
     }
 
-    void read_problem(List<MotionDataSetDto> motionDataSetDtos,BodyArea area) {
+    void read_problem(List<MotionDataSetDto> motionDataSetDtos, BodyArea area) {
 
         final Vector<Double> vy = new Vector<Double>();
         final Vector<svm_node[]> vx = new Vector<svm_node[]>();

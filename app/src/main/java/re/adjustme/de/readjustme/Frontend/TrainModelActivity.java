@@ -25,7 +25,6 @@ public class TrainModelActivity extends GenericBaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -35,10 +34,10 @@ public class TrainModelActivity extends GenericBaseActivity {
 
     @Override
     protected void afterServiceConnection() {
-        if (mPersistenceService != null) {
+        if (mDataAccessService != null) {
             Log.i("Info", "set label text");
-            label.setText(mPersistenceService.getLabel());
-            isInLabeledPostion.setChecked(mPersistenceService.getIsInLabeledPosition());
+            label.setText(mDataAccessService.getLabel());
+            isInLabeledPostion.setChecked(mDataAccessService.getIsInLabeledPosition());
         }
     }
 
@@ -49,7 +48,7 @@ public class TrainModelActivity extends GenericBaseActivity {
         setContentView(R.layout.activity_train);
 
         // set navigation bar
-         setNavigationBar();
+        setNavigationBar();
 
         labelTxt = (EditText) findViewById(R.id.editText2);
         isInLabeledPostion = (ToggleButton) findViewById(R.id.toggleButton2);
@@ -62,19 +61,19 @@ public class TrainModelActivity extends GenericBaseActivity {
         // switch true/false
         if (isInLabeledPostion.getText().equals("False - not in Position")) {
             //set false
-            mPersistenceService.setIsInLabeledPosition(false);
+            mDataAccessService.setIsInLabeledPosition(false);
         } else {
             // set true
-            mPersistenceService.setIsInLabeledPosition(true);
+            mDataAccessService.setIsInLabeledPosition(true);
         }
     }
 
     public void setLabelTxt(View v) {
         // is labeled = false
-        mPersistenceService.setIsInLabeledPosition(false);
+        mDataAccessService.setIsInLabeledPosition(false);
         // set new label
         if (labelTxt.getText() != null) {
-            mPersistenceService.setLabel(labelTxt.getText().toString());
+            mDataAccessService.setLabel(labelTxt.getText().toString());
             label.setText(labelTxt.getText());
             labelTxt.setText("");
         }

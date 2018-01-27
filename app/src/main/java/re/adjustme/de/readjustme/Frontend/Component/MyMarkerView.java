@@ -9,11 +9,9 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.MPPointF;
 
-import org.w3c.dom.Text;
-
 import java.text.SimpleDateFormat;
 
-import re.adjustme.de.readjustme.Bean.LabelData;
+import re.adjustme.de.readjustme.Bean.Posture;
 import re.adjustme.de.readjustme.R;
 import re.adjustme.de.readjustme.Util.Duration;
 
@@ -35,9 +33,9 @@ public class MyMarkerView extends MarkerView {
     public void refreshContent(Entry e, Highlight highlight) {
         long millis = (long) e.getY();
         String s = "";
-        if (e.getData() instanceof LabelData) {
+        if (e.getData() instanceof Posture) {
             SimpleDateFormat format = new SimpleDateFormat("d MMMM - HH:mm");
-            s = format.format(((LabelData) e.getData()).getBegin());
+            s = format.format(((Posture) e.getData()).getBegin());
             s += " - ";
         }
         s += Duration.millisToDuration(millis);
@@ -48,11 +46,10 @@ public class MyMarkerView extends MarkerView {
     }
 
 
-
     @Override
     public MPPointF getOffset() {
 
-        if(mOffset == null) {
+        if (mOffset == null) {
             // center the marker horizontally and vertically
             mOffset = new MPPointF(-(getWidth() / 2), -getHeight());
         }

@@ -8,7 +8,7 @@ import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
  * Created by Semmel on 13.01.2017.
  */
 
-public enum LwsLabel implements Label {
+public enum LwsPosture implements Label {
     A("A", "neutrale Haltung", "1"),
     AJ("AJ", "gestreckt", "61"),
     AI("AI", "vorgebeugt", "62"),
@@ -18,7 +18,7 @@ public enum LwsLabel implements Label {
     private String description;
     private String SVMClass;
 
-    LwsLabel(String label, String description, String svm) {
+    LwsPosture(String label, String description, String svm) {
         this.label = label;
         this.description = description;
         this.SVMClass = svm;

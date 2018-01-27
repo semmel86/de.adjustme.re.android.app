@@ -1,6 +1,8 @@
 package re.adjustme.de.readjustme.Predefined;
 
 /**
+ * Predefined types for Persistence.
+ * <p>
  * Created by Semmel on 18.11.2017.
  */
 
@@ -10,9 +12,13 @@ public enum PersistenceType {
     OBJECT("Object"),
     BACKEND("Backend");
 
-    private String persitanceType;
+    private String persistenceType;
 
-    PersistenceType(String persistanceType) {
-        this.persitanceType = persitanceType;
+    PersistenceType(String persistenceType) {
+        this.persistenceType = persistenceType;
+    }
+
+    public String getType() {
+        return this.persistenceType;
     }
 }

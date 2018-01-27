@@ -20,16 +20,16 @@ import org.json.JSONObject;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
-import re.adjustme.de.readjustme.Bean.DashboardData;
-import re.adjustme.de.readjustme.Bean.LabelData;
-import re.adjustme.de.readjustme.Bean.MotionData;
-import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
+import re.adjustme.de.readjustme.Bean.Posture;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Persistence.BackendConnection;
-import re.adjustme.de.readjustme.Persistence.MotionDataPersistor;
-import re.adjustme.de.readjustme.Persistence.PersistorFactory;
+import re.adjustme.de.readjustme.Persistence.Entity.BackendDataEntity;
+import re.adjustme.de.readjustme.Persistence.Entity.CalibrationDataEntity;
+import re.adjustme.de.readjustme.Persistence.Entity.DashboardDataEntity;
+import re.adjustme.de.readjustme.Bean.MotionData;
+import re.adjustme.de.readjustme.Persistence.Entity.MotionDataSetDto;
+import re.adjustme.de.readjustme.Persistence.Entity.UserEntity;
+import re.adjustme.de.readjustme.Persistence.GenericPersistenceProvider;
 import re.adjustme.de.readjustme.Persistence.internal.ObjectPersistor;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Predefined.Classification.Label;
@@ -37,31 +37,31 @@ import re.adjustme.de.readjustme.Predefined.Sensor;
 import re.adjustme.de.readjustme.R;
 
 /**
+ * Class providing access to all data needed by different services/Activities.
+ * Therefore it is possible to bind this Service, which exists along with the live time of all binding Services.
+ * <p>
  * Created by semmel on 25.11.2017.
  */
 
-public class PersistenceService extends Service {
-    // calibration values
+public class DataAccessService extends Service {
     private static HashMap<Sensor, MotionData> currentRawMotionData;
-    private static HashMap<Sensor, MotionData> calibrationMotionData;
+    private static CalibrationDataEntity calibrationMotionData;
     // Binder given to clients
     private final IBinder mBinder = new PersistenceServiceBinder();
-    // current data
-    private MotionDataSetDto motionDataSet;
-    private MotionDataPersistor persistor;
+    GenericPersistenceProvider mPersistenceProvider;
+    // data existing on runtime
+    private boolean receivesLiveData = false;
     private String label = "";
     private boolean isInLabeledPosition = false;
-    private HashMap<Sensor, List<MotionData>> fullMotionData;
-    private boolean receivesLiveData = false;
-    private BackendConnection backend = new BackendConnection();
-    private DashboardData dashboardData;
-    private String username;
     private boolean isRunning = false;
     private boolean tryStarting = false;
-
+    // persisted entities
+    private UserEntity user;
+    private MotionDataSetDto motionDataSet;
+    private DashboardDataEntity dashboardData;
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
-        // simple counter for sendet Notification, to avoid thousands of notifications if the position
+        // simple counter for sended Notification, to avoid thousands of notifications if the position
         // doesn't change after the first notification
         private int sendNotification = 1;
 
@@ -69,14 +69,14 @@ public class PersistenceService extends Service {
             String action = intent.getAction();
             if (action.equals("Posture")) {
                 if (dashboardData == null) {
-                    dashboardData = new DashboardData();
+                    dashboardData = new DashboardDataEntity();
                 }
                 String s = intent.getStringExtra("PostureName");
                 BodyArea bodyarea = BodyArea.valueOf(intent.getStringExtra("Area"));
                 Label label = bodyarea.getLableByDescription(intent.getStringExtra("PostureName"));
                 // put on Dashboard stack
                 // get last stacked object
-                LabelData lastLabel = dashboardData.getlast(bodyarea);
+                Posture lastLabel = dashboardData.getlast(bodyarea);
                 if (label != null) {
                     if (lastLabel != null && lastLabel.getLabel().equals(label)) {
                         // same Label -> accumulate duration
@@ -84,8 +84,8 @@ public class PersistenceService extends Service {
                         HashMap<Label, Long> dashboardDataSum = dashboardData.getSum(bodyarea);
                         Long sumDuration = 0L;
                         if (dashboardDataSum != null) {
-                             sumDuration = dashboardDataSum.get(lastLabel.getLabel());
-                             sumDuration = sumDuration == null ? 0L : sumDuration;
+                            sumDuration = dashboardDataSum.get(lastLabel.getLabel());
+                            sumDuration = sumDuration == null ? 0L : sumDuration;
                         }
                         if (lastLabel.getDuration().compareTo(0L) > 0) {
                             sumDuration = sumDuration - lastLabel.getDuration();
@@ -94,18 +94,18 @@ public class PersistenceService extends Service {
                         lastLabel.setDuration(dur);
                         if (sumDuration.compareTo(0L) > 0) {
                             sumDuration = sumDuration + dur;
-                        } else{
+                        } else {
                             sumDuration = dur;
                         }
                         dashboardData.getSum(bodyarea).put(lastLabel.getLabel(), sumDuration);
                         if (dur >= lastLabel.getArea().getMaxDuration() * sendNotification) {
-                            sendNotification(lastLabel.getArea().getAreaName(),lastLabel.getLabel().getDescription(),dur);
+                            sendNotification(lastLabel.getArea().getAreaName(), lastLabel.getLabel().getDescription(), dur);
                             sendNotification++;
                         }
                     } else {
-                        // other label -> new LabelData object
+                        // other label -> new Posture object
                         Log.d("New Posture detected", bodyarea.name() + " - " + label.getDescription());
-                        LabelData newLabel = new LabelData(label, bodyarea);
+                        Posture newLabel = new Posture(label, bodyarea);
                         dashboardData.addLabelData(newLabel);
                         save(dashboardData);
                     }
@@ -116,77 +116,56 @@ public class PersistenceService extends Service {
     };
 
 
-    public PersistenceService() {
+    public DataAccessService() {
         super();
-        intiPersistenceService();
+        intiDataAccessService();
     }
 
-    private void save(DashboardData dashboardData) {
-        ObjectPersistor helper = new ObjectPersistor();
-        helper.save(dashboardData, "DashboardData");
+    private void save(DashboardDataEntity dashboardData) {
+        mPersistenceProvider.save(dashboardData);
     }
 
-    private void saveUserName(String username){
-        ObjectPersistor helper = new ObjectPersistor();
-        helper.save(username, "User");
-    }
 
-    private String loadUserName(){
-        ObjectPersistor helper = new ObjectPersistor();
-        return (String) helper.load("User");
-    }
-
-    private void intiPersistenceService() {
-        ObjectPersistor helper = new ObjectPersistor();
-        // helper.load("calibrationMotionData");
+    private void intiDataAccessService() {
+        mPersistenceProvider = new GenericPersistenceProvider();
         // load Dashboard Object if possible
-        dashboardData = (DashboardData) helper.load("DashboardData");
+        dashboardData = (DashboardDataEntity) mPersistenceProvider.load(dashboardData.getClass());
         if (dashboardData == null) {
-            dashboardData = new DashboardData();
-            helper.save(dashboardData, "DashboardData");
+            dashboardData = new DashboardDataEntity();
         }
-        this.username =(String) helper.load("User");
+        this.user = (UserEntity) mPersistenceProvider.load(user.getClass());
         motionDataSet = new MotionDataSetDto();
-        calibrationMotionData = (HashMap<Sensor, MotionData>) helper.load("calibrationMotionData"); // new HashMap<>();
+        calibrationMotionData = (CalibrationDataEntity) mPersistenceProvider.load(calibrationMotionData.getClass()); // new HashMap<>();
         if (calibrationMotionData == null) {
             // for restets, start with a new entity
-            calibrationMotionData = new HashMap<>();
-        }
-        currentRawMotionData = new HashMap<>();
-        // get Persistor
-        this.persistor = PersistorFactory.getMotionDataPersistor(PersistenceConfiguration.DEFAULT_PERSISTOR);
+            calibrationMotionData = new CalibrationDataEntity();
+            calibrationMotionData.setData(new HashMap<Sensor, MotionData>());
 
+            for (Sensor s : Sensor.values()) {
+                // initiate calibration with (x,y,z)->(0,0,0)
+                MotionData calibration = new MotionData();
+                calibration.setDuration(0);
+                calibration.setX(0);
+                calibration.setY(0);
+                calibration.setZ(0);
 
-        fullMotionData = new HashMap<>();
-//        // load current data foreach Sensor
-        for (Sensor s : Sensor.values()) {
-            // initiate calibration with (x,y,z)->(0,0,0)
-            MotionData calibration = new MotionData();
-            calibration.setDuration(0);
-            calibration.setX(0);
-            calibration.setY(0);
-            calibration.setZ(0);
-
-            List<MotionData> list = persistor.getMotionDataForSensor(s);
-            if (!calibrationMotionData.containsKey(s)) {
-                calibration.setSensor(s);
-                calibrationMotionData.put(s, calibration);
+                if (!calibrationMotionData.getData().containsKey(s)) {
+                    calibration.setSensor(s);
+                    calibrationMotionData.getData().put(s, calibration);
+                }
             }
-            fullMotionData.put(s, list);
-
         }
+
+        currentRawMotionData = new HashMap<>();
+
         // Register BroadcastReceiver to receive current Motions
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mPostureReceiver, new IntentFilter("Posture"));
     }
 
-    public HashMap<Sensor, List<MotionData>> getMotionData() {
-        return fullMotionData;
-    }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        this.intiPersistenceService();
+        this.intiDataAccessService();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -199,6 +178,11 @@ public class PersistenceService extends Service {
         setIsRunning(false);
         setTryStarting(false);
         save(dashboardData);
+
+    }
+
+    public boolean getIsRunning() {
+        return this.isRunning;
     }
 
     public void setIsRunning(Boolean running) {
@@ -208,8 +192,8 @@ public class PersistenceService extends Service {
         this.isRunning = running;
     }
 
-    public boolean getIsRunning() {
-        return this.isRunning;
+    public boolean getTryStarting() {
+        return this.tryStarting;
     }
 
     public void setTryStarting(Boolean tryStarting) {
@@ -219,23 +203,19 @@ public class PersistenceService extends Service {
         this.tryStarting = tryStarting;
     }
 
-    public boolean getTryStarting() {
-        return this.tryStarting;
-    }
-
     // sets the current raw Motion Data as calibrated 0-values and all following
     // motions are calculated related to these
     public void calibrate() {
         for (Sensor s : Sensor.values()) {
             if (currentRawMotionData.containsKey(s)) {
-                MotionData oldCalibration = calibrationMotionData.get(s);
+                MotionData oldCalibration = calibrationMotionData.getData().get(s);
                 MotionData newMd = currentRawMotionData.get(s);
                 // Recalculate calibration, as it was already calibrated before
                 // x1 = x1 - calibrationX == calibrate(x1) + calibrationX
                 if (!oldCalibration.equals(newMd)) {
-                    oldCalibration.setX(newMd.getX());// + oldCalibration.getX());
-                    oldCalibration.setY(newMd.getY());// + oldCalibration.getY());
-                    oldCalibration.setZ(newMd.getZ());// + oldCalibration.getZ());
+                    oldCalibration.setX(newMd.getX());
+                    oldCalibration.setY(newMd.getY());
+                    oldCalibration.setZ(newMd.getZ());
                     Log.d("Info", "Calibrated to" + newMd.toString());
                     // set as new calibration
                 }
@@ -246,9 +226,9 @@ public class PersistenceService extends Service {
     }
 
     private void doCalibration(MotionData md) {
-        MotionData calibration = calibrationMotionData.get(md.getSensor());
+        MotionData calibration = calibrationMotionData.getData().get(md.getSensor());
         Log.d("Info Persistence", "Before Calibration: " + md.toString());
-        // CALIBRATION
+//        // CALIBRATION
 //        if((md.getX() - calibration.getX()) >=(-180)){
 //            md.setX(md.getX() - calibration.getX());}
 //        else{
@@ -260,11 +240,40 @@ public class PersistenceService extends Service {
 //        else{
 //            md.setY(180+calibration.getY() - md.getY());
 //        }
-//
-//        if((md.getZ() - calibration.getZ()) >=(-180)){
-//            md.setZ(md.getZ() - calibration.getZ());}
+
+//        // X
+//        if((md.getX() - calibration.getX()) >=(-180)) {
+//            if (((md.getX() - calibration.getX()) <= (180))) {
+//                md.setX(md.getX() - calibration.getX()+180);
+//            }else{
+//                md.setX(-181+calibration.getX() + md.getX()+180);
+//            }
+//        }
 //        else{
-//            md.setZ(180+calibration.getZ() - md.getZ());
+//            md.setX(181+calibration.getX() - md.getX()+180);
+//        }
+//        // Y
+//        if((md.getY() - calibration.getY()) >=(-180)) {
+//            if (((md.getY() - calibration.getY()) <= (180))) {
+//                md.setY(md.getY() - calibration.getY());
+//            }else{
+//                md.setY(-181+calibration.getY() + md.getY());
+//            }
+//        }
+//        else{
+//            md.setY(181+calibration.getY() - md.getY());
+//        }
+
+        // Z
+//        if((md.getZ() - calibration.getZ()) >=(-180)) {
+//            if (((md.getZ() - calibration.getZ()) <= (180))) {
+//                md.setZ(md.getZ() - calibration.getZ());
+//            }else{
+//                md.setZ(0-(calibration.getZ() + md.getZ()));
+//            }
+//        }
+//        else{
+//            md.setZ(0-(calibration.getZ() + md.getZ()));
 //        }
         md.setX(md.getX() - calibration.getX());
         md.setY(md.getY() - calibration.getY());
@@ -278,29 +287,26 @@ public class PersistenceService extends Service {
         if (PersistenceConfiguration.ENABLE_CALIBRATION) {
             doCalibration(md);
         }
-        // SAVE
-        if (PersistenceConfiguration.SAVE_LOCAL) {
-            labelMotionData(md);
-            persistor.saveMotion(md);
-            motionDataSet.update(md);
-            persistor.saveMotionSet(motionDataSet);
-            Log.d("Info Persistence", "Saved Motion Data: " + md.toString());
-        }
-        if (PersistenceConfiguration.SAVE_BACKEND) {
-            JSONObject motionData = motionDataSet.getJson();
-            try {
-                motionData.put("user", this.username.toString());
-                for (BodyArea b : BodyArea.values()) {
-                    if(dashboardData.getlast(b)!=null) {
-                        motionData.put(b.name(), dashboardData.getlast(b).getLabel().getLabel());
-                    }
+        labelMotionData(md);
+        motionDataSet.update(md); // add md to MotionDataSetDto where z is adjusted !
+        mPersistenceProvider.save(motionDataSet);
+
+
+        JSONObject motionData = motionDataSet.getJson();
+        try {
+            motionData.put("user", this.user.getName());
+            for (BodyArea b : BodyArea.values()) {
+                if (dashboardData.getlast(b) != null) {
+                    motionData.put(b.name(), dashboardData.getlast(b).getLabel().getLabel());
                 }
-            } catch (Exception e) {
-                //Log.e("Error Persistence", "Error on parsing Json");
             }
-            Log.d("SEND-JSON",motionData.toString());
-            backend.sendRequest(motionData, this.getApplicationContext());
+        } catch (Exception e) {
+            // nothing to do here
         }
+
+        mPersistenceProvider.save(new BackendDataEntity(motionData, this.getApplicationContext()));
+        Log.d("Info Persistence", "Saved Motion Data: " + md.toString());
+
     }
 
 
@@ -318,8 +324,9 @@ public class PersistenceService extends Service {
                 long duration = currentRawMotionData.get(md.getSensor()).getDuration();
                 duration = md.getBegin().getTime() - currentRawMotionData.get(md.getSensor()).getBegin().getTime();
                 currentRawMotionData.get(md.getSensor()).setDuration(duration);
-                // Log.d("Info", "Enlarged duration to: " + duration + " it's " + duration / 1000 + " sek");
+
             } else {
+
                 // there is a difference, change md to current and persist old current
                 save(currentRawMotionData.get(md.getSensor()));
                 currentRawMotionData.put(md.getSensor(), md);
@@ -332,12 +339,12 @@ public class PersistenceService extends Service {
     }
 
     public String getUsername() {
-        return this.username;
+        return this.user.getName();
     }
 
     public void setUsername(String username) {
-        this.username = username;
-        saveUserName(username);
+        this.user.setName(username);
+        mPersistenceProvider.save(user);
     }
 
     public String getLabel() {
@@ -366,13 +373,9 @@ public class PersistenceService extends Service {
         return motionDataSet;
     }
 
-    // get the data from cached Map
-    public MotionData getLast(Sensor s) {
-        return motionDataSet.getMotion(s);
-    }
 
-    // get reference to current DashboardData object
-    public DashboardData getDashboardData() {
+    // get reference to current DashboardDataEntity object
+    public DashboardDataEntity getDashboardData() {
         return this.dashboardData;
     }
 
@@ -385,7 +388,7 @@ public class PersistenceService extends Service {
         this.receivesLiveData = false;
     }
 
-    protected void sendNotification(String area,String posture,long dur) {
+    protected void sendNotification(String area, String posture, long dur) {
         // prepare intent which is triggered if the
         // notification is selected
 
@@ -399,15 +402,15 @@ public class PersistenceService extends Service {
                         .addNextIntentWithParentStack(dash)
                         .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-      //  PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        //  PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-        String s ="Zeit zu handeln.";
+        String s = "Zeit zu handeln.";
         // large notification layout
         Notification.InboxStyle inboxStyle =
                 new Notification.InboxStyle();
-        inboxStyle.addLine("Du warst jetzt schon über "+Long.toString(dur/60000L)+" Minuten in") ;
+        inboxStyle.addLine("Du warst jetzt schon über " + Long.toString(dur / 60000L) + " Minuten in");
 //        inboxStyle.addLine(" ");
-        inboxStyle.addLine("dieser Haltung:     "+area.toString()+" - "+posture.toString());
+        inboxStyle.addLine("dieser Haltung:     " + area.toString() + " - " + posture.toString());
 //        inboxStyle.addLine(" ");
         inboxStyle.addLine("Du solltest dich bewegen oder deine Position");
         inboxStyle.addLine("ändern um Verspannungen vorzubeugen.");
@@ -428,8 +431,6 @@ public class PersistenceService extends Service {
                 .setAutoCancel(true).build();
 
 
-
-
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -437,21 +438,21 @@ public class PersistenceService extends Service {
 
     }
 
+    private void sendAppEventBroadcast(boolean running, boolean tryStarting) {
+        Intent intent = new Intent("AppEvent");
+        intent.putExtra("Running", running ? "true" : "false");
+        intent.putExtra("Starting", tryStarting ? "true" : "false");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
     /**
      * Class used for the client Binder.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
      */
     public class PersistenceServiceBinder extends Binder {
-        PersistenceService getService() {
+        DataAccessService getService() {
             // Return this instance of LocalService so clients can call public methods
-            return PersistenceService.this;
+            return DataAccessService.this;
         }
-    }
-
-    private void sendAppEventBroadcast(boolean running, boolean tryStarting) {
-        Intent intent = new Intent("AppEvent");
-        intent.putExtra("Running", running ? "true" : "false");
-        intent.putExtra("Starting", tryStarting? "true" : "false");
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }
