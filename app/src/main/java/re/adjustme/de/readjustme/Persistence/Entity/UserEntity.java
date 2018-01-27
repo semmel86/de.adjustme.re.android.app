@@ -8,7 +8,7 @@ import re.adjustme.de.readjustme.Predefined.PersistenceType;
 /**
  * Created by semmel on 27.01.2018.
  */
-@Persistence(name = "user", type = PersistenceType.FILE)
+@Persistence(name = "user", type = PersistenceType.OBJECT)
 public class UserEntity implements Serializable {
 
     private String name;

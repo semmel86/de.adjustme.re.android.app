@@ -129,13 +129,16 @@ public class DataAccessService extends Service {
     private void intiDataAccessService() {
         mPersistenceProvider = new GenericPersistenceProvider();
         // load Dashboard Object if possible
-        dashboardData = (DashboardDataEntity) mPersistenceProvider.load(dashboardData.getClass());
+        dashboardData = (DashboardDataEntity) mPersistenceProvider.load(DashboardDataEntity.class);
         if (dashboardData == null) {
             dashboardData = new DashboardDataEntity();
         }
-        this.user = (UserEntity) mPersistenceProvider.load(user.getClass());
+        user = (UserEntity) mPersistenceProvider.load(UserEntity.class);
+        if(user==null){
+            user=new UserEntity();
+        }
         motionDataSet = new MotionDataSetDto();
-        calibrationMotionData = (CalibrationDataEntity) mPersistenceProvider.load(calibrationMotionData.getClass()); // new HashMap<>();
+        calibrationMotionData = (CalibrationDataEntity) mPersistenceProvider.load(CalibrationDataEntity.class); // new HashMap<>();
         if (calibrationMotionData == null) {
             // for restets, start with a new entity
             calibrationMotionData = new CalibrationDataEntity();
@@ -343,7 +346,7 @@ public class DataAccessService extends Service {
     }
 
     public void setUsername(String username) {
-        this.user.setName(username);
+        user.setName(username);
         mPersistenceProvider.save(user);
     }
 

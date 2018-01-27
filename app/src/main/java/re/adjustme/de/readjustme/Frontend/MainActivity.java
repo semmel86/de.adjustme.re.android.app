@@ -91,6 +91,7 @@ public class MainActivity extends GenericBaseActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                setNewUsername(s.toString());
             }
 
             @Override
@@ -101,7 +102,7 @@ public class MainActivity extends GenericBaseActivity {
             @Override
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
-                setNewUsername(s.toString());
+
             }
         });
         usernameLabel = (TextView) findViewById(R.id.usernameTextview);

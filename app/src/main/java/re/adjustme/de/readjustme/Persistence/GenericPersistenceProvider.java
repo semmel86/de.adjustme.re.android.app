@@ -30,7 +30,7 @@ public class GenericPersistenceProvider {
     public void save(Object object) {
         // Check if persistence is enabled
         if (object.getClass().isAnnotationPresent(Persistence.class)) {
-            Persistence p = (Persistence) getClass().getAnnotation(Persistence.class);
+            Persistence p =  object.getClass().getAnnotation(Persistence.class);
             switch (p.type()) {
                 case BACKEND:
                     if (PersistenceConfiguration.SAVE_BACKEND) {
