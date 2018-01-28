@@ -3,7 +3,7 @@ package re.adjustme.de.readjustme.Prediction;
 import java.io.Serializable;
 import java.util.List;
 
-import re.adjustme.de.readjustme.Bean.Entity.MotionDataSetEntity;
+import re.adjustme.de.readjustme.Bean.PersistedEntity.MotionDataSetEntity;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Prediction.internal.svm;
 import re.adjustme.de.readjustme.Prediction.internal.svm_model;

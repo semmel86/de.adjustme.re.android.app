@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme.Bean.Entity;
+package re.adjustme.de.readjustme.Bean.PersistedEntity;
 
 import android.util.Log;
 
