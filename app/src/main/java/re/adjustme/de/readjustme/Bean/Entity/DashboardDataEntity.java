@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme.Persistence.Entity;
+package re.adjustme.de.readjustme.Bean.Entity;
 
 import android.util.Log;
 
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Stack;
 import java.util.TimeZone;
 
-import re.adjustme.de.readjustme.Bean.Posture;
+import re.adjustme.de.readjustme.Bean.PostureBean;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Persistence.Persistence;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
@@ -28,10 +28,10 @@ public class DashboardDataEntity implements Serializable {
     // aggregated lable-sum (duration)
     HashMap<BodyArea, HashMap<Label, Long>> posture_sum;
     // Timeline: sorted List of Lables with duration
-    Stack<Posture> bws_timeline;
-    Stack<Posture> hws_timeline;
-    Stack<Posture> lws_timeline;
-    Stack<Posture> shoulder_timeline;
+    Stack<PostureBean> bws_timeline;
+    Stack<PostureBean> hws_timeline;
+    Stack<PostureBean> lws_timeline;
+    Stack<PostureBean> shoulder_timeline;
     private Date date;
 
     public DashboardDataEntity() {
@@ -43,10 +43,10 @@ public class DashboardDataEntity implements Serializable {
         shoulder_timeline = new Stack<>();
     }
 
-    private void checkDurationRestriction(Posture l) {
+    private void checkDurationRestriction(PostureBean l) {
         // check if the duration of the last lable > minDuration
         // if not, delete it from stack
-        Posture lastLabel = this.getlast(l.getArea());
+        PostureBean lastLabel = this.getlast(l.getArea());
         if (lastLabel != null) {
             if (lastLabel.getDuration() < PersistenceConfiguration.MIN_POSTURE_DURATION) {
                 deleteLast(l.getArea());
@@ -55,7 +55,7 @@ public class DashboardDataEntity implements Serializable {
         ;
     }
 
-    public void addLabelData(Posture l) {
+    public void addLabelData(PostureBean l) {
         BodyArea area = l.getArea();
         if (posture_sum.get(area) == null) {
             posture_sum.put(area, new HashMap<Label, Long>());
@@ -82,7 +82,7 @@ public class DashboardDataEntity implements Serializable {
         }
     }
 
-    private void addArea(BodyArea b, Stack<Posture> stack, Posture l) {
+    private void addArea(BodyArea b, Stack<PostureBean> stack, PostureBean l) {
         if (posture_sum.get(b).get(l.getLabel()) != null) {
             // accumulate old to sum
             Long currentDuration = posture_sum.get(b).get(l.getLabel());
@@ -108,39 +108,39 @@ public class DashboardDataEntity implements Serializable {
         this.posture_sum.put(b, sum);
     }
 
-    public Stack<Posture> getShoulder_timeline() {
+    public Stack<PostureBean> getShoulder_timeline() {
         return shoulder_timeline;
     }
 
-    public void setShoulder_timeline(Stack<Posture> shoulder_timeline) {
+    public void setShoulder_timeline(Stack<PostureBean> shoulder_timeline) {
         this.shoulder_timeline = shoulder_timeline;
     }
 
-    public Stack<Posture> getBws_timeline() {
+    public Stack<PostureBean> getBws_timeline() {
         return bws_timeline;
     }
 
-    public void setBws_timeline(Stack<Posture> bws_timeline) {
+    public void setBws_timeline(Stack<PostureBean> bws_timeline) {
         this.bws_timeline = bws_timeline;
     }
 
-    public Stack<Posture> getHws_timeline() {
+    public Stack<PostureBean> getHws_timeline() {
         return hws_timeline;
     }
 
-    public void setHws_timeline(Stack<Posture> hws_timeline) {
+    public void setHws_timeline(Stack<PostureBean> hws_timeline) {
         this.hws_timeline = hws_timeline;
     }
 
-    public Stack<Posture> getLws_timeline() {
+    public Stack<PostureBean> getLws_timeline() {
         return lws_timeline;
     }
 
-    public void setLws_timeline(Stack<Posture> lws_timeline) {
+    public void setLws_timeline(Stack<PostureBean> lws_timeline) {
         this.lws_timeline = lws_timeline;
     }
 
-    public Posture getlast(BodyArea b) {
+    public PostureBean getlast(BodyArea b) {
         switch (b) {
             case SHOULDER:
                 if (shoulder_timeline.size() > 0) {
@@ -209,9 +209,9 @@ public class DashboardDataEntity implements Serializable {
         return newDashboardData;
     }
 
-    private HashMap<Label, Long> createSum(Stack<Posture> timeline, BodyArea b) {
+    private HashMap<Label, Long> createSum(Stack<PostureBean> timeline, BodyArea b) {
         HashMap<Label, Long> map = new HashMap<>();
-        for (Posture l : timeline) {
+        for (PostureBean l : timeline) {
             if (map.containsKey(l.getLabel())) {
                 map.put(l.getLabel(), l.getDuration() + map.get(l.getLabel()));
             } else {
@@ -221,24 +221,24 @@ public class DashboardDataEntity implements Serializable {
         return map;
     }
 
-    private Stack<Posture> adjusteTimeline(Stack<Posture> timeline, TimeSpan timeSpan) {
-        Stack<Posture> helperStack = new Stack<>();
-        Stack<Posture> stack = (Stack<Posture>) timeline.clone();
+    private Stack<PostureBean> adjusteTimeline(Stack<PostureBean> timeline, TimeSpan timeSpan) {
+        Stack<PostureBean> helperStack = new Stack<>();
+        Stack<PostureBean> stack = (Stack<PostureBean>) timeline.clone();
         Timestamp relevantTimestamp = getRelevantTimestamp(timeSpan);
-        for (Posture data : stack) {
+        for (PostureBean data : stack) {
             if (data.getEnd().after(relevantTimestamp)) {
                 helperStack.push(adjustLabelDataDuration(data, relevantTimestamp));
             }
         }
 
-        Stack<Posture> helperStack2 = new Stack<>();
-        for (Posture data : helperStack) {
+        Stack<PostureBean> helperStack2 = new Stack<>();
+        for (PostureBean data : helperStack) {
             helperStack2.push(data);
         }
         return helperStack2;
     }
 
-    private Posture adjustLabelDataDuration(Posture data, Timestamp timestamp) {
+    private PostureBean adjustLabelDataDuration(PostureBean data, Timestamp timestamp) {
         if ((data.getEnd().before(timestamp)) || (data.getBegin().after(timestamp))) {
             return data;
         }

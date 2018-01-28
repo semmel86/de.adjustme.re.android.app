@@ -20,9 +20,9 @@ import java.util.Calendar;
 import java.util.Stack;
 import java.util.TimeZone;
 
-import re.adjustme.de.readjustme.Bean.Posture;
-import re.adjustme.de.readjustme.Persistence.Entity.DashboardDataEntity;
-import re.adjustme.de.readjustme.Frontend.Component.MyMarkerView;
+import re.adjustme.de.readjustme.Bean.PostureBean;
+import re.adjustme.de.readjustme.Bean.Entity.DashboardDataEntity;
+import re.adjustme.de.readjustme.Frontend.Component.ChartMarkerView;
 import re.adjustme.de.readjustme.Frontend.Component.TimelineBarChartRenderer;
 import re.adjustme.de.readjustme.Frontend.Component.TimelineBarChartValueFormatter;
 import re.adjustme.de.readjustme.R;
@@ -30,11 +30,11 @@ import re.adjustme.de.readjustme.Util.Duration;
 
 public class TimelineActivity extends GenericBaseActivity {
 
-    private DashboardDataEntity dashboardData = new DashboardDataEntity();
-    private BarChart splineBar;
-    private BarChart shoulderBar;
-    private BarChart hwsBar;
-    private BarChart lwsBar;
+    private DashboardDataEntity dashboardDataEntity = new DashboardDataEntity();
+    private BarChart mSpineBarChart;
+    private BarChart mShoulderBarChart;
+    private BarChart mHwsBarChart;
+    private BarChart mLwsBarChart;
 
     @Override
     public void onDestroy() {
@@ -46,10 +46,10 @@ public class TimelineActivity extends GenericBaseActivity {
         super.onCreate(savedInstanceState);
         setTitle(R.string.title_timeline);
         setContentView(R.layout.activity_timeline_day);
-        splineBar = (BarChart) findViewById(R.id.splineBarChart);
-        shoulderBar = (BarChart) findViewById(R.id.shoulderBarChart);
-        hwsBar = (BarChart) findViewById(R.id.hwsBarChart);
-        lwsBar = (BarChart) findViewById(R.id.lwsBarChart);
+        mSpineBarChart = (BarChart) findViewById(R.id.splineBarChart);
+        mShoulderBarChart = (BarChart) findViewById(R.id.shoulderBarChart);
+        mHwsBarChart = (BarChart) findViewById(R.id.hwsBarChart);
+        mLwsBarChart = (BarChart) findViewById(R.id.lwsBarChart);
 
         // set navigation bar
         setNavigationBar();
@@ -59,7 +59,7 @@ public class TimelineActivity extends GenericBaseActivity {
 
     @Override
     protected void afterServiceConnection() {
-        dashboardData = mDataAccessService.getDashboardData();
+        dashboardDataEntity = mDataAccessService.getmDashboardDataEntity();
         addDataToBarCharts();
     }
 
@@ -68,28 +68,28 @@ public class TimelineActivity extends GenericBaseActivity {
         String shoulderBarTitle = getResources().getString(R.string.shoulder_dashboard);
         String hwsBarTitle = getResources().getString(R.string.hws_dashboard);
         String lwsBarTitle = getResources().getString(R.string.lws_dashboard);
-        if (dashboardData == null) {
-            addDataToChart(splineBar, new Stack<Posture>(), splineBarTitle);
-            addDataToChart(shoulderBar, new Stack<Posture>(), shoulderBarTitle);
-            addDataToChart(hwsBar, new Stack<Posture>(), hwsBarTitle);
-            addDataToChart(lwsBar, new Stack<Posture>(), lwsBarTitle);
+        if (dashboardDataEntity == null) {
+            addDataToChart(mSpineBarChart, new Stack<PostureBean>(), splineBarTitle);
+            addDataToChart(mShoulderBarChart, new Stack<PostureBean>(), shoulderBarTitle);
+            addDataToChart(mHwsBarChart, new Stack<PostureBean>(), hwsBarTitle);
+            addDataToChart(mLwsBarChart, new Stack<PostureBean>(), lwsBarTitle);
             return;
         }
-        addDataToChart(splineBar, dashboardData.getBws_timeline(), splineBarTitle);
-        addDataToChart(shoulderBar, dashboardData.getShoulder_timeline(), shoulderBarTitle);
-        addDataToChart(hwsBar, dashboardData.getHws_timeline(), hwsBarTitle);
-        addDataToChart(lwsBar, dashboardData.getLws_timeline(), lwsBarTitle);
+        addDataToChart(mSpineBarChart, dashboardDataEntity.getBws_timeline(), splineBarTitle);
+        addDataToChart(mShoulderBarChart, dashboardDataEntity.getShoulder_timeline(), shoulderBarTitle);
+        addDataToChart(mHwsBarChart, dashboardDataEntity.getHws_timeline(), hwsBarTitle);
+        addDataToChart(mLwsBarChart, dashboardDataEntity.getLws_timeline(), lwsBarTitle);
 
     }
 
-    private void addDataToChart(BarChart barChart, Stack<Posture> timeline, String label) {
-        Stack<Posture> adjustedTimelineHelper = new Stack<>();
+    private void addDataToChart(BarChart barChart, Stack<PostureBean> timeline, String label) {
+        Stack<PostureBean> adjustedTimelineHelper = new Stack<>();
 
         adjustedTimelineHelper = timeline;
         ArrayList<BarEntry> entries = new ArrayList<>();
         ArrayList<Integer> colors = new ArrayList<>();
         Long xAxisCounter = 0L;
-        for (Posture l : adjustedTimelineHelper) {
+        for (PostureBean l : adjustedTimelineHelper) {
             entries.add(new BarEntry(xAxisCounter, l.getDuration(), l));
 
             //add color
@@ -113,7 +113,7 @@ public class TimelineActivity extends GenericBaseActivity {
         String[] labels = new String[adjustedTimelineHelper.size()];
         Timestamp lastTime = null;
         int currentPosition = adjustedTimelineHelper.size() - 1;
-        for (Posture l : adjustedTimelineHelper) {
+        for (PostureBean l : adjustedTimelineHelper) {
             if (lastTime == null) {
                 labels[currentPosition] = getDate(l);
                 lastTime = l.getEnd();
@@ -153,7 +153,7 @@ public class TimelineActivity extends GenericBaseActivity {
         barChart.moveViewToX(adjustedTimelineHelper.size());
         barChart.getLegend().setEnabled(false);
         barChart.getDescription().setEnabled(false);
-        IMarker marker = new MyMarkerView(this, R.layout.custom_marker_view);
+        IMarker marker = new ChartMarkerView(this, R.layout.custom_marker_view);
         barChart.setMarker(marker);
         barChart.invalidate();
     }
@@ -162,7 +162,7 @@ public class TimelineActivity extends GenericBaseActivity {
         return lastTime.getTime() - currentEnd.getTime() > 3600000;
     }
 
-    private String getDate(Posture l) {
+    private String getDate(PostureBean l) {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         cal.setTime(l.getBegin());
         SimpleDateFormat format = new SimpleDateFormat("d MMMM - HH");

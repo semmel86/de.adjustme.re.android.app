@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme.Persistence.Entity;
+package re.adjustme.de.readjustme.Bean.Entity;
 
 import android.content.Context;
 

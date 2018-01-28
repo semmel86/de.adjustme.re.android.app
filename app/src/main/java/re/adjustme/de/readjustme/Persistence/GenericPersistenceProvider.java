@@ -3,8 +3,8 @@ package re.adjustme.de.readjustme.Persistence;
 import android.util.Log;
 
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Persistence.Entity.BackendDataEntity;
-import re.adjustme.de.readjustme.Persistence.Entity.MotionDataSetEntity;
+import re.adjustme.de.readjustme.Bean.Entity.BackendDataEntity;
+import re.adjustme.de.readjustme.Bean.Entity.MotionDataSetEntity;
 import re.adjustme.de.readjustme.Persistence.internal.BackendPersistor;
 import re.adjustme.de.readjustme.Persistence.internal.MotionDataTextFilePersistor;
 import re.adjustme.de.readjustme.Persistence.internal.ObjectPersistor;

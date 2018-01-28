@@ -16,10 +16,10 @@ import re.adjustme.de.readjustme.R;
 
 public class TrainModelActivity extends GenericBaseActivity {
 
-    private Button setLabelButton;
-    private EditText labelTxt;
-    private TextView label;
-    private ToggleButton isInLabeledPostion;
+    private Button mSetLabelButton;
+    private EditText mLabelTxt;
+    private TextView mLabelView;
+    private ToggleButton mIsInLabeledPostionBtn;
 
 
     @Override
@@ -35,9 +35,9 @@ public class TrainModelActivity extends GenericBaseActivity {
     @Override
     protected void afterServiceConnection() {
         if (mDataAccessService != null) {
-            Log.i("Info", "set label text");
-            label.setText(mDataAccessService.getLabel());
-            isInLabeledPostion.setChecked(mDataAccessService.getIsInLabeledPosition());
+            Log.i("Info", "set mLabelView text");
+            mLabelView.setText(mDataAccessService.getLabel());
+            mIsInLabeledPostionBtn.setChecked(mDataAccessService.getIsInLabeledPosition());
         }
     }
 
@@ -50,16 +50,16 @@ public class TrainModelActivity extends GenericBaseActivity {
         // set navigation bar
         setNavigationBar();
 
-        labelTxt = (EditText) findViewById(R.id.editText2);
-        isInLabeledPostion = (ToggleButton) findViewById(R.id.toggleButton2);
-        label = (TextView) findViewById(R.id.editText3);
-        setLabelButton = (Button) findViewById(R.id.button4);
+        mLabelTxt = (EditText) findViewById(R.id.editText2);
+        mIsInLabeledPostionBtn = (ToggleButton) findViewById(R.id.toggleButton2);
+        mLabelView = (TextView) findViewById(R.id.editText3);
+        mSetLabelButton = (Button) findViewById(R.id.button4);
 
     }
 
     public void onToggleButtonClick(View v) {
         // switch true/false
-        if (isInLabeledPostion.getText().equals("False - not in Position")) {
+        if (mIsInLabeledPostionBtn.getText().equals("False - not in Position")) {
             //set false
             mDataAccessService.setIsInLabeledPosition(false);
         } else {
@@ -68,14 +68,14 @@ public class TrainModelActivity extends GenericBaseActivity {
         }
     }
 
-    public void setLabelTxt(View v) {
+    public void setmLabelTxt(View v) {
         // is labeled = false
         mDataAccessService.setIsInLabeledPosition(false);
-        // set new label
-        if (labelTxt.getText() != null) {
-            mDataAccessService.setLabel(labelTxt.getText().toString());
-            label.setText(labelTxt.getText());
-            labelTxt.setText("");
+        // set new mLabelView
+        if (mLabelTxt.getText() != null) {
+            mDataAccessService.setLabel(mLabelTxt.getText().toString());
+            mLabelView.setText(mLabelTxt.getText());
+            mLabelTxt.setText("");
         }
     }
 

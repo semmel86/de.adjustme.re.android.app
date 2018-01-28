@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Bean.MotionData;
-import re.adjustme.de.readjustme.Persistence.Entity.MotionDataSetEntity;
+import re.adjustme.de.readjustme.Bean.MotionDataBean;
+import re.adjustme.de.readjustme.Bean.Entity.MotionDataSetEntity;
 import re.adjustme.de.readjustme.Predefined.Sensor;
 
 /**
@@ -31,11 +31,11 @@ public class MotionDataTextFilePersistor extends TextFilePersistor {
 
     private MotionDataSetEntity getFullMotionDataFromString(String s) {
         final MotionDataSetEntity mDto = new MotionDataSetEntity();
-        final MotionData[] motionDataSet = new MotionData[5];
+        final MotionDataBean[] motionDataBeanSet = new MotionDataBean[5];
         // sensor
 //        int z_=0;
         for (int j = 0; j < 5; j++) {
-            final MotionData md = new MotionData();
+            final MotionDataBean md = new MotionDataBean();
             // 1 ; 20171118123325634213 ; 25632 ; 10 ; 90 ; 155
             // 1 - set Sensor
             final String sub = s.substring(0, s.indexOf(PersistenceConfiguration.CSV_SEPARATOR));
@@ -78,7 +78,7 @@ public class MotionDataTextFilePersistor extends TextFilePersistor {
 //            md.setZ(i);
 //            z_ +=i;
 
-            motionDataSet[j] = md;
+            motionDataBeanSet[j] = md;
         }
 
         // there is some additional label information
@@ -95,11 +95,11 @@ public class MotionDataTextFilePersistor extends TextFilePersistor {
 //        clean up z
 //        z_ = z_/5;
 //        for (int j = 0; j < 5; j++) {
-//            motionDataSet[j].setZ(motionDataSet[j].getZ()-z_);
+//            motionDataBeanSet[j].setZ(motionDataBeanSet[j].getZ()-z_);
 //        }
-        mDto.addMotionData(motionDataSet);
+        mDto.addMotionData(motionDataBeanSet);
         return mDto;
-        // 5x MotionData + lable+ boolean
+        // 5x MotionDataBean + lable+ boolean
 
     }
 }

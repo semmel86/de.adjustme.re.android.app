@@ -33,36 +33,40 @@ import re.adjustme.de.readjustme.Frontend.Service.EvaluationBackgroundService;
 import re.adjustme.de.readjustme.R;
 
 public class HomeActivity extends GenericBaseActivity {
-    private Button startServiceBtn;
-    private Button stopServiceBtn;
-    private Button calibrateBtn;
-    private EditText usernameInput;
-    private ProgressBar progressBar;
-    private TextView usernameLabel;
-    private TextView hws_posture;
-    private TextView shoulder_posture;
-    private TextView bws_posture;
-    private TextView lws_posture;
+    private Button mStartServiceBtn;
+    private Button mStopServiceBtn;
+    private Button mCalibrateBtn;
+    private EditText mUsernameInput;
+    private ProgressBar mProgressBar;
+    private TextView mUsernameLabel;
+    private TextView mHwsPosture;
+    private TextView mShoulderPosture;
+    private TextView mBwsPosture;
+    private TextView mLwsPosture;
+    private AlertDialog mAlertDialog;
+    private TextView mCalibrationTextView;
+    private LinearLayout mMainLayout;
+    private BluetoothAdapter mBluetoothAdapter;
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
         public void onReceive(final Context context, Intent intent) {
             String action = intent.getAction();
 
-            if (action.equals("Posture")) {
+            if (action.equals("PostureBean")) {
                 String s = intent.getStringExtra("PostureName");
                 String area = intent.getStringExtra("Area");
                 switch (area) {
                     case "HWS":
-                        hws_posture.setText(s);
+                        mHwsPosture.setText(s);
                         break;
                     case "SHOULDER":
-                        shoulder_posture.setText(s);
+                        mShoulderPosture.setText(s);
                         break;
                     case "SPINE":
-                        bws_posture.setText(s);
+                        mBwsPosture.setText(s);
                         break;
                     case "LWS":
-                        lws_posture.setText(s);
+                        mLwsPosture.setText(s);
                         break;
                 }
             } else if (action.equals("AppEvent")) {
@@ -73,10 +77,7 @@ public class HomeActivity extends GenericBaseActivity {
         }
 
     };
-    private AlertDialog alertDialog;
-    private TextView calibrationTextView;
-    private LinearLayout mainLayout;
-    private BluetoothAdapter BA;
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -88,8 +89,8 @@ public class HomeActivity extends GenericBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        usernameInput = (EditText) findViewById(R.id.editUsername);
-        usernameInput.addTextChangedListener(new TextWatcher() {
+        mUsernameInput = (EditText) findViewById(R.id.editUsername);
+        mUsernameInput.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -107,38 +108,38 @@ public class HomeActivity extends GenericBaseActivity {
 
             }
         });
-        usernameLabel = (TextView) findViewById(R.id.usernameTextview);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.VISIBLE);
-        mainLayout = (LinearLayout) findViewById(R.id.mainLayout);
-        mainLayout.setVisibility(View.INVISIBLE);
-        calibrateBtn = (Button) findViewById(R.id.btnCalibrate);
-        startServiceBtn = (Button) findViewById(R.id.startService);
-        stopServiceBtn = (Button) findViewById(R.id.stopService);
-        BA = BluetoothAdapter.getDefaultAdapter();
-        enableButton(startServiceBtn, true);
+        mUsernameLabel = (TextView) findViewById(R.id.usernameTextview);
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mProgressBar.setVisibility(View.VISIBLE);
+        mMainLayout = (LinearLayout) findViewById(R.id.mainLayout);
+        mMainLayout.setVisibility(View.INVISIBLE);
+        mCalibrateBtn = (Button) findViewById(R.id.btnCalibrate);
+        mStartServiceBtn = (Button) findViewById(R.id.startService);
+        mStopServiceBtn = (Button) findViewById(R.id.stopService);
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        enableButton(mStartServiceBtn, true);
         changeStartStopBtns(mDataAccessService != null && mDataAccessService.getIsRunning());
         checkBluethoothActive();
         checkPermissions();
         // set navigation bar
         setNavigationBar();
 
-        hws_posture = (TextView) findViewById(R.id.hws_posture);
-        shoulder_posture = (TextView) findViewById(R.id.shoulder_posture);
-        bws_posture = (TextView) findViewById(R.id.bws_posture);
-        lws_posture = (TextView) findViewById(R.id.lws_posture);
+        mHwsPosture = (TextView) findViewById(R.id.hws_posture);
+        mShoulderPosture = (TextView) findViewById(R.id.shoulder_posture);
+        mBwsPosture = (TextView) findViewById(R.id.bws_posture);
+        mLwsPosture = (TextView) findViewById(R.id.lws_posture);
         LocalBroadcastManager.getInstance(this).registerReceiver(
-                mPostureReceiver, new IntentFilter("Posture"));
+                mPostureReceiver, new IntentFilter("PostureBean"));
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mPostureReceiver, new IntentFilter("AppEvent"));
 
     }
 
     protected void afterServiceConnection() {
-        progressBar.setVisibility(View.INVISIBLE);
-        mainLayout.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mMainLayout.setVisibility(View.VISIBLE);
         if (mDataAccessService.getUsername() != null) {
-            usernameInput.setText(mDataAccessService.getUsername());
+            mUsernameInput.setText(mDataAccessService.getUsername());
         }
         setButtons(mDataAccessService.getIsRunning(), mDataAccessService.getTryStarting());
     }
@@ -147,14 +148,14 @@ public class HomeActivity extends GenericBaseActivity {
         if (running) {
             mDataAccessService.setTryStarting(false);
             changeUsernameEditable(false);
-            enableButton(startServiceBtn, true);
+            enableButton(mStartServiceBtn, true);
         } else if (!starting) {
             changeUsernameEditable(true);
-            enableButton(startServiceBtn, true);
+            enableButton(mStartServiceBtn, true);
         }
         if (starting) {
             changeUsernameEditable(false);
-            enableButton(startServiceBtn, false);
+            enableButton(mStartServiceBtn, false);
         }
         changeStartStopBtns(running);
     }
@@ -162,9 +163,9 @@ public class HomeActivity extends GenericBaseActivity {
     private void setNewUsername(String name) {
         if (mDataAccessService != null) {
             if (name.equals("") || name.equals(" ")) {
-                enableButton(startServiceBtn, false);
+                enableButton(mStartServiceBtn, false);
             } else if (!mDataAccessService.getTryStarting()) {
-                enableButton(startServiceBtn, true);
+                enableButton(mStartServiceBtn, true);
 
             }
             mDataAccessService.setUsername(name);
@@ -172,13 +173,13 @@ public class HomeActivity extends GenericBaseActivity {
     }
 
     private void changeUsernameEditable(boolean editable) {
-        usernameLabel.setText(usernameInput.getText());
+        mUsernameLabel.setText(mUsernameInput.getText());
         if (editable) {
-            usernameLabel.setVisibility(View.INVISIBLE);
-            usernameInput.setVisibility(View.VISIBLE);
+            mUsernameLabel.setVisibility(View.INVISIBLE);
+            mUsernameInput.setVisibility(View.VISIBLE);
         } else {
-            usernameLabel.setVisibility(View.VISIBLE);
-            usernameInput.setVisibility(View.INVISIBLE);
+            mUsernameLabel.setVisibility(View.VISIBLE);
+            mUsernameInput.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -189,7 +190,7 @@ public class HomeActivity extends GenericBaseActivity {
 
     private void checkBluethoothActive() {
         // Check and Log BT
-        if (!BA.isEnabled()) {
+        if (!mBluetoothAdapter.isEnabled()) {
             Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(turnOn, 0);
             Toast.makeText(getApplicationContext(), "Turned on", Toast.LENGTH_LONG).show();
@@ -242,26 +243,26 @@ public class HomeActivity extends GenericBaseActivity {
     }
 
     private void startCalibrationAlert() {
-        alertDialog = new AlertDialog.Builder(this).setMessage("5").show();   //
-        calibrationTextView = (TextView) alertDialog.findViewById(android.R.id.message);
-        calibrationTextView.setTextSize(30);
-        calibrationTextView.setGravity(Gravity.CENTER);
+        mAlertDialog = new AlertDialog.Builder(this).setMessage("5").show();   //
+        mCalibrationTextView = (TextView) mAlertDialog.findViewById(android.R.id.message);
+        mCalibrationTextView.setTextSize(30);
+        mCalibrationTextView.setGravity(Gravity.CENTER);
 
         new CountDownTimer(10000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 if (millisUntilFinished > 7000) {
-                    alertDialog.setMessage(getResources().getString(R.string.calibrationMessage));
+                    mAlertDialog.setMessage(getResources().getString(R.string.calibrationMessage));
                 } else {
-                    calibrationTextView.setTextSize(60);
-                    alertDialog.setMessage("" + ((millisUntilFinished / 1000) - 1));
+                    mCalibrationTextView.setTextSize(60);
+                    mAlertDialog.setMessage("" + ((millisUntilFinished / 1000) - 1));
                 }
             }
 
             @Override
             public void onFinish() {
                 mDataAccessService.setCalibrationData();
-                alertDialog.hide();
+                mAlertDialog.hide();
             }
         }.start();
     }
@@ -321,7 +322,7 @@ public class HomeActivity extends GenericBaseActivity {
     }
 
     private void checkPermissions() {
-        for (String currentPerm : BluetoothConfiguration.permissionsToRequest) {
+        for (String currentPerm : BluetoothConfiguration.REQUESTED_PERMISSIONS) {
 
             if (ContextCompat.checkSelfPermission(this,
                     currentPerm)
@@ -346,13 +347,13 @@ public class HomeActivity extends GenericBaseActivity {
 
     private void changeStartStopBtns(boolean isRunning) {
         if (isRunning) {
-            startServiceBtn.setVisibility(View.INVISIBLE);
-            stopServiceBtn.setVisibility(View.VISIBLE);
-            enableButton(calibrateBtn, true);
+            mStartServiceBtn.setVisibility(View.INVISIBLE);
+            mStopServiceBtn.setVisibility(View.VISIBLE);
+            enableButton(mCalibrateBtn, true);
         } else {
-            startServiceBtn.setVisibility(View.VISIBLE);
-            stopServiceBtn.setVisibility(View.INVISIBLE);
-            enableButton(calibrateBtn, false);
+            mStartServiceBtn.setVisibility(View.VISIBLE);
+            mStopServiceBtn.setVisibility(View.INVISIBLE);
+            enableButton(mCalibrateBtn, false);
         }
     }
 

@@ -7,8 +7,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Persistence.Persistence;
-import re.adjustme.de.readjustme.Predefined.PersistenceType;
 import re.adjustme.de.readjustme.Predefined.Sensor;
 
 /**
@@ -16,11 +14,7 @@ import re.adjustme.de.readjustme.Predefined.Sensor;
  * <p>
  * Created by Semmel on 18.11.2017.
  */
-public class MotionData implements Serializable, Comparable {
-
-    final long serialVersionUID = 41234500967890L;
-
-    private Integer id;
+public class MotionDataBean implements Serializable, Comparable {
 
     private Sensor sensor = Sensor.SENSOR_FRONT;
 
@@ -36,7 +30,7 @@ public class MotionData implements Serializable, Comparable {
     private String label;
     private Boolean inLabeledPosition;
 
-    public MotionData() {
+    public MotionDataBean() {
         super();
     }
 
@@ -136,11 +130,11 @@ public class MotionData implements Serializable, Comparable {
 
     @Override
     public int compareTo(@NonNull Object o) {
-        MotionData m = null;
+        MotionDataBean m = null;
         try {
-            m = (MotionData) o;
+            m = (MotionDataBean) o;
         } catch (Exception e) {
-            // not equal if it isn't a MotionData
+            // not equal if it isn't a MotionDataBean
             return -1;
         }
         int difX = this.getX() - m.getX();
@@ -161,8 +155,8 @@ public class MotionData implements Serializable, Comparable {
         return 0;
     }
 
-    public MotionData clone() {
-        MotionData clone = new MotionData();
+    public MotionDataBean clone() {
+        MotionDataBean clone = new MotionDataBean();
         clone.setSensor(sensor);
         clone.setLabel(label);
         clone.setInLabeledPosition(inLabeledPosition);

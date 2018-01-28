@@ -20,20 +20,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import re.adjustme.de.readjustme.Persistence.Entity.DashboardDataEntity;
-import re.adjustme.de.readjustme.Frontend.Component.MyMarkerView;
+import re.adjustme.de.readjustme.Bean.Entity.DashboardDataEntity;
+import re.adjustme.de.readjustme.Frontend.Component.ChartMarkerView;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Predefined.Classification.Label;
 import re.adjustme.de.readjustme.R;
 
 public class DashboardDayActivity extends GenericBaseActivity {
 
-    private DashboardDataEntity dashboardData = new DashboardDataEntity();
-    private PieChart splinePie;
-    private PieChart shoulderPie;
-    private PieChart hwsPie;
-    private PieChart lwsPie;
-    private RadioGroup radioGroup;
+    private DashboardDataEntity mDashboardDataEntity = new DashboardDataEntity();
+    private PieChart mSpinePieChart;
+    private PieChart mShoulderPieChart;
+    private PieChart mHwsPieChart;
+    private PieChart mLwsPieChart;
+    private RadioGroup mRadioGroup;
 
 
     @Override
@@ -46,19 +46,19 @@ public class DashboardDayActivity extends GenericBaseActivity {
         super.onCreate(savedInstanceState);
         setTitle(R.string.title_dashboard);
         setContentView(R.layout.activity_dashboard_day);
-        splinePie = (PieChart) findViewById(R.id.splinePieChart);
-        shoulderPie = (PieChart) findViewById(R.id.shoulderPieChart);
-        hwsPie = (PieChart) findViewById(R.id.hwsPieChart);
-        lwsPie = (PieChart) findViewById(R.id.lwsPieChart);
+        mSpinePieChart = (PieChart) findViewById(R.id.spinePieChart);
+        mShoulderPieChart = (PieChart) findViewById(R.id.shoulderPieChart);
+        mHwsPieChart = (PieChart) findViewById(R.id.hwsPieChart);
+        mLwsPieChart = (PieChart) findViewById(R.id.lwsPieChart);
 
-        radioGroup = (RadioGroup) findViewById(R.id.postureProfileRadioGroup);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        mRadioGroup = (RadioGroup) findViewById(R.id.postureProfileRadioGroup);
+        mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
                 radioGroupCheckedChanged();
             }
         });
-        radioGroup.check(R.id.radio_all);
+        mRadioGroup.check(R.id.radio_all);
 
         // set navigation bar
         setNavigationBar();
@@ -67,34 +67,34 @@ public class DashboardDayActivity extends GenericBaseActivity {
     private void radioGroupCheckedChanged() {
         DashboardDataEntity newDashboardData = new DashboardDataEntity();
         //find selected radio button
-        switch (radioGroup.getCheckedRadioButtonId()) {
+        switch (mRadioGroup.getCheckedRadioButtonId()) {
             case R.id.radio_all:
-                newDashboardData = dashboardData;
+                newDashboardData = mDashboardDataEntity;
                 break;
             case R.id.radio_week:
-                newDashboardData = dashboardData.getDashboardDataSubset(DashboardDataEntity.TimeSpan.WEEK);
+                newDashboardData = mDashboardDataEntity.getDashboardDataSubset(DashboardDataEntity.TimeSpan.WEEK);
                 break;
             case R.id.radio_day:
-                newDashboardData = dashboardData.getDashboardDataSubset(DashboardDataEntity.TimeSpan.DAY);
+                newDashboardData = mDashboardDataEntity.getDashboardDataSubset(DashboardDataEntity.TimeSpan.DAY);
                 break;
             case R.id.radio_hour:
-                newDashboardData = dashboardData.getDashboardDataSubset(DashboardDataEntity.TimeSpan.HOUR);
+                newDashboardData = mDashboardDataEntity.getDashboardDataSubset(DashboardDataEntity.TimeSpan.HOUR);
                 break;
         }
 
         //spline
-        addDataToChart(splinePie, newDashboardData.getSum(BodyArea.SPINE), getResources().getString(R.string.spline_dashboard));
+        addDataToChart(mSpinePieChart, newDashboardData.getSum(BodyArea.SPINE), getResources().getString(R.string.spline_dashboard));
         //shoulder
-        addDataToChart(shoulderPie, newDashboardData.getSum(BodyArea.SHOULDER), getResources().getString(R.string.shoulder_dashboard));
+        addDataToChart(mShoulderPieChart, newDashboardData.getSum(BodyArea.SHOULDER), getResources().getString(R.string.shoulder_dashboard));
         //hws
-        addDataToChart(hwsPie, newDashboardData.getSum(BodyArea.HWS), getResources().getString(R.string.hws_dashboard));
+        addDataToChart(mHwsPieChart, newDashboardData.getSum(BodyArea.HWS), getResources().getString(R.string.hws_dashboard));
         //lws
-        addDataToChart(lwsPie, newDashboardData.getSum(BodyArea.LWS), getResources().getString(R.string.lws_dashboard));
+        addDataToChart(mLwsPieChart, newDashboardData.getSum(BodyArea.LWS), getResources().getString(R.string.lws_dashboard));
     }
 
     @Override
     protected void afterServiceConnection() {
-        dashboardData = mDataAccessService.getDashboardData();
+        mDashboardDataEntity = mDataAccessService.getmDashboardDataEntity();
         radioGroupCheckedChanged();
     }
 
@@ -150,7 +150,7 @@ public class DashboardDayActivity extends GenericBaseActivity {
 
         pieDataSet.setColors(colors);
 
-        IMarker marker = new MyMarkerView(this, R.layout.custom_marker_view);
+        IMarker marker = new ChartMarkerView(this, R.layout.custom_marker_view);
         pieChart.setMarker(marker);
 
         pieChart.setEntryLabelTextSize(7f);

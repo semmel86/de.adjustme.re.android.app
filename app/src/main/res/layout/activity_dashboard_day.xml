@@ -109,7 +109,7 @@
                     tools:layout_editor_absoluteY="108dp" />
 
                 <com.github.mikephil.charting.charts.PieChart
-                    android:id="@+id/splinePieChart"
+                    android:id="@+id/spinePieChart"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"

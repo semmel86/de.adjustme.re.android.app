@@ -26,7 +26,7 @@ public class ClassificationConfiguration {
     public static final boolean DISTANCE_VALUES = true;
 
     // maximum allowed difference for calculation of the rotation vector
-    public static int CROSS_VALIDATION = 0;
+    public static final int CROSS_VALIDATION = 0;
 
     // default values for SVM training
     public final static svm_parameter getSVMParams() {

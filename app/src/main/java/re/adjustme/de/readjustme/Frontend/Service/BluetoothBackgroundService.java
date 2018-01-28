@@ -27,9 +27,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import re.adjustme.de.readjustme.Bean.MotionDataBean;
 import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Bean.MotionData;
 import re.adjustme.de.readjustme.Predefined.HardwareFailures;
 
 import static android.content.ContentValues.TAG;
@@ -42,14 +42,14 @@ import static android.content.ContentValues.TAG;
 public class BluetoothBackgroundService extends Service {
 
     private static Handler mHandler;
-    // current MotionData used for aggregation via equals
-    // private static HashMap<Sensor, MotionData> currentRawMotionData;
+    // current MotionDataBean used for aggregation via equals
+    // private static HashMap<Sensor, MotionDataBean> currentRawMotionData;
     private BluetoothAdapter mBluetoothAdapter;
     private DataAccessService mDataAccessService = null;
     private ServiceConnection mConnection = null;
     private BluetoothSocket mSocket;
     private BluetoothDevice mDevice;
-    private boolean mConnected = false;
+    private boolean connected = false;
     private boolean destroyed = false;
 
     @Override
@@ -212,13 +212,13 @@ public class BluetoothBackgroundService extends Service {
 
                         if (fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) >= 0) {
                             fullData = fullData.substring(fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) + BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length());
-                            List<MotionData> data = new ArrayList<>();
+                            List<MotionDataBean> data = new ArrayList<>();
                             while (fullData.length() > 0 && fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) > 0) {
                                 // Send the obtained bytes to the UI activity.
                                 String singleData = fullData.substring(0, fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR));
                                 if (singleData.length() > 0) {
                                     // get an motion data object from String
-                                    MotionData md = getMotionDataObjectFromString(singleData);
+                                    MotionDataBean md = getMotionDataObjectFromString(singleData);
                                     if (md != null) {
                                         mDataAccessService.processNewMotionData(md);
                                     }
@@ -231,9 +231,9 @@ public class BluetoothBackgroundService extends Service {
             }
         }
 
-        private MotionData getMotionDataObjectFromString(String input) {
+        private MotionDataBean getMotionDataObjectFromString(String input) {
             String[] data = new String[5];
-            MotionData md = new MotionData();
+            MotionDataBean md = new MotionDataBean();
             // split the single String into its data
             try {
                 for (int i = 0; i < 5; i++) {
@@ -306,7 +306,7 @@ public class BluetoothBackgroundService extends Service {
                 try {
                     socket = mmServerSocket.accept();
                 } catch (IOException e) {
-                    mConnected = false;
+                    connected = false;
                     Log.e("info", "Socket's accept() method failed", e);
                     System.out.println("Socket's accept() method failed");
                     break;
@@ -315,7 +315,7 @@ public class BluetoothBackgroundService extends Service {
                 if (socket != null) {
                     // A connection was accepted. Perform work associated with
                     // the connection in a separate thread.
-                    mConnected = true;
+                    connected = true;
                     listenOnConnectedSocket(socket);
                     break;
                 }
@@ -398,7 +398,7 @@ public class BluetoothBackgroundService extends Service {
                     mDataAccessService.unsetReceivesLiveData();
                     if (mmSocket != null && !mmSocket.isConnected()) {
                         // lost connection, close and destroy this socket,
-                        mConnected = false;
+                        connected = false;
                         try {
                             mmSocket.close();
                             mmSocket = null;
@@ -475,7 +475,7 @@ public class BluetoothBackgroundService extends Service {
         public void run() {
             // Cancel discovery because it otherwise slows down the connection.
             mBluetoothAdapter.cancelDiscovery();
-            while (!mConnected) {
+            while (!connected) {
                 try {
                     // Connect to the remote device through the socket. This call blocks
                     // until it succeeds or throws an exception.
@@ -483,12 +483,12 @@ public class BluetoothBackgroundService extends Service {
 
                     // The connection attempt succeeded. Perform work associated with
                     // the connection in a separate thread.
-                    mConnected = true;
+                    connected = true;
                     listenOnConnectedSocket(mmSocket);
 
                 } catch (IOException connectException) {
                     // Unable to connect; close the socket and return.
-                    // mConnected = false;
+                    // connected = false;
                     try {
                         mmSocket.close();
                     } catch (IOException closeException) {

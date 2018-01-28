@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
-import re.adjustme.de.readjustme.Persistence.Entity.MotionDataSetEntity;
+import re.adjustme.de.readjustme.Bean.Entity.MotionDataSetEntity;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 
 public class svm_train {

@@ -21,15 +21,15 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 
-import re.adjustme.de.readjustme.Bean.Posture;
+import re.adjustme.de.readjustme.Bean.MotionDataBean;
+import re.adjustme.de.readjustme.Bean.PostureBean;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Frontend.DashboardDayActivity;
-import re.adjustme.de.readjustme.Persistence.Entity.BackendDataEntity;
-import re.adjustme.de.readjustme.Persistence.Entity.CalibrationDataEntity;
-import re.adjustme.de.readjustme.Persistence.Entity.DashboardDataEntity;
-import re.adjustme.de.readjustme.Bean.MotionData;
-import re.adjustme.de.readjustme.Persistence.Entity.MotionDataSetEntity;
-import re.adjustme.de.readjustme.Persistence.Entity.UserEntity;
+import re.adjustme.de.readjustme.Bean.Entity.BackendDataEntity;
+import re.adjustme.de.readjustme.Bean.Entity.CalibrationDataEntity;
+import re.adjustme.de.readjustme.Bean.Entity.DashboardDataEntity;
+import re.adjustme.de.readjustme.Bean.Entity.MotionDataSetEntity;
+import re.adjustme.de.readjustme.Bean.Entity.UserEntity;
 import re.adjustme.de.readjustme.Persistence.GenericPersistenceProvider;
 import re.adjustme.de.readjustme.Persistence.internal.ObjectPersistor;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
@@ -46,8 +46,8 @@ import re.adjustme.de.readjustme.Util.Calibration;
  */
 
 public class DataAccessService extends Service {
-    private static HashMap<Sensor, MotionData> currentRawMotionData;
-    private static CalibrationDataEntity calibrationMotionData;
+    private static HashMap<Sensor, MotionDataBean> currentRawMotionData;
+    private static CalibrationDataEntity mCalibrationDataEntity;
     // Binder given to clients
     private final IBinder mBinder = new PersistenceServiceBinder();
     GenericPersistenceProvider mPersistenceProvider;
@@ -58,9 +58,9 @@ public class DataAccessService extends Service {
     private boolean isRunning = false;
     private boolean tryStarting = false;
     // persisted entities
-    private UserEntity user;
-    private MotionDataSetEntity motionDataSet;
-    private DashboardDataEntity dashboardData;
+    private UserEntity mUser;
+    private MotionDataSetEntity mMotionDataSetEntity;
+    private DashboardDataEntity mDashboardDataEntity;
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
         // simple counter for sended Notification, to avoid thousands of notifications if the position
@@ -69,21 +69,21 @@ public class DataAccessService extends Service {
 
         public void onReceive(final Context context, Intent intent) {
             String action = intent.getAction();
-            if (action.equals("Posture")) {
-                if (dashboardData == null) {
-                    dashboardData = new DashboardDataEntity();
+            if (action.equals("PostureBean")) {
+                if (mDashboardDataEntity == null) {
+                    mDashboardDataEntity = new DashboardDataEntity();
                 }
                 String s = intent.getStringExtra("PostureName");
                 BodyArea bodyarea = BodyArea.valueOf(intent.getStringExtra("Area"));
                 Label label = bodyarea.getLableByDescription(intent.getStringExtra("PostureName"));
                 // put on Dashboard stack
                 // get last stacked object
-                Posture lastLabel = dashboardData.getlast(bodyarea);
+                PostureBean lastLabel = mDashboardDataEntity.getlast(bodyarea);
                 if (label != null) {
                     if (lastLabel != null && lastLabel.getLabel().equals(label)) {
                         // same Label -> accumulate duration
                         Timestamp current = new Timestamp(new Date().getTime());
-                        HashMap<Label, Long> dashboardDataSum = dashboardData.getSum(bodyarea);
+                        HashMap<Label, Long> dashboardDataSum = mDashboardDataEntity.getSum(bodyarea);
                         Long sumDuration = 0L;
                         if (dashboardDataSum != null) {
                             sumDuration = dashboardDataSum.get(lastLabel.getLabel());
@@ -99,17 +99,17 @@ public class DataAccessService extends Service {
                         } else {
                             sumDuration = dur;
                         }
-                        dashboardData.getSum(bodyarea).put(lastLabel.getLabel(), sumDuration);
+                        mDashboardDataEntity.getSum(bodyarea).put(lastLabel.getLabel(), sumDuration);
                         if (dur >= lastLabel.getArea().getMaxDuration() * sendNotification) {
                             sendNotification(lastLabel.getArea().getAreaName(), lastLabel.getLabel().getDescription(), dur);
                             sendNotification++;
                         }
                     } else {
-                        // other label -> new Posture object
+                        // other label -> new PostureBean object
                         Log.d("New Posture detected", bodyarea.name() + " - " + label.getDescription());
-                        Posture newLabel = new Posture(label, bodyarea);
-                        dashboardData.addLabelData(newLabel);
-                        save(dashboardData);
+                        PostureBean newLabel = new PostureBean(label, bodyarea);
+                        mDashboardDataEntity.addLabelData(newLabel);
+                        save(mDashboardDataEntity);
                     }
                 }
             }
@@ -131,32 +131,32 @@ public class DataAccessService extends Service {
     private void intiDataAccessService() {
         mPersistenceProvider = new GenericPersistenceProvider();
         // load Dashboard Object if possible
-        dashboardData = (DashboardDataEntity) mPersistenceProvider.load(DashboardDataEntity.class);
-        if (dashboardData == null) {
-            dashboardData = new DashboardDataEntity();
+        mDashboardDataEntity = (DashboardDataEntity) mPersistenceProvider.load(DashboardDataEntity.class);
+        if (mDashboardDataEntity == null) {
+            mDashboardDataEntity = new DashboardDataEntity();
         }
-        user = (UserEntity) mPersistenceProvider.load(UserEntity.class);
-        if(user==null){
-            user=new UserEntity();
+        mUser = (UserEntity) mPersistenceProvider.load(UserEntity.class);
+        if(mUser ==null){
+            mUser =new UserEntity();
         }
-        motionDataSet = new MotionDataSetEntity();
-        calibrationMotionData = (CalibrationDataEntity) mPersistenceProvider.load(CalibrationDataEntity.class); // new HashMap<>();
-        if (calibrationMotionData == null) {
+        mMotionDataSetEntity = new MotionDataSetEntity();
+        mCalibrationDataEntity = (CalibrationDataEntity) mPersistenceProvider.load(CalibrationDataEntity.class); // new HashMap<>();
+        if (mCalibrationDataEntity == null) {
             // for restets, start with a new entity
-            calibrationMotionData = new CalibrationDataEntity();
-            calibrationMotionData.setData(new HashMap<Sensor, MotionData>());
+            mCalibrationDataEntity = new CalibrationDataEntity();
+            mCalibrationDataEntity.setData(new HashMap<Sensor, MotionDataBean>());
 
             for (Sensor s : Sensor.values()) {
                 // initiate calibration with (x,y,z)->(0,0,0)
-                MotionData calibration = new MotionData();
+                MotionDataBean calibration = new MotionDataBean();
                 calibration.setDuration(0);
                 calibration.setX(0);
                 calibration.setY(0);
                 calibration.setZ(0);
 
-                if (!calibrationMotionData.getData().containsKey(s)) {
+                if (!mCalibrationDataEntity.getData().containsKey(s)) {
                     calibration.setSensor(s);
-                    calibrationMotionData.getData().put(s, calibration);
+                    mCalibrationDataEntity.getData().put(s, calibration);
                 }
             }
         }
@@ -165,7 +165,7 @@ public class DataAccessService extends Service {
 
         // Register BroadcastReceiver to receive current Motions
         LocalBroadcastManager.getInstance(this).registerReceiver(
-                mPostureReceiver, new IntentFilter("Posture"));
+                mPostureReceiver, new IntentFilter("PostureBean"));
     }
 
     @Override
@@ -177,12 +177,12 @@ public class DataAccessService extends Service {
     @Override
     public void onDestroy() {
         // save the pending raw data
-        for (MotionData m : currentRawMotionData.values()) {
+        for (MotionDataBean m : currentRawMotionData.values()) {
             save(m);
         }
         setIsRunning(false);
         setTryStarting(false);
-        save(dashboardData);
+        save(mDashboardDataEntity);
 
     }
 
@@ -213,8 +213,8 @@ public class DataAccessService extends Service {
     public void setCalibrationData() {
         for (Sensor s : Sensor.values()) {
             if (currentRawMotionData.containsKey(s)) {
-                MotionData oldCalibration = calibrationMotionData.getData().get(s);
-                MotionData newMd = currentRawMotionData.get(s);
+                MotionDataBean oldCalibration = mCalibrationDataEntity.getData().get(s);
+                MotionDataBean newMd = currentRawMotionData.get(s);
                 // Recalculate calibration, as it was already calibrated before
                 // x1 = x1 - calibrationX == setCalibrationData(x1) + calibrationX
                 if (!oldCalibration.equals(newMd)) {
@@ -227,11 +227,11 @@ public class DataAccessService extends Service {
             }
         }
         ObjectPersistor helper = new ObjectPersistor();
-        helper.save(calibrationMotionData, "calibrationMotionData");
+        helper.save(mCalibrationDataEntity, "mCalibrationDataEntity");
     }
 
-    private void calibration(MotionData md) {
-        MotionData calibration = calibrationMotionData.getData().get(md.getSensor());
+    private void calibration(MotionDataBean md) {
+        MotionDataBean calibration = mCalibrationDataEntity.getData().get(md.getSensor());
         Log.d("Info Persistence", "Before Calibration: " + md.toString());
 
          // Z
@@ -242,22 +242,22 @@ public class DataAccessService extends Service {
 
     // save persist immediately the object
     // and adds to the cached map after
-    public void save(MotionData md) {
+    public void save(MotionDataBean md) {
         this.receivesLiveData = true;
         if (PersistenceConfiguration.ENABLE_CALIBRATION) {
             calibration(md);
         }
         labelMotionData(md);
-        motionDataSet.update(md); // add md to MotionDataSetEntity where z is adjusted !
-        mPersistenceProvider.save(motionDataSet);
+        mMotionDataSetEntity.update(md); // add md to MotionDataSetEntity where z is adjusted !
+        mPersistenceProvider.save(mMotionDataSetEntity);
 
 
-        JSONObject motionData = motionDataSet.getJson();
+        JSONObject motionData = mMotionDataSetEntity.getJson();
         try {
-            motionData.put("user", this.user.getName());
+            motionData.put("mUser", this.mUser.getName());
             for (BodyArea b : BodyArea.values()) {
-                if (dashboardData.getlast(b) != null) {
-                    motionData.put(b.name(), dashboardData.getlast(b).getLabel().getLabel());
+                if (mDashboardDataEntity.getlast(b) != null) {
+                    motionData.put(b.name(), mDashboardDataEntity.getlast(b).getLabel().getLabel());
                 }
             }
         } catch (Exception e) {
@@ -276,8 +276,8 @@ public class DataAccessService extends Service {
         return mBinder;
     }
 
-    public void processNewMotionData(MotionData md) {
-        // compare to current MotionData of the same sensor
+    public void processNewMotionData(MotionDataBean md) {
+        // compare to current MotionDataBean of the same sensor
         if (currentRawMotionData.containsKey(md.getSensor())) {
             if (md.compareTo(currentRawMotionData.get(md.getSensor())) == 0) {
                 // no change, we only count up the duration
@@ -299,12 +299,12 @@ public class DataAccessService extends Service {
     }
 
     public String getUsername() {
-        return this.user.getName();
+        return this.mUser.getName();
     }
 
     public void setUsername(String username) {
-        user.setName(username);
-        mPersistenceProvider.save(user);
+        mUser.setName(username);
+        mPersistenceProvider.save(mUser);
     }
 
     public String getLabel() {
@@ -323,20 +323,20 @@ public class DataAccessService extends Service {
         this.isInLabeledPosition = b;
     }
 
-    private void labelMotionData(MotionData md) {
+    private void labelMotionData(MotionDataBean md) {
         md.setInLabeledPosition(isInLabeledPosition);
         md.setLabel(label);
     }
 
     // get reference to current MotionDataSet object
-    public MotionDataSetEntity getMotionDataSet() {
-        return motionDataSet;
+    public MotionDataSetEntity getmMotionDataSetEntity() {
+        return mMotionDataSetEntity;
     }
 
 
     // get reference to current DashboardDataEntity object
-    public DashboardDataEntity getDashboardData() {
-        return this.dashboardData;
+    public DashboardDataEntity getmDashboardDataEntity() {
+        return this.mDashboardDataEntity;
     }
 
     // indicates whether the loose coupled Bluetooth service brings in some data
@@ -410,7 +410,7 @@ public class DataAccessService extends Service {
      * runs in the same process as its clients, we don't need to deal with IPC.
      */
     public class PersistenceServiceBinder extends Binder {
-        DataAccessService getService() {
+        public DataAccessService getService() {
             // Return this instance of LocalService so clients can call public methods
             return DataAccessService.this;
         }

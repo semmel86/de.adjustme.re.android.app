@@ -1,13 +1,12 @@
-package re.adjustme.de.readjustme.Persistence.Entity;
+package re.adjustme.de.readjustme.Bean.Entity;
 
 import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import re.adjustme.de.readjustme.Bean.MotionData;
+import re.adjustme.de.readjustme.Bean.MotionDataBean;
 import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Persistence.Persistence;
@@ -29,25 +28,25 @@ public class MotionDataSetEntity implements Serializable {
     private final static String pair = ":";
     public double probability = 0;
     public String predictedLable = "";
-    private MotionData[] motionDataSet;
+    private MotionDataBean[] motionDataBeanSet;
     private String label = "";
     private String svmClass = "0";
     private boolean isInLabeledPostion = false;
     private int[] zValuesBeforAdjustment = {0, 0, 0, 0, 0};
 
     public MotionDataSetEntity() {
-        // at least on place for each last sensors MotionData
-        motionDataSet = new MotionData[Sensor.values().length];
+        // at least on place for each last sensors MotionDataBean
+        motionDataBeanSet = new MotionDataBean[Sensor.values().length];
         for (Sensor s : Sensor.values()) {
             // fill with dummy data
-            motionDataSet[s.getSensorNumber() - 1] = new MotionData();
+            motionDataBeanSet[s.getSensorNumber() - 1] = new MotionDataBean();
         }
 
     }
 
-    public void update(MotionData md) {
-        // update MotionData
-        motionDataSet[md.getSensor().getSensorNumber() - 1] = md;
+    public void update(MotionDataBean md) {
+        // update MotionDataBean
+        motionDataBeanSet[md.getSensor().getSensorNumber() - 1] = md;
         // save z before adjusting
         zValuesBeforAdjustment[md.getSensor().getSensorNumber()-1]=md.getZ();
 
@@ -67,8 +66,8 @@ public class MotionDataSetEntity implements Serializable {
         this.svmClass = classNum;
     }
 
-    public MotionData getMotion(Sensor s) {
-        return this.motionDataSet[s.getSensorNumber() - 1].clone();
+    public MotionDataBean getMotion(Sensor s) {
+        return this.motionDataBeanSet[s.getSensorNumber() - 1].clone();
     }
 
     // special format for saving as csv file
@@ -76,7 +75,7 @@ public class MotionDataSetEntity implements Serializable {
     public String toString() {
         StringBuilder s = new StringBuilder();
         for (Sensor sensor : Sensor.values()) {
-            MotionData md = motionDataSet[sensor.getSensorNumber() - 1];
+            MotionDataBean md = motionDataBeanSet[sensor.getSensorNumber() - 1];
             s.append(sensor.getSensorNumber());
             s.append(PersistenceConfiguration.CSV_SEPARATOR);
             s.append(md.getBegin());
@@ -105,12 +104,12 @@ public class MotionDataSetEntity implements Serializable {
         for (Sensor s : Sensor.values()) {
             // only calculate distances, if this sensor is part
             // of the current area!
-            MotionData curr = motionDataSet[s.getSensorNumber() - 1];
+            MotionDataBean curr = motionDataBeanSet[s.getSensorNumber() - 1];
             if (area.containsSensors(s)) {
                 // calc the distance to every already marked sensor
                 for (Sensor m : markedSensors) {
 
-                    MotionData marked = motionDataSet[m.getSensorNumber() - 1];
+                    MotionDataBean marked = motionDataBeanSet[m.getSensorNumber() - 1];
                     double distance = getDistance(curr, marked, m);
                     // append "i:dist "
                     svmLightString.append(i);
@@ -126,7 +125,7 @@ public class MotionDataSetEntity implements Serializable {
         return svmLightString.toString();
     }
 
-    private double getDistance(MotionData curr, MotionData marked, Sensor s) {
+    private double getDistance(MotionDataBean curr, MotionDataBean marked, Sensor s) {
         double distance = 0;
         // if z is excluded, distance (x,y)
         if (s.isExclude_z()) {
@@ -151,7 +150,7 @@ public class MotionDataSetEntity implements Serializable {
             if (ClassificationConfiguration.RAW_VALUES) {
                 for (final Sensor sensor : Sensor.values()) {
                     if (area.containsSensors(sensor)) {
-                        final MotionData md = this.motionDataSet[sensor.getSensorNumber() - 1];
+                        final MotionDataBean md = this.motionDataBeanSet[sensor.getSensorNumber() - 1];
                         if (!sensor.isExclude_x()) {
                             // x
                             s.append(i);
@@ -261,12 +260,12 @@ public class MotionDataSetEntity implements Serializable {
             for (Sensor s : Sensor.values()) {
                 // only calculate distances, if this sensor is part
                 // of the current area!
-                MotionData curr = motionDataSet[s.getSensorNumber() - 1];
+                MotionDataBean curr = motionDataBeanSet[s.getSensorNumber() - 1];
                 if (area.containsSensors(s)) {
                     // calc the distance to every already marked sensor
                     for (Sensor m : markedSensors) {
 
-                        MotionData marked = motionDataSet[m.getSensorNumber() - 1];
+                        MotionDataBean marked = motionDataBeanSet[m.getSensorNumber() - 1];
                         double distance = getDistance(curr, marked, m);
                         x[c] = new svm_node();
                         x[c].index = c;
@@ -282,8 +281,8 @@ public class MotionDataSetEntity implements Serializable {
         return x;
     }
 
-    public void addMotionData(MotionData[] md) {
-        motionDataSet = md;
+    public void addMotionData(MotionDataBean[] md) {
+        motionDataBeanSet = md;
     }
 
     public void setLable(String lable) {
@@ -312,7 +311,7 @@ public class MotionDataSetEntity implements Serializable {
             jsonObj.put("inPosition", this.isInLabeledPostion);
             int i = 1;
             for (Sensor s : Sensor.values()) {
-                MotionData md = motionDataSet[s.getSensorNumber() - 1];
+                MotionDataBean md = motionDataBeanSet[s.getSensorNumber() - 1];
                 jsonObj.put("s" + i, s.getSensorNumber());
                 jsonObj.put("t" + i, md.getBegin());
                 jsonObj.put("d" + i, md.getDuration());

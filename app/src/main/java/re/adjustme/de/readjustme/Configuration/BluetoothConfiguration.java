@@ -32,7 +32,7 @@ public class BluetoothConfiguration {
     public static final String SENSOR_STATUS_OK = "100";
 
     // global App permissions
-    public static final String[] permissionsToRequest =
+    public static final String[] REQUESTED_PERMISSIONS =
             {
                     Manifest.permission.BLUETOOTH_ADMIN,
                     Manifest.permission.BLUETOOTH,

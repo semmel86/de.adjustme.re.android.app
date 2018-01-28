@@ -20,8 +20,8 @@ import java.util.List;
 
 import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Persistence.Entity.MotionDataSetEntity;
-import re.adjustme.de.readjustme.Persistence.Entity.SVMClassificationEntity;
+import re.adjustme.de.readjustme.Bean.Entity.MotionDataSetEntity;
+import re.adjustme.de.readjustme.Bean.Entity.SVMClassificationEntity;
 import re.adjustme.de.readjustme.Persistence.GenericPersistenceProvider;
 import re.adjustme.de.readjustme.Persistence.internal.MotionDataTextFilePersistor;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
@@ -30,16 +30,16 @@ import re.adjustme.de.readjustme.Prediction.SvmPredictor;
 
 /**
  * Connected to the Persistence Service
- * Evaluates the current Posture and
+ * Evaluates the current PostureBean and
  * (1) gives Notifications for bad Postures
- * (2) Broadcasts the current Posture to GUI
+ * (2) Broadcasts the current PostureBean to GUI
  * Created by semmel on 03.12.2017.
  */
 
 public class EvaluationBackgroundService extends Service {
 
     // Contains a specific Classifier for each Area
-    SVMClassificationEntity svmMotionclassifier;
+    SVMClassificationEntity mSVMClassificationEntity;
     GenericPersistenceProvider mPersistenceProvider;
     private DataAccessService mDataAccessService = null;
     private ServiceConnection mPersistenceConnection = null;
@@ -53,7 +53,7 @@ public class EvaluationBackgroundService extends Service {
 
     @Override
     public void onCreate() {
-        svmMotionclassifier = (SVMClassificationEntity) mPersistenceProvider.load(svmMotionclassifier.getClass());
+        mSVMClassificationEntity = (SVMClassificationEntity) mPersistenceProvider.load(mSVMClassificationEntity.getClass());
     }
 
     @Override
@@ -102,11 +102,11 @@ public class EvaluationBackgroundService extends Service {
     private void loadClassifier() {
 
         // load svm
-        svmMotionclassifier = (SVMClassificationEntity) mPersistenceProvider.load(svmMotionclassifier.getClass());
-        if (svmMotionclassifier == null || svmMotionclassifier.getSvmMotionclassifier().isEmpty()) {
+        mSVMClassificationEntity = (SVMClassificationEntity) mPersistenceProvider.load(mSVMClassificationEntity.getClass());
+        if (mSVMClassificationEntity == null || mSVMClassificationEntity.getSvmMotionclassifier().isEmpty()) {
             unzipClassificator("svmClassificationMap.md");
             unzipClassificator("FullMotionDataSet.csv");
-            svmMotionclassifier = (SVMClassificationEntity) mPersistenceProvider.load(svmMotionclassifier.getClass());
+            mSVMClassificationEntity = (SVMClassificationEntity) mPersistenceProvider.load(mSVMClassificationEntity.getClass());
         }
     }
 
@@ -176,23 +176,23 @@ public class EvaluationBackgroundService extends Service {
                 }
             }
         }
-        svmMotionclassifier = new SVMClassificationEntity();
-        svmMotionclassifier.setSvmMotionclassifier(new HashMap<BodyArea, SvmPredictor>());
+        mSVMClassificationEntity = new SVMClassificationEntity();
+        mSVMClassificationEntity.setSvmMotionclassifier(new HashMap<BodyArea, SvmPredictor>());
         // 3- build the model for each Bodyarea
         for (BodyArea area : BodyArea.values()) {
             SvmPredictor predictor = new SvmPredictor();
             predictor.trainModel(sortedMap.get(area), area);
-            svmMotionclassifier.getSvmMotionclassifier().put(area, predictor);
+            mSVMClassificationEntity.getSvmMotionclassifier().put(area, predictor);
         }
 
         // 4 - save the classifierMap
-        mPersistenceProvider.save(svmMotionclassifier);
+        mPersistenceProvider.save(mSVMClassificationEntity);
     }
 
     private void evaluateMotionData(MotionDataSetEntity motionDataSet) {
         if (mDataAccessService.receivesLiveData()) {
             for (BodyArea area : BodyArea.values()) {
-                double classification = svmMotionclassifier.getSvmMotionclassifier().get(area).predict(motionDataSet, area);
+                double classification = mSVMClassificationEntity.getSvmMotionclassifier().get(area).predict(motionDataSet, area);
                 Label l = area.getLable(Math.round(classification));
                 this.sendPostureBroadcast(l.getDescription(), area.name());
                 Log.d("Info", "Classification: " + area.name() + "  " + l.getDescription());
@@ -204,7 +204,7 @@ public class EvaluationBackgroundService extends Service {
 
     private void sendPostureBroadcast(String posture, String area) {
 
-        Intent intent = new Intent("Posture");
+        Intent intent = new Intent("PostureBean");
         intent.putExtra("PostureName", posture);
         intent.putExtra("Area", area);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
@@ -223,11 +223,11 @@ public class EvaluationBackgroundService extends Service {
         @Override
         public void run() {
 
-            // Evaluate Posture
+            // Evaluate PostureBean
             while (runThreadrun) {
                 try {
                     sleep(ClassificationConfiguration.EVALUATION_TIME);
-                    motionDataSet = mDataAccessService.getMotionDataSet();
+                    motionDataSet = mDataAccessService.getmMotionDataSetEntity();
                     evaluateMotionData(motionDataSet);
 
                 } catch (Exception e) {

@@ -4,7 +4,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
-import re.adjustme.de.readjustme.Bean.Posture;
+import re.adjustme.de.readjustme.Bean.PostureBean;
 
 /**
  * Created by Stefan on 21.01.2018.
@@ -22,8 +22,8 @@ public class TimelineBarChartValueFormatter implements IValueFormatter {
     @Override
     public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
         // "value" represents the position of the label on the axis (x or y)
-        if (entry.getData() instanceof Posture) {
-            Posture l = (Posture) entry.getData();
+        if (entry.getData() instanceof PostureBean) {
+            PostureBean l = (PostureBean) entry.getData();
             String description = l.getLabel().getDescription();
             String descriptionSubString = "";
             if (description.contains("&")) {

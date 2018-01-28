@@ -11,16 +11,16 @@ import com.github.mikephil.charting.utils.MPPointF;
 
 import java.text.SimpleDateFormat;
 
-import re.adjustme.de.readjustme.Bean.Posture;
+import re.adjustme.de.readjustme.Bean.PostureBean;
 import re.adjustme.de.readjustme.R;
 import re.adjustme.de.readjustme.Util.Duration;
 
-public class MyMarkerView extends MarkerView {
+public class ChartMarkerView extends MarkerView {
 
     private TextView tvContent;
     private MPPointF mOffset;
 
-    public MyMarkerView(Context context, int layoutResource) {
+    public ChartMarkerView(Context context, int layoutResource) {
         super(context, layoutResource);
 
         // find your layout components
@@ -33,9 +33,9 @@ public class MyMarkerView extends MarkerView {
     public void refreshContent(Entry e, Highlight highlight) {
         long millis = (long) e.getY();
         String s = "";
-        if (e.getData() instanceof Posture) {
+        if (e.getData() instanceof PostureBean) {
             SimpleDateFormat format = new SimpleDateFormat("d MMMM - HH:mm");
-            s = format.format(((Posture) e.getData()).getBegin());
+            s = format.format(((PostureBean) e.getData()).getBegin());
             s += " - ";
         }
         s += Duration.millisToDuration(millis);

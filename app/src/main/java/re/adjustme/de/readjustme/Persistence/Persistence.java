@@ -14,6 +14,5 @@ import re.adjustme.de.readjustme.Predefined.PersistenceType;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Persistence {
     PersistenceType type();
-
     String name();
 }

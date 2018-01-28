@@ -1,8 +1,8 @@
-package re.adjustme.de.readjustme.Persistence.Entity;
+package re.adjustme.de.readjustme.Bean.Entity;
 
 import java.util.HashMap;
 
-import re.adjustme.de.readjustme.Bean.MotionData;
+import re.adjustme.de.readjustme.Bean.MotionDataBean;
 import re.adjustme.de.readjustme.Persistence.Persistence;
 import re.adjustme.de.readjustme.Predefined.PersistenceType;
 import re.adjustme.de.readjustme.Predefined.Sensor;
@@ -14,13 +14,13 @@ import re.adjustme.de.readjustme.Predefined.Sensor;
 @Persistence(name = "CalibrationDataEntity", type = PersistenceType.OBJECT)
 public class CalibrationDataEntity {
 
-    private HashMap<Sensor, MotionData> data;
+    private HashMap<Sensor, MotionDataBean> data;
 
-    public HashMap<Sensor, MotionData> getData() {
+    public HashMap<Sensor, MotionDataBean> getData() {
         return data;
     }
 
-    public void setData(HashMap<Sensor, MotionData> data) {
+    public void setData(HashMap<Sensor, MotionDataBean> data) {
         this.data = data;
     }
 }
