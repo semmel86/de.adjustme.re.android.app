@@ -20,6 +20,7 @@ class Cache {
     private final head_t[] head;
     private long size;
     private head_t lru_head;
+
     Cache(int l_, long size_) {
         l = l_;
         size = size_;

@@ -12,27 +12,25 @@ public class ClassificationConfiguration {
     /*
     // General settings for classification
     */
-
     public static final Long EVALUATION_TIME = 500L;
     public static final String UNKNOWN_POSITION = "Unknown";
-    // if true the model will be calculated
-    // else load from APK
+
+    // if true the model will be calculated else load from APK
     public static final boolean CALCULATE_MODEL = false;
 
     /*
     // SVM model settings
     */
-    public static final boolean USE_SVM_MODEL = true;
-    public static int CROSS_VALIDATION=0;
-    public static String motionDataSetFile="FullMotionDataSet.csv";
-
     // Svm featuers
-    public static final boolean RAW_VALUES=true;
-    public static final boolean DISTANCE_VALUES=true;
+    public static final boolean RAW_VALUES = true;
+    public static final boolean DISTANCE_VALUES = true;
+
+    // maximum allowed difference for calculation of the rotation vector
+    public static final int CROSS_VALIDATION = 0;
 
     // default values for SVM training
-    public final static svm_parameter getSVMParams(){
-     svm_parameter param = new svm_parameter();
+    public final static svm_parameter getSVMParams() {
+        svm_parameter param = new svm_parameter();
 
 
         param.svm_type = svm_parameter.C_SVC; // C_SVC & NU_SVC
@@ -51,19 +49,6 @@ public class ClassificationConfiguration {
         param.weight_label = new int[0];
         param.weight = new double[0];
         return param;
-        }
-
-    /*
-    // Simple distance based model settings
-    */
-
-    // if true the max distance will be calculated for each model,
-    // else =180
-    public static final boolean CALCULATE_DISTANCE = true;
-    public static final boolean CALCULATE_ROTATION = false;
-    public static final double MIN_PROBABILITY = 5;
-    // maximum allowed difference for calculation of the rotation vector
-    public static final double MAX_ROTATION_VARIANCE_DEGREES = 5;
-    // predict with SVM or internal Model builder
+    }
 
 }

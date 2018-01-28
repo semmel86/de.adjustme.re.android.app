@@ -5,7 +5,7 @@ package re.adjustme.de.readjustme.Predefined;
  */
 
 public enum HardwareFailures {
-    GENRAL_FAILURE(200, "Unexpected failure."),
+    GENERAL_FAILURE(200, "Unexpected failure."),
     INITIATION_FAILURE(201, "MPU initialization failed."),
     RUNTIME_ERROR(202, "Runtime Error."),
     INITIALIZATION(500, "INIT New Start.");

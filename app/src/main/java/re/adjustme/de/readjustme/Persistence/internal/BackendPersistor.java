@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme.Persistence;
+package re.adjustme.de.readjustme.Persistence.internal;
 
 import android.app.Service;
 import android.content.Context;
@@ -13,13 +13,14 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
-import re.adjustme.de.readjustme.Persistence.internal.HttpRequestQueue;
-
 /**
+ * Construct a valid Request and add to Queue
+ * <p>
  * Created by semmel on 05.01.2018.
  */
 
-public class BackendConnection extends Service {
+public class BackendPersistor extends Service {
+
 
     public void sendRequest(JSONObject body, Context context) {
         String url = "http://re.adjustme.de/testData.php";
@@ -39,7 +40,7 @@ public class BackendConnection extends Service {
                         // Log.d("backend-error", "Doesn't send anything.");
                     }
                 });
-// Access the RequestQueue through your singleton class.
+        // Access the RequestQueue through your singleton class.
         HttpRequestQueue.getInstance(context).addToRequestQueue(jsObjRequest);
     }
 

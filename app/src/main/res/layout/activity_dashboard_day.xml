@@ -51,6 +51,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
+                    android:autoText="false"
                     android:background="@drawable/radio_button_selector"
                     android:button="@null"
                     android:checked="true"
@@ -108,7 +109,7 @@
                     tools:layout_editor_absoluteY="108dp" />
 
                 <com.github.mikephil.charting.charts.PieChart
-                    android:id="@+id/splinePieChart"
+                    android:id="@+id/spinePieChart"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"

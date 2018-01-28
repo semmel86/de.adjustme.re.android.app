@@ -2,20 +2,18 @@ package re.adjustme.de.readjustme.Configuration;
 
 import java.io.File;
 
-import re.adjustme.de.readjustme.Predefined.PersistenceType;
-
 /**
  * Created by Semmel on 18.11.2017.
  */
 
 public class PersistenceConfiguration {
 
-public final static boolean MODE_DEVELOPMENT=false;
+    public final static boolean MODE_DEVELOPMENT = true;
 
- // DEFINES THE MINIMAL DURATION FOR A POSTURE, ALL SMALLER Postures where dismissed
+    // DEFINES THE MINIMAL DURATION FOR A POSTURE, ALL SMALLER Postures where dismissed
     public static final long MIN_POSTURE_DURATION = 5000L;
     public static final String CSV_SEPARATOR = ";";
-    public static final PersistenceType DEFAULT_PERSISTOR = PersistenceType.FILE;
+
     public static final boolean SAVE_LOCAL = true;//MODE_DEVELOPMENT;
     public static final boolean SAVE_BACKEND = true;
     public static final boolean ENABLE_CALIBRATION = true;

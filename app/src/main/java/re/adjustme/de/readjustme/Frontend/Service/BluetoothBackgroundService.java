@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme.Frontend;
+package re.adjustme.de.readjustme.Frontend.Service;
 
 
 import android.app.Service;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import re.adjustme.de.readjustme.Bean.MotionData;
+import re.adjustme.de.readjustme.Bean.MotionDataBean;
 import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Predefined.HardwareFailures;
@@ -42,19 +42,18 @@ import static android.content.ContentValues.TAG;
 public class BluetoothBackgroundService extends Service {
 
     private static Handler mHandler;
-    // current MotionData used for aggregation via equals
-    // private static HashMap<Sensor, MotionData> currentRawMotionData;
+    // current MotionDataBean used for aggregation via equals
+    // private static HashMap<Sensor, MotionDataBean> currentRawMotionData;
     private BluetoothAdapter mBluetoothAdapter;
-    private PersistenceService mPersistenceService = null;
+    private DataAccessService mDataAccessService = null;
     private ServiceConnection mConnection = null;
     private BluetoothSocket mSocket;
     private BluetoothDevice mDevice;
-    private boolean mConnected = false;
+    private boolean connected = false;
     private boolean destroyed = false;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        //  Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
         this.init();
         // startConnection Bluetooth listener
         getBondedDevice();
@@ -66,8 +65,8 @@ public class BluetoothBackgroundService extends Service {
 
     @Override
     public void onDestroy() {
-       destroyed = true;
-        mPersistenceService.unsetReceivesLiveData();
+        destroyed = true;
+        mDataAccessService.unsetReceivesLiveData();
         if (mSocket != null && mSocket.isConnected()) {
             try {
                 mSocket.close();
@@ -91,10 +90,9 @@ public class BluetoothBackgroundService extends Service {
     }
 
     private void init() {
-
         // get Persistence Service Binder
         setConnection();
-        Intent intent = new Intent(this, PersistenceService.class);
+        Intent intent = new Intent(this, DataAccessService.class);
         boolean b = bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         // set up specific classes
         this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -170,32 +168,32 @@ public class BluetoothBackgroundService extends Service {
 
 
     private void setHandler() {
-        this.mHandler = new DataHandler(mPersistenceService);
+        this.mHandler = new DataHandler(mDataAccessService);
     }
 
     private void setConnection() {
         mConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                PersistenceService.PersistenceServiceBinder b = (PersistenceService.PersistenceServiceBinder) iBinder;
-                mPersistenceService = b.getService();
+                DataAccessService.PersistenceServiceBinder b = (DataAccessService.PersistenceServiceBinder) iBinder;
+                mDataAccessService = b.getService();
                 // ensures the handler got a persistence service instance!!!
                 setHandler();
             }
 
             @Override
             public void onServiceDisconnected(ComponentName componentName) {
-                mPersistenceService = null;
+                mDataAccessService = null;
             }
         };
     }
 
     private static class DataHandler extends Handler {
-        private PersistenceService mPersistenceService = null;
+        private DataAccessService mDataAccessService = null;
         private StringBuilder mReceivedData;
 
-        public DataHandler(PersistenceService p) {
-            this.mPersistenceService = p;
+        public DataHandler(DataAccessService p) {
+            this.mDataAccessService = p;
             this.mReceivedData = new StringBuilder();
         }
 
@@ -214,15 +212,15 @@ public class BluetoothBackgroundService extends Service {
 
                         if (fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) >= 0) {
                             fullData = fullData.substring(fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) + BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length());
-                            List<MotionData> data = new ArrayList<>();
+                            List<MotionDataBean> data = new ArrayList<>();
                             while (fullData.length() > 0 && fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) > 0) {
                                 // Send the obtained bytes to the UI activity.
                                 String singleData = fullData.substring(0, fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR));
                                 if (singleData.length() > 0) {
                                     // get an motion data object from String
-                                    MotionData md = getMotionDataObjectFromString(singleData);
+                                    MotionDataBean md = getMotionDataObjectFromString(singleData);
                                     if (md != null) {
-                                        mPersistenceService.processNewMotionData(md);
+                                        mDataAccessService.processNewMotionData(md);
                                     }
                                 }
                                 fullData = fullData.substring(fullData.indexOf(BluetoothConfiguration.MESSAGE_LINE_SEPERATOR) + BluetoothConfiguration.MESSAGE_LINE_SEPERATOR.length());
@@ -233,9 +231,9 @@ public class BluetoothBackgroundService extends Service {
             }
         }
 
-        private MotionData getMotionDataObjectFromString(String input) {
+        private MotionDataBean getMotionDataObjectFromString(String input) {
             String[] data = new String[5];
-            MotionData md = new MotionData();
+            MotionDataBean md = new MotionDataBean();
             // split the single String into its data
             try {
                 for (int i = 0; i < 5; i++) {
@@ -308,7 +306,7 @@ public class BluetoothBackgroundService extends Service {
                 try {
                     socket = mmServerSocket.accept();
                 } catch (IOException e) {
-                    mConnected = false;
+                    connected = false;
                     Log.e("info", "Socket's accept() method failed", e);
                     System.out.println("Socket's accept() method failed");
                     break;
@@ -317,7 +315,7 @@ public class BluetoothBackgroundService extends Service {
                 if (socket != null) {
                     // A connection was accepted. Perform work associated with
                     // the connection in a separate thread.
-                    mConnected = true;
+                    connected = true;
                     listenOnConnectedSocket(socket);
                     break;
                 }
@@ -383,33 +381,31 @@ public class BluetoothBackgroundService extends Service {
                                     BluetoothConfiguration.MESSAGE_READ, numBytes, -1,
                                     s2);
                             readMsg.sendToTarget();
-//                            Log.d("Debug", "BT received Input.");
+
                         } else {
                             try {
-//                                Log.d("Debug", "BT Inputstream empty.");
                                 sleep(BluetoothConfiguration.CONNECTION_DELAY);
                             } catch (Exception e) {
                             }
-                            ;
                         }
                     } else {
                         // get in the except block and restart
-                        mmSocket=null;
+                        mmSocket = null;
                         throw new IOException();
                     }
                 } catch (IOException e) {
                     Log.d("Info", "Input stream was disconnected", e);
-                    mPersistenceService.unsetReceivesLiveData();
-                    if (mmSocket!=null && !mmSocket.isConnected()) {
+                    mDataAccessService.unsetReceivesLiveData();
+                    if (mmSocket != null && !mmSocket.isConnected()) {
                         // lost connection, close and destroy this socket,
-                        mConnected = false;
+                        connected = false;
                         try {
                             mmSocket.close();
                             mmSocket = null;
                         } catch (IOException e2) {
                         }
                         // restart connection
-                         startConnection();
+                        startConnection();
                     }
                     break;
                 }
@@ -479,7 +475,10 @@ public class BluetoothBackgroundService extends Service {
         public void run() {
             // Cancel discovery because it otherwise slows down the connection.
             mBluetoothAdapter.cancelDiscovery();
-            while (!mConnected) {
+            long start= System.currentTimeMillis();
+            long curr=0L;
+            while (!connected && curr<BluetoothConfiguration.CONNECTION_TIMEOUT) {
+                curr=System.currentTimeMillis()-start;
                 try {
                     // Connect to the remote device through the socket. This call blocks
                     // until it succeeds or throws an exception.
@@ -487,12 +486,12 @@ public class BluetoothBackgroundService extends Service {
 
                     // The connection attempt succeeded. Perform work associated with
                     // the connection in a separate thread.
-                    mConnected = true;
+                    connected = true;
                     listenOnConnectedSocket(mmSocket);
 
                 } catch (IOException connectException) {
                     // Unable to connect; close the socket and return.
-                    // mConnected = false;
+                    // connected = false;
                     try {
                         mmSocket.close();
                     } catch (IOException closeException) {

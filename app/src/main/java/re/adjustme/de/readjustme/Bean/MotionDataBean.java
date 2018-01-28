@@ -10,14 +10,11 @@ import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Predefined.Sensor;
 
 /**
+ * Class represent the Data for one specific Sensor from the Shirt.
+ * <p>
  * Created by Semmel on 18.11.2017.
  */
-
-public class MotionData implements Serializable, Comparable {
-
-    final long serialVersionUID = 41234500967890L;
-
-    private Integer id;
+public class MotionDataBean implements Serializable, Comparable {
 
     private Sensor sensor = Sensor.SENSOR_FRONT;
 
@@ -33,7 +30,7 @@ public class MotionData implements Serializable, Comparable {
     private String label;
     private Boolean inLabeledPosition;
 
-    public MotionData() {
+    public MotionDataBean() {
         super();
     }
 
@@ -133,12 +130,11 @@ public class MotionData implements Serializable, Comparable {
 
     @Override
     public int compareTo(@NonNull Object o) {
-        MotionData m = null;
+        MotionDataBean m = null;
         try {
-            m = (MotionData) o;
+            m = (MotionDataBean) o;
         } catch (Exception e) {
-            // not equal if it isn't a MotionData
-//            Log.i("Comparable-Info","MotionData not comparable");
+            // not equal if it isn't a MotionDataBean
             return -1;
         }
         int difX = this.getX() - m.getX();
@@ -146,15 +142,12 @@ public class MotionData implements Serializable, Comparable {
         int difZ = this.getZ() - m.getZ();
         if ((difX > 0 && difX > this.sensor.getEpsilon_x()) || (difX < 0 && difX < this.sensor.getEpsilon_x() * (-1))) {
             // x-difference is to high
-//            Log.i("Comparable-Info","MotionData is different on x "+this.toString() +"\n"+m.toString());
             return 1;
         } else if ((difY > 0 && difY > this.sensor.getEpsilon_y()) || (difY < 0 && difY < this.sensor.getEpsilon_y() * (-1))) {
             // y-difference is to high
-//            Log.i("Comparable-Info","MotionData is different on y "+this.toString() +"\n"+m.toString());
             return 1;
         } else if ((difZ > 0 && difZ > this.sensor.getEpsilon_z()) || (difZ < 0 && difZ < this.sensor.getEpsilon_z() * (-1))) {
             // z-difference is to high
-//            Log.i("Comparable-Info","MotionData is different on z "+this.toString() +"\n"+m.toString());
             return 1;
         }
         // all possible differences are between the 0 and predefined epsilon
@@ -162,8 +155,8 @@ public class MotionData implements Serializable, Comparable {
         return 0;
     }
 
-    public MotionData clone() {
-        MotionData clone = new MotionData();
+    public MotionDataBean clone() {
+        MotionDataBean clone = new MotionDataBean();
         clone.setSensor(sensor);
         clone.setLabel(label);
         clone.setInLabeledPosition(inLabeledPosition);

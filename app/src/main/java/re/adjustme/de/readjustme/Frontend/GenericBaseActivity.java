@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
+import re.adjustme.de.readjustme.Frontend.Service.DataAccessService;
 import re.adjustme.de.readjustme.R;
 
 /**
@@ -21,9 +22,7 @@ import re.adjustme.de.readjustme.R;
 
 public abstract class GenericBaseActivity extends AppCompatActivity {
 
-    protected PersistenceService mPersistenceService = null;
-//    protected EvaluationBackgroundService mEvaluationBackgroundService = null;
-    //protected ServiceConnection mEvaluationConnection = null;
+    protected DataAccessService mDataAccessService = null;
     protected ServiceConnection mPersistenceConnection = null;
     protected BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -34,8 +33,8 @@ public abstract class GenericBaseActivity extends AppCompatActivity {
             switch (item.getItemId()) {
 
                 case R.id.navigation_home:
-                    if (!this.getClass().equals(MainActivity.class)) {
-                        intent = new Intent(getApplicationContext(), MainActivity.class);
+                    if (!this.getClass().equals(HomeActivity.class)) {
+                        intent = new Intent(getApplicationContext(), HomeActivity.class);
                         startActivity(intent);
                     }
                     return true;
@@ -52,7 +51,7 @@ public abstract class GenericBaseActivity extends AppCompatActivity {
                     }
                     return true;
                 case R.id.navigation_timeline:
-                    if (!this.getClass().equals(TimelineActivity.class)){
+                    if (!this.getClass().equals(TimelineActivity.class)) {
                         intent = new Intent(getApplicationContext(), TimelineActivity.class);
                         startActivity(intent);
                     }
@@ -66,28 +65,26 @@ public abstract class GenericBaseActivity extends AppCompatActivity {
         mPersistenceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                PersistenceService.PersistenceServiceBinder b = (PersistenceService.PersistenceServiceBinder) iBinder;
-                mPersistenceService = b.getService();
+                DataAccessService.PersistenceServiceBinder b = (DataAccessService.PersistenceServiceBinder) iBinder;
+                mDataAccessService = b.getService();
                 afterServiceConnection();
             }
 
             @Override
             public void onServiceDisconnected(ComponentName componentName) {
-                mPersistenceService = null;
+                mDataAccessService = null;
             }
         };
     }
 
     protected void afterServiceConnection() {
-    // declare methods that should be called after persitence connection here
+        // declare methods that should be called after persitence connection here
         // in derived classes
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // unbind service
-        unbindService(mPersistenceConnection);
     }
 
     @Override
@@ -101,38 +98,39 @@ public abstract class GenericBaseActivity extends AppCompatActivity {
         addPersistence();
     }
 
-    protected void addPersistence(){
+    protected void addPersistence() {
         PersistenceConfiguration.setPersistenceDirectory(this.getApplicationContext().getFilesDir());
         // get Persistence Service Binder
         setPersistenceConnection();
-        Intent intent = new Intent(this, PersistenceService.class);
+        Intent intent = new Intent(this, DataAccessService.class);
         boolean b = bindService(intent, mPersistenceConnection, Context.BIND_AUTO_CREATE);
     }
-    protected void setNavigationBar(){
-        BottomNavigationView navigation =null;
-        BottomNavigationView deactivatedNavigation =null;
-        if(PersistenceConfiguration.MODE_DEVELOPMENT) {
+
+    protected void setNavigationBar() {
+        BottomNavigationView navigation = null;
+        BottomNavigationView deactivatedNavigation = null;
+        if (PersistenceConfiguration.MODE_DEVELOPMENT) {
             navigation = (BottomNavigationView) findViewById(R.id.navigation_developer);
             navigation.setVisibility(View.VISIBLE);
             deactivatedNavigation = (BottomNavigationView) findViewById(R.id.navigation);
             deactivatedNavigation.setVisibility(View.INVISIBLE);
-        }else{
+        } else {
             navigation = (BottomNavigationView) findViewById(R.id.navigation);
             navigation.setVisibility(View.VISIBLE);
             deactivatedNavigation = (BottomNavigationView) findViewById(R.id.navigation_developer);
             deactivatedNavigation.setVisibility(View.INVISIBLE);
         }
 
-        if(this.getClass().equals(MainActivity.class)) {
+        if (this.getClass().equals(HomeActivity.class)) {
             navigation.setSelectedItemId(R.id.navigation_home);
-        }else if(this.getClass().equals(DashboardDayActivity.class)) {
+        } else if (this.getClass().equals(DashboardDayActivity.class)) {
             navigation.setSelectedItemId(R.id.navigation_dashboard);
-        }else if(this.getClass().equals(TrainModelActivity.class)) {
+        } else if (this.getClass().equals(TrainModelActivity.class)) {
             navigation.setSelectedItemId(R.id.navigation_train);
-        } else if(this.getClass().equals(TimelineActivity.class)) {
+        } else if (this.getClass().equals(TimelineActivity.class)) {
             navigation.setSelectedItemId(R.id.navigation_timeline);
         }
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-}
+    }
 
 }

@@ -1,12 +1,10 @@
 package re.adjustme.de.readjustme.Prediction;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.List;
 
-import re.adjustme.de.readjustme.Bean.MotionDataSetDto;
+import re.adjustme.de.readjustme.Bean.PersistedEntity.MotionDataSetEntity;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
-import re.adjustme.de.readjustme.Predefined.Sensor;
 import re.adjustme.de.readjustme.Prediction.internal.svm;
 import re.adjustme.de.readjustme.Prediction.internal.svm_model;
 import re.adjustme.de.readjustme.Prediction.internal.svm_node;
@@ -19,75 +17,23 @@ import re.adjustme.de.readjustme.Prediction.internal.svm_train;
  * @author selmkes
  */
 public class SvmPredictor implements Serializable {
-    private svm_model model;
+    private svm_model mSvmModel;
 
-    public SvmPredictor() {
-        super();
-        this.init();
-
-    }
-
-    private void init() {
-    }
-
-
-    public double predict(MotionDataSetDto md, BodyArea area) {
-        //final int svm_type = svm.svm_get_svm_type(model);
-        final int nr_class = svm.svm_get_nr_class(model);
+    public double predict(MotionDataSetEntity md, BodyArea area) {
+        //final int svm_type = svm.svm_get_svm_type(mSvmModel);
+        final int nr_class = svm.svm_get_nr_class(mSvmModel);
 
         // Data for prediction
         double[] prob_estimates = new double[nr_class];
-
-//        // calc amount of features -> one node for each feature
-//        int c = 0;
-//        for (Sensor s : Sensor.values()) {
-//            if(area.containsSensors(s)){
-//            if (!s.isExclude_x()) {
-//                c++;
-//            }
-//            if (!s.isExclude_y()) {
-//                c++;
-//            }
-//            if (!s.isExclude_z()) {
-//                c++;
-//            }}
-//        }
-//        final svm_node[] x = new svm_node[c];
-//        c = 0;
-//
-//        for (Sensor s : Sensor.values()) {
-//            // x
-//            if (area.containsSensors(s)) {
-//                if (!s.isExclude_x()) {
-//                    x[c] = new svm_node();
-//                    x[c].index = c;
-//                    x[c].value = md.getMotion(s).getX();
-//                    c++;
-//                }
-//                // y
-//                if (!s.isExclude_y()) {
-//                    x[c] = new svm_node();
-//                    x[c].index = c;
-//                    x[c].value = md.getMotion(s).getY();
-//                    c++;
-//                }
-//                // z
-//                if (!s.isExclude_z()) {
-//                    x[c] = new svm_node();
-//                    x[c].index = c;
-//                    x[c].value = md.getMotion(s).getZ();
-//                    c++;
-//                }
-//            }
-//        }
         final svm_node[] x = md.getsvmNodes(area);
-        double v = svm.svm_predict_probability(model, x, prob_estimates); // internal prediction
+        double v = svm.svm_predict_probability(mSvmModel, x, prob_estimates); // internal prediction
         System.out.println(prob_estimates);
         return v;
     }
 
-    public void trainModel(List<MotionDataSetDto> motionDataSetDtos,BodyArea area) {
+
+    public void trainModel(List<MotionDataSetEntity> motionDataSetEntities, BodyArea area) {
         final svm_train train = new svm_train();
-        model = train.train(motionDataSetDtos,area);
+        mSvmModel = train.train(motionDataSetEntities, area);
     }
 }

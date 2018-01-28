@@ -6,6 +6,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+
+/**
+ * Queue all BackendRequests
+ * Created by semmel on 05.01.2018.
+ */
 public class HttpRequestQueue {
     private static HttpRequestQueue mInstance;
     private static Context mCtx;

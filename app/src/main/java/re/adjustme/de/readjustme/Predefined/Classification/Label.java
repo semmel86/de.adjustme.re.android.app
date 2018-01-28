@@ -6,7 +6,6 @@ package re.adjustme.de.readjustme.Predefined.Classification;
 
 public interface Label {
 
-    //    public String getDescription(String label);
     public String getDescription();
 
     public String getLabel();

@@ -25,19 +25,23 @@ public class BluetoothConfiguration {
     public static final int MESSAGE_READ = 0;
     public static final int MESSAGE_WRITE = 1;
     public static final int MESSAGE_TOAST = 2;
-    public static final String BLUETOOTH_CONNECTED = "Connected";
-    public static final String BLUETOOTH_DISCONNECTED = "Disconnected";
+
+    // Parsing
     public static final String MESSAGE_LINE_SEPERATOR = "\r\n";
     public static final String MESSAGE_SEPARATOR = " ";
     public static final String SENSOR_STATUS_OK = "100";
+
     // global App permissions
-    public static final String[] permissionsToRequest =
+    public static final String[] REQUESTED_PERMISSIONS =
             {
                     Manifest.permission.BLUETOOTH_ADMIN,
                     Manifest.permission.BLUETOOTH,
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
             };
-    public static boolean SERVER_MODE = false;
 
+    // Bluetooth connection can be established as Server or Client
+    // false is default
+    public static boolean SERVER_MODE = false;
+    public static long CONNECTION_TIMEOUT =60000L; // 60000L = 1Min
 }

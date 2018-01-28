@@ -16,16 +16,15 @@ import re.adjustme.de.readjustme.R;
 
 public class TrainModelActivity extends GenericBaseActivity {
 
-    private Button setLabelButton;
-    private EditText labelTxt;
-    private TextView label;
-    private ToggleButton isInLabeledPostion;
+    private Button mSetLabelButton;
+    private EditText mLabelTxt;
+    private TextView mLabelView;
+    private ToggleButton mIsInLabeledPostionBtn;
 
 
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -35,10 +34,10 @@ public class TrainModelActivity extends GenericBaseActivity {
 
     @Override
     protected void afterServiceConnection() {
-        if (mPersistenceService != null) {
-            Log.i("Info", "set label text");
-            label.setText(mPersistenceService.getLabel());
-            isInLabeledPostion.setChecked(mPersistenceService.getIsInLabeledPosition());
+        if (mDataAccessService != null) {
+            Log.i("Info", "set mLabelView text");
+            mLabelView.setText(mDataAccessService.getLabel());
+            mIsInLabeledPostionBtn.setChecked(mDataAccessService.getIsInLabeledPosition());
         }
     }
 
@@ -49,34 +48,34 @@ public class TrainModelActivity extends GenericBaseActivity {
         setContentView(R.layout.activity_train);
 
         // set navigation bar
-         setNavigationBar();
+        setNavigationBar();
 
-        labelTxt = (EditText) findViewById(R.id.editText2);
-        isInLabeledPostion = (ToggleButton) findViewById(R.id.toggleButton2);
-        label = (TextView) findViewById(R.id.editText3);
-        setLabelButton = (Button) findViewById(R.id.button4);
+        mLabelTxt = (EditText) findViewById(R.id.editText2);
+        mIsInLabeledPostionBtn = (ToggleButton) findViewById(R.id.toggleButton2);
+        mLabelView = (TextView) findViewById(R.id.editText3);
+        mSetLabelButton = (Button) findViewById(R.id.button4);
 
     }
 
     public void onToggleButtonClick(View v) {
         // switch true/false
-        if (isInLabeledPostion.getText().equals("False - not in Position")) {
+        if (mIsInLabeledPostionBtn.getText().equals("False - not in Position")) {
             //set false
-            mPersistenceService.setIsInLabeledPosition(false);
+            mDataAccessService.setIsInLabeledPosition(false);
         } else {
             // set true
-            mPersistenceService.setIsInLabeledPosition(true);
+            mDataAccessService.setIsInLabeledPosition(true);
         }
     }
 
-    public void setLabelTxt(View v) {
+    public void setmLabelTxt(View v) {
         // is labeled = false
-        mPersistenceService.setIsInLabeledPosition(false);
-        // set new label
-        if (labelTxt.getText() != null) {
-            mPersistenceService.setLabel(labelTxt.getText().toString());
-            label.setText(labelTxt.getText());
-            labelTxt.setText("");
+        mDataAccessService.setIsInLabeledPosition(false);
+        // set new mLabelView
+        if (mLabelTxt.getText() != null) {
+            mDataAccessService.setLabel(mLabelTxt.getText().toString());
+            mLabelView.setText(mLabelTxt.getText());
+            mLabelTxt.setText("");
         }
     }
 
