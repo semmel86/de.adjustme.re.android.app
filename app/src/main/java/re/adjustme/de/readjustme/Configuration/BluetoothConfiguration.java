@@ -43,5 +43,5 @@ public class BluetoothConfiguration {
     // Bluetooth connection can be established as Server or Client
     // false is default
     public static boolean SERVER_MODE = false;
-
+    public static long CONNECTION_TIMEOUT =60000L; // 60000L = 1Min
 }

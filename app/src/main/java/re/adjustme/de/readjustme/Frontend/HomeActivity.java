@@ -368,21 +368,29 @@ public class HomeActivity extends GenericBaseActivity {
         }
 
         @Override
-        public void run() {
+        public void run()  {
             // init BlueTooth first
             startService(btIntent);
-
+            long start= System.currentTimeMillis();
+            long curr=0L;
             // wait until the data comes in
-            while (!mDataAccessService.receivesLiveData()) {
+            while (!mDataAccessService.receivesLiveData() && curr<BluetoothConfiguration.CONNECTION_TIMEOUT) {
+                curr= System.currentTimeMillis()-start;
+
                 try {
                     sleep(1000);
                 } catch (InterruptedException e1) {
 
                 }
             }
-            // and init Evaluation last
-            startService(evalIntent);
+            if(curr>=BluetoothConfiguration.CONNECTION_TIMEOUT){
+                mDataAccessService.setTryStarting(false);
+
+            }
+    if( mDataAccessService.getTryStarting()){
+                // and init Evaluation last
+                startService(evalIntent);
 
         }
     }
-}
+}}

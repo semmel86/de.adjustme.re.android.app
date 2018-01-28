@@ -475,7 +475,10 @@ public class BluetoothBackgroundService extends Service {
         public void run() {
             // Cancel discovery because it otherwise slows down the connection.
             mBluetoothAdapter.cancelDiscovery();
-            while (!connected) {
+            long start= System.currentTimeMillis();
+            long curr=0L;
+            while (!connected && curr<BluetoothConfiguration.CONNECTION_TIMEOUT) {
+                curr=System.currentTimeMillis()-start;
                 try {
                     // Connect to the remote device through the socket. This call blocks
                     // until it succeeds or throws an exception.

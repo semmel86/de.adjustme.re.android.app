@@ -21,7 +21,7 @@ import java.util.Stack;
 import java.util.TimeZone;
 
 import re.adjustme.de.readjustme.Bean.PostureBean;
-import re.adjustme.de.readjustme.Bean.Entity.DashboardDataEntity;
+import re.adjustme.de.readjustme.Bean.PersistedEntity.DashboardDataEntity;
 import re.adjustme.de.readjustme.Frontend.Component.ChartMarkerView;
 import re.adjustme.de.readjustme.Frontend.Component.TimelineBarChartRenderer;
 import re.adjustme.de.readjustme.Frontend.Component.TimelineBarChartValueFormatter;

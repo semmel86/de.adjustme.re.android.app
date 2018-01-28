@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import re.adjustme.de.readjustme.Bean.Entity.DashboardDataEntity;
+import re.adjustme.de.readjustme.Bean.PersistedEntity.DashboardDataEntity;
 import re.adjustme.de.readjustme.Frontend.Component.ChartMarkerView;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Predefined.Classification.Label;

@@ -20,8 +20,8 @@ import java.util.List;
 
 import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Bean.Entity.MotionDataSetEntity;
-import re.adjustme.de.readjustme.Bean.Entity.SVMClassificationEntity;
+import re.adjustme.de.readjustme.Bean.PersistedEntity.MotionDataSetEntity;
+import re.adjustme.de.readjustme.Bean.PersistedEntity.SVMClassificationEntity;
 import re.adjustme.de.readjustme.Persistence.GenericPersistenceProvider;
 import re.adjustme.de.readjustme.Persistence.internal.MotionDataTextFilePersistor;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;

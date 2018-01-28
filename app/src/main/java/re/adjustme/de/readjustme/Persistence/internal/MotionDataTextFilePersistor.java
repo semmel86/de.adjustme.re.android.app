@@ -6,7 +6,7 @@ import java.util.List;
 
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Bean.MotionDataBean;
-import re.adjustme.de.readjustme.Bean.Entity.MotionDataSetEntity;
+import re.adjustme.de.readjustme.Bean.PersistedEntity.MotionDataSetEntity;
 import re.adjustme.de.readjustme.Predefined.Sensor;
 
 /**
