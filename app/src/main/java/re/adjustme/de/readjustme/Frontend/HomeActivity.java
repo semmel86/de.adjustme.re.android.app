@@ -28,9 +28,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
+import re.adjustme.de.readjustme.Frontend.Service.BluetoothBackgroundService;
+import re.adjustme.de.readjustme.Frontend.Service.EvaluationBackgroundService;
 import re.adjustme.de.readjustme.R;
 
-public class MainActivity extends GenericBaseActivity {
+public class HomeActivity extends GenericBaseActivity {
     private Button startServiceBtn;
     private Button stopServiceBtn;
     private Button calibrateBtn;
@@ -258,7 +260,7 @@ public class MainActivity extends GenericBaseActivity {
 
             @Override
             public void onFinish() {
-                mDataAccessService.calibrate();
+                mDataAccessService.setCalibrationData();
                 alertDialog.hide();
             }
         }.start();

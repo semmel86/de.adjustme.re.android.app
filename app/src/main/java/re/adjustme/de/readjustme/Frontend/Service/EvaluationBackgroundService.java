@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme.Frontend;
+package re.adjustme.de.readjustme.Frontend.Service;
 
 import android.app.Service;
 import android.content.ComponentName;
@@ -20,7 +20,7 @@ import java.util.List;
 
 import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Persistence.Entity.MotionDataSetDto;
+import re.adjustme.de.readjustme.Persistence.Entity.MotionDataSetEntity;
 import re.adjustme.de.readjustme.Persistence.Entity.SVMClassificationEntity;
 import re.adjustme.de.readjustme.Persistence.GenericPersistenceProvider;
 import re.adjustme.de.readjustme.Persistence.internal.MotionDataTextFilePersistor;
@@ -38,8 +38,6 @@ import re.adjustme.de.readjustme.Prediction.SvmPredictor;
 
 public class EvaluationBackgroundService extends Service {
 
-    // Binder given to clients
-    private final IBinder mBinder = new EvaluationBackgroundServiceBinder();
     // Contains a specific Classifier for each Area
     SVMClassificationEntity svmMotionclassifier;
     GenericPersistenceProvider mPersistenceProvider;
@@ -50,7 +48,7 @@ public class EvaluationBackgroundService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;//mBinder;
+        return null;
     }
 
     @Override
@@ -160,14 +158,14 @@ public class EvaluationBackgroundService extends Service {
     public void calculateSVMModel() {
         // 1-load the data (Full Motion data set objects)
         MotionDataTextFilePersistor csvPersistor = new MotionDataTextFilePersistor();
-        List<MotionDataSetDto> raw = csvPersistor.getMotionDataSetDtos();
-        HashMap<BodyArea, List<MotionDataSetDto>> sortedMap = new HashMap<BodyArea, List<MotionDataSetDto>>();
+        List<MotionDataSetEntity> raw = csvPersistor.getMotionDataSetDtos();
+        HashMap<BodyArea, List<MotionDataSetEntity>> sortedMap = new HashMap<BodyArea, List<MotionDataSetEntity>>();
         // init sortedMap with empty lists
         for (BodyArea area : BodyArea.values()) {
-            sortedMap.put(area, new ArrayList<MotionDataSetDto>());
+            sortedMap.put(area, new ArrayList<MotionDataSetEntity>());
         }
         // 2- assign each line with label & inPosition to a Bodyarea
-        for (MotionDataSetDto curr : raw) {
+        for (MotionDataSetEntity curr : raw) {
             if (curr.getInPosition() && curr.getLabel() != null) {
                 for (BodyArea area : BodyArea.values()) {
                     if (area.contains(curr.getLabel())) {
@@ -191,7 +189,7 @@ public class EvaluationBackgroundService extends Service {
         mPersistenceProvider.save(svmMotionclassifier);
     }
 
-    private void evaluateMotionData(MotionDataSetDto motionDataSet) {
+    private void evaluateMotionData(MotionDataSetEntity motionDataSet) {
         if (mDataAccessService.receivesLiveData()) {
             for (BodyArea area : BodyArea.values()) {
                 double classification = svmMotionclassifier.getSvmMotionclassifier().get(area).predict(motionDataSet, area);
@@ -215,7 +213,7 @@ public class EvaluationBackgroundService extends Service {
 
     private class EvalThread extends Thread {
 
-        private MotionDataSetDto motionDataSet;
+        private MotionDataSetEntity motionDataSet;
         private boolean runThreadrun = true;
 
         public void killMe() {

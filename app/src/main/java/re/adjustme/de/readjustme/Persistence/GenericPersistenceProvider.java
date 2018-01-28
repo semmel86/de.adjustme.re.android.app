@@ -4,7 +4,7 @@ import android.util.Log;
 
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Persistence.Entity.BackendDataEntity;
-import re.adjustme.de.readjustme.Persistence.Entity.MotionDataSetDto;
+import re.adjustme.de.readjustme.Persistence.Entity.MotionDataSetEntity;
 import re.adjustme.de.readjustme.Persistence.internal.BackendPersistor;
 import re.adjustme.de.readjustme.Persistence.internal.MotionDataTextFilePersistor;
 import re.adjustme.de.readjustme.Persistence.internal.ObjectPersistor;
@@ -47,10 +47,10 @@ public class GenericPersistenceProvider {
                     break;
                 case FILE:
                     // only for testing to get csv data from device
-                    // assume this can only be the MotionDataSetDto -> else Exception
+                    // assume this can only be the MotionDataSetEntity -> else Exception
                     if (PersistenceConfiguration.SAVE_LOCAL) {
                         try {
-                            mTextFilePersistor.saveMotionSet((MotionDataSetDto) object);
+                            mTextFilePersistor.saveMotionSet((MotionDataSetEntity) object);
                             ;
                         } catch (Exception e) {
                             Log.e("ClassCast", "Cannot save object to csv", e);
@@ -74,7 +74,7 @@ public class GenericPersistenceProvider {
                 case FILE:
                     // only for testing to load csv data from local device
                     // only for testing to get csv data from device
-                    // assume this can only be the MotionDataSetDto -> else Exception
+                    // assume this can only be the MotionDataSetEntity -> else Exception
                     try {
                         o = mTextFilePersistor.getMotionDataSetDtos();
                     } catch (Exception e) {

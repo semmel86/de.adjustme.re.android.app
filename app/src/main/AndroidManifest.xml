@@ -15,7 +15,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Frontend.MainActivity"
+            android:name=".Frontend.HomeActivity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
@@ -26,30 +26,30 @@
         <activity
             android:name=".Frontend.DashboardDayActivity"
             android:label="@string/title_activity_dashboard_day"
-            android:parentActivityName=".Frontend.MainActivity"
+            android:parentActivityName=".Frontend.HomeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"></activity>
 
         <activity
             android:name=".Frontend.TimelineActivity"
             android:label="@string/title_timeline"
-            android:parentActivityName=".Frontend.MainActivity"
+            android:parentActivityName=".Frontend.HomeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"></activity>
 
         <activity
             android:name=".Frontend.TrainModelActivity"
             android:label="BluetoothActivity"
-            android:parentActivityName=".Frontend.MainActivity"
+            android:parentActivityName=".Frontend.HomeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"></activity>
 
         <service
-            android:name=".Frontend.DataAccessService"
+            android:name=".Frontend.Service.DataAccessService"
             android:exported="false"
            />
         <service
-            android:name="re.adjustme.de.readjustme.Frontend.BluetoothBackgroundService"
+            android:name="re.adjustme.de.readjustme.Frontend.Service.BluetoothBackgroundService"
             android:exported="false" />
         <service
-            android:name=".Frontend.EvaluationBackgroundService"
+            android:name=".Frontend.Service.EvaluationBackgroundService"
             android:exported="false" />
 
     </application>

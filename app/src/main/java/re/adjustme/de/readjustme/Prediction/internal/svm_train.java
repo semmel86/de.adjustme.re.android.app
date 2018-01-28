@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
-import re.adjustme.de.readjustme.Persistence.Entity.MotionDataSetDto;
+import re.adjustme.de.readjustme.Persistence.Entity.MotionDataSetEntity;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 
 public class svm_train {
@@ -139,8 +139,8 @@ public class svm_train {
     // t.run(argv);
     // }
 
-    public svm_model train(List<MotionDataSetDto> motionDataSetDtos, BodyArea area) {
-        this.read_problem(motionDataSetDtos, area);
+    public svm_model train(List<MotionDataSetEntity> motionDataSetEntities, BodyArea area) {
+        this.read_problem(motionDataSetEntities, area);
         if (this.cross_validation != 0) {
             this.do_cross_validation();
         } else {
@@ -303,15 +303,15 @@ public class svm_train {
         // }
     }
 
-    void read_problem(List<MotionDataSetDto> motionDataSetDtos, BodyArea area) {
+    void read_problem(List<MotionDataSetEntity> motionDataSetEntities, BodyArea area) {
 
         final Vector<Double> vy = new Vector<Double>();
         final Vector<svm_node[]> vx = new Vector<svm_node[]>();
         int max_index = 0;
 
-        for (MotionDataSetDto currentMotion : motionDataSetDtos) {
+        for (MotionDataSetEntity currentMotion : motionDataSetEntities) {
             // while(true){
-            if (motionDataSetDtos != null) {
+            if (motionDataSetEntities != null) {
                 final String line = currentMotion.toSVMLightStr(area);
                 if (line == null) {
                     break;

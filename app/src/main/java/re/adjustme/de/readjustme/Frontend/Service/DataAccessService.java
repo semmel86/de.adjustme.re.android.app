@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme.Frontend;
+package re.adjustme.de.readjustme.Frontend.Service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -23,11 +23,12 @@ import java.util.HashMap;
 
 import re.adjustme.de.readjustme.Bean.Posture;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
+import re.adjustme.de.readjustme.Frontend.DashboardDayActivity;
 import re.adjustme.de.readjustme.Persistence.Entity.BackendDataEntity;
 import re.adjustme.de.readjustme.Persistence.Entity.CalibrationDataEntity;
 import re.adjustme.de.readjustme.Persistence.Entity.DashboardDataEntity;
 import re.adjustme.de.readjustme.Bean.MotionData;
-import re.adjustme.de.readjustme.Persistence.Entity.MotionDataSetDto;
+import re.adjustme.de.readjustme.Persistence.Entity.MotionDataSetEntity;
 import re.adjustme.de.readjustme.Persistence.Entity.UserEntity;
 import re.adjustme.de.readjustme.Persistence.GenericPersistenceProvider;
 import re.adjustme.de.readjustme.Persistence.internal.ObjectPersistor;
@@ -35,6 +36,7 @@ import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Predefined.Classification.Label;
 import re.adjustme.de.readjustme.Predefined.Sensor;
 import re.adjustme.de.readjustme.R;
+import re.adjustme.de.readjustme.Util.Calibration;
 
 /**
  * Class providing access to all data needed by different services/Activities.
@@ -57,7 +59,7 @@ public class DataAccessService extends Service {
     private boolean tryStarting = false;
     // persisted entities
     private UserEntity user;
-    private MotionDataSetDto motionDataSet;
+    private MotionDataSetEntity motionDataSet;
     private DashboardDataEntity dashboardData;
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mPostureReceiver = new BroadcastReceiver() {
@@ -137,7 +139,7 @@ public class DataAccessService extends Service {
         if(user==null){
             user=new UserEntity();
         }
-        motionDataSet = new MotionDataSetDto();
+        motionDataSet = new MotionDataSetEntity();
         calibrationMotionData = (CalibrationDataEntity) mPersistenceProvider.load(CalibrationDataEntity.class); // new HashMap<>();
         if (calibrationMotionData == null) {
             // for restets, start with a new entity
@@ -208,13 +210,13 @@ public class DataAccessService extends Service {
 
     // sets the current raw Motion Data as calibrated 0-values and all following
     // motions are calculated related to these
-    public void calibrate() {
+    public void setCalibrationData() {
         for (Sensor s : Sensor.values()) {
             if (currentRawMotionData.containsKey(s)) {
                 MotionData oldCalibration = calibrationMotionData.getData().get(s);
                 MotionData newMd = currentRawMotionData.get(s);
                 // Recalculate calibration, as it was already calibrated before
-                // x1 = x1 - calibrationX == calibrate(x1) + calibrationX
+                // x1 = x1 - calibrationX == setCalibrationData(x1) + calibrationX
                 if (!oldCalibration.equals(newMd)) {
                     oldCalibration.setX(newMd.getX());
                     oldCalibration.setY(newMd.getY());
@@ -228,59 +230,14 @@ public class DataAccessService extends Service {
         helper.save(calibrationMotionData, "calibrationMotionData");
     }
 
-    private void doCalibration(MotionData md) {
+    private void calibration(MotionData md) {
         MotionData calibration = calibrationMotionData.getData().get(md.getSensor());
         Log.d("Info Persistence", "Before Calibration: " + md.toString());
-//        // CALIBRATION
-//        if((md.getX() - calibration.getX()) >=(-180)){
-//            md.setX(md.getX() - calibration.getX());}
-//        else{
-//            md.setX(180+calibration.getX() - md.getX());
-//        }
-//
-//        if((md.getY() - calibration.getY()) >=(-180)){
-//            md.setY(md.getY() - calibration.getY());}
-//        else{
-//            md.setY(180+calibration.getY() - md.getY());
-//        }
 
-//        // X
-//        if((md.getX() - calibration.getX()) >=(-180)) {
-//            if (((md.getX() - calibration.getX()) <= (180))) {
-//                md.setX(md.getX() - calibration.getX()+180);
-//            }else{
-//                md.setX(-181+calibration.getX() + md.getX()+180);
-//            }
-//        }
-//        else{
-//            md.setX(181+calibration.getX() - md.getX()+180);
-//        }
-//        // Y
-//        if((md.getY() - calibration.getY()) >=(-180)) {
-//            if (((md.getY() - calibration.getY()) <= (180))) {
-//                md.setY(md.getY() - calibration.getY());
-//            }else{
-//                md.setY(-181+calibration.getY() + md.getY());
-//            }
-//        }
-//        else{
-//            md.setY(181+calibration.getY() - md.getY());
-//        }
-
-        // Z
-//        if((md.getZ() - calibration.getZ()) >=(-180)) {
-//            if (((md.getZ() - calibration.getZ()) <= (180))) {
-//                md.setZ(md.getZ() - calibration.getZ());
-//            }else{
-//                md.setZ(0-(calibration.getZ() + md.getZ()));
-//            }
-//        }
-//        else{
-//            md.setZ(0-(calibration.getZ() + md.getZ()));
-//        }
-        md.setX(md.getX() - calibration.getX());
-        md.setY(md.getY() - calibration.getY());
-        md.setZ(md.getZ() - calibration.getZ());
+         // Z
+        md.setX(Calibration.calibrate(md.getX(), calibration.getX()));
+        md.setY(Calibration.calibrate(md.getY(), calibration.getY()));
+        md.setZ(Calibration.calibrate(md.getZ(), calibration.getZ()));
     }
 
     // save persist immediately the object
@@ -288,10 +245,10 @@ public class DataAccessService extends Service {
     public void save(MotionData md) {
         this.receivesLiveData = true;
         if (PersistenceConfiguration.ENABLE_CALIBRATION) {
-            doCalibration(md);
+            calibration(md);
         }
         labelMotionData(md);
-        motionDataSet.update(md); // add md to MotionDataSetDto where z is adjusted !
+        motionDataSet.update(md); // add md to MotionDataSetEntity where z is adjusted !
         mPersistenceProvider.save(motionDataSet);
 
 
@@ -372,7 +329,7 @@ public class DataAccessService extends Service {
     }
 
     // get reference to current MotionDataSet object
-    public MotionDataSetDto getMotionDataSet() {
+    public MotionDataSetEntity getMotionDataSet() {
         return motionDataSet;
     }
 

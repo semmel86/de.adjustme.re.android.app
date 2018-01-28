@@ -6,7 +6,7 @@ import java.util.List;
 
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Bean.MotionData;
-import re.adjustme.de.readjustme.Persistence.Entity.MotionDataSetDto;
+import re.adjustme.de.readjustme.Persistence.Entity.MotionDataSetEntity;
 import re.adjustme.de.readjustme.Predefined.Sensor;
 
 /**
@@ -15,13 +15,13 @@ import re.adjustme.de.readjustme.Predefined.Sensor;
 
 public class MotionDataTextFilePersistor extends TextFilePersistor {
 
-    public void saveMotionSet(MotionDataSetDto m) {
+    public void saveMotionSet(MotionDataSetEntity m) {
         this.save(m, "fullMotionDataSet.csv");
     }
 
-    public List<MotionDataSetDto> getMotionDataSetDtos() {
+    public List<MotionDataSetEntity> getMotionDataSetDtos() {
         final List<String> motions = this.loadFullLines("fullMotionDataSet.csv");
-        final List<MotionDataSetDto> list = new ArrayList<>();
+        final List<MotionDataSetEntity> list = new ArrayList<>();
 
         for (final String s : motions) {
             list.add(this.getFullMotionDataFromString(s));
@@ -29,8 +29,8 @@ public class MotionDataTextFilePersistor extends TextFilePersistor {
         return list;
     }
 
-    private MotionDataSetDto getFullMotionDataFromString(String s) {
-        final MotionDataSetDto mDto = new MotionDataSetDto();
+    private MotionDataSetEntity getFullMotionDataFromString(String s) {
+        final MotionDataSetEntity mDto = new MotionDataSetEntity();
         final MotionData[] motionDataSet = new MotionData[5];
         // sensor
 //        int z_=0;

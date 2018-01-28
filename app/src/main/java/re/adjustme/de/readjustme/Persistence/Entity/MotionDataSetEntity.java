@@ -15,6 +15,7 @@ import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
 import re.adjustme.de.readjustme.Predefined.PersistenceType;
 import re.adjustme.de.readjustme.Predefined.Sensor;
 import re.adjustme.de.readjustme.Prediction.internal.svm_node;
+import re.adjustme.de.readjustme.Util.Calibration;
 import re.adjustme.de.readjustme.Util.Distance;
 
 /**
@@ -22,8 +23,8 @@ import re.adjustme.de.readjustme.Util.Distance;
  * <p>
  * Created by semmel on 03.12.2017.
  */
-@Persistence(name = "MotionDataSetDto", type = PersistenceType.BACKEND)
-public class MotionDataSetDto implements Serializable {
+@Persistence(name = "MotionDataSetEntity", type = PersistenceType.BACKEND)
+public class MotionDataSetEntity implements Serializable {
     private final static String sep = " ";
     private final static String pair = ":";
     public double probability = 0;
@@ -34,7 +35,7 @@ public class MotionDataSetDto implements Serializable {
     private boolean isInLabeledPostion = false;
     private int[] zValuesBeforAdjustment = {0, 0, 0, 0, 0};
 
-    public MotionDataSetDto() {
+    public MotionDataSetEntity() {
         // at least on place for each last sensors MotionData
         motionDataSet = new MotionData[Sensor.values().length];
         for (Sensor s : Sensor.values()) {
@@ -47,24 +48,19 @@ public class MotionDataSetDto implements Serializable {
     public void update(MotionData md) {
         // update MotionData
         motionDataSet[md.getSensor().getSensorNumber() - 1] = md;
-//        // save z before adjusting
-//        zValuesBeforAdjustment[md.getSensor().getSensorNumber()-1]=md.getZ();
-//        // calc z_
-//        int z_=0;
-//        for(int i=0;i<5;i++){
-//            z_ +=zValuesBeforAdjustment[i];
-//        }
-//        // adjust z with z_
-//        md.setZ(md.getZ()-(z_/5));
+        // save z before adjusting
+        zValuesBeforAdjustment[md.getSensor().getSensorNumber()-1]=md.getZ();
+
+        // calc z_
+        int z_=0;
+        for(int i=0;i<5;i++){
+            z_ +=zValuesBeforAdjustment[i];
+        }
+        z_=z_/5;
+        md.setZ(Calibration.scale(md.getZ(),z_));
         //update Label information
         label = md.getLabel();
         isInLabeledPostion = md.getInLabeledPosition();
-    }
-
-    public MotionData[] getMotionDataSet() {
-        MotionData[] motionDataSetCopy = Arrays.copyOf(this.motionDataSet, this.motionDataSet.length);
-
-        return motionDataSetCopy;
     }
 
     public void setSvmClass(String classNum) {

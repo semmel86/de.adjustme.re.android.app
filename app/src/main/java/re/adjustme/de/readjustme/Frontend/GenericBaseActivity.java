@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
+import re.adjustme.de.readjustme.Frontend.Service.DataAccessService;
 import re.adjustme.de.readjustme.R;
 
 /**
@@ -32,8 +33,8 @@ public abstract class GenericBaseActivity extends AppCompatActivity {
             switch (item.getItemId()) {
 
                 case R.id.navigation_home:
-                    if (!this.getClass().equals(MainActivity.class)) {
-                        intent = new Intent(getApplicationContext(), MainActivity.class);
+                    if (!this.getClass().equals(HomeActivity.class)) {
+                        intent = new Intent(getApplicationContext(), HomeActivity.class);
                         startActivity(intent);
                     }
                     return true;
@@ -120,7 +121,7 @@ public abstract class GenericBaseActivity extends AppCompatActivity {
             deactivatedNavigation.setVisibility(View.INVISIBLE);
         }
 
-        if (this.getClass().equals(MainActivity.class)) {
+        if (this.getClass().equals(HomeActivity.class)) {
             navigation.setSelectedItemId(R.id.navigation_home);
         } else if (this.getClass().equals(DashboardDayActivity.class)) {
             navigation.setSelectedItemId(R.id.navigation_dashboard);

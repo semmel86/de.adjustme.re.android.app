@@ -1,4 +1,4 @@
-package re.adjustme.de.readjustme.Frontend;
+package re.adjustme.de.readjustme.Frontend.Service;
 
 
 import android.app.Service;
