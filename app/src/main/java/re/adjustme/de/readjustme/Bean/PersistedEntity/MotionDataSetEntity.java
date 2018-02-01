@@ -22,7 +22,7 @@ import re.adjustme.de.readjustme.Util.Distance;
  * <p>
  * Created by semmel on 03.12.2017.
  */
-@Persistence(name = "MotionDataSetEntity", type = PersistenceType.BACKEND)
+@Persistence(name = "MotionDataSetEntity", type = PersistenceType.FILE)
 public class MotionDataSetEntity implements Serializable {
     private final static String sep = " ";
     private final static String pair = ":";

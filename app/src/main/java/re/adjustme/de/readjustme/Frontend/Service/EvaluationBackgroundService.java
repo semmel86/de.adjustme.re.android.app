@@ -18,10 +18,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
-import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Bean.PersistedEntity.MotionDataSetEntity;
 import re.adjustme.de.readjustme.Bean.PersistedEntity.SVMClassificationEntity;
+import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
+import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Persistence.GenericPersistenceProvider;
 import re.adjustme.de.readjustme.Persistence.internal.MotionDataTextFilePersistor;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
@@ -53,7 +53,8 @@ public class EvaluationBackgroundService extends Service {
 
     @Override
     public void onCreate() {
-        mSVMClassificationEntity = (SVMClassificationEntity) mPersistenceProvider.load(mSVMClassificationEntity.getClass());
+        mPersistenceProvider = new GenericPersistenceProvider();
+        mSVMClassificationEntity = (SVMClassificationEntity) mPersistenceProvider.load(SVMClassificationEntity.class);
     }
 
     @Override
@@ -102,11 +103,11 @@ public class EvaluationBackgroundService extends Service {
     private void loadClassifier() {
 
         // load svm
-        mSVMClassificationEntity = (SVMClassificationEntity) mPersistenceProvider.load(mSVMClassificationEntity.getClass());
+        mSVMClassificationEntity = (SVMClassificationEntity) mPersistenceProvider.load(SVMClassificationEntity.class);
         if (mSVMClassificationEntity == null || mSVMClassificationEntity.getSvmMotionclassifier().isEmpty()) {
-            unzipClassificator("svmClassificationMap.md");
+            unzipClassificator("SvmClassificator.md");
             unzipClassificator("FullMotionDataSet.csv");
-            mSVMClassificationEntity = (SVMClassificationEntity) mPersistenceProvider.load(mSVMClassificationEntity.getClass());
+            mSVMClassificationEntity = (SVMClassificationEntity) mPersistenceProvider.load(SVMClassificationEntity.class);
         }
     }
 
@@ -116,19 +117,19 @@ public class EvaluationBackgroundService extends Service {
             // load classifier first
             if (ClassificationConfiguration.CALCULATE_MODEL) {
                 this.calculateSVMModel();
-                {
-                    this.loadClassifier();
-                }
-
-                if (mEvalThread == null) {
-                    mEvalThread = new EvalThread();
-                }
-                // start the thread
-                mEvalThread.start();
-                sendStatusToPersistenceService(true);
+            } else {
+                this.loadClassifier();
             }
-        }
+
+            if (mEvalThread == null) {
+                mEvalThread = new EvalThread();
+            }
+            // start the thread
+            mEvalThread.start();
+            sendStatusToPersistenceService(true);
+
     }
+}
 
     private void sendStatusToPersistenceService(boolean status) {
         if (mDataAccessService != null) {
@@ -211,40 +212,40 @@ public class EvaluationBackgroundService extends Service {
 
     }
 
-    private class EvalThread extends Thread {
+private class EvalThread extends Thread {
 
-        private MotionDataSetEntity motionDataSet;
-        private boolean runThreadrun = true;
+    private MotionDataSetEntity motionDataSet;
+    private boolean runThreadrun = true;
 
-        public void killMe() {
-            this.runThreadrun = false;
-        }
+    public void killMe() {
+        this.runThreadrun = false;
+    }
 
-        @Override
-        public void run() {
+    @Override
+    public void run() {
 
-            // Evaluate PostureBean
-            while (runThreadrun) {
-                try {
-                    sleep(ClassificationConfiguration.EVALUATION_TIME);
-                    motionDataSet = mDataAccessService.getmMotionDataSetEntity();
-                    evaluateMotionData(motionDataSet);
+        // Evaluate PostureBean
+        while (runThreadrun) {
+            try {
+                sleep(ClassificationConfiguration.EVALUATION_TIME);
+                motionDataSet = mDataAccessService.getmMotionDataSetEntity();
+                evaluateMotionData(motionDataSet);
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
+}
 
-    /**
-     * Class used for the client Binder.  Because we know this service always
-     * runs in the same process as its clients, we don't need to deal with IPC.
-     */
-    public class EvaluationBackgroundServiceBinder extends Binder {
-        EvaluationBackgroundService getService() {
-            // Return this instance of LocalService so clients can call public methods
-            return EvaluationBackgroundService.this;
-        }
+/**
+ * Class used for the client Binder.  Because we know this service always
+ * runs in the same process as its clients, we don't need to deal with IPC.
+ */
+public class EvaluationBackgroundServiceBinder extends Binder {
+    EvaluationBackgroundService getService() {
+        // Return this instance of LocalService so clients can call public methods
+        return EvaluationBackgroundService.this;
     }
+}
 }

@@ -1,5 +1,6 @@
 package re.adjustme.de.readjustme.Bean.PersistedEntity;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import re.adjustme.de.readjustme.Persistence.Persistence;
@@ -11,7 +12,7 @@ import re.adjustme.de.readjustme.Prediction.SvmPredictor;
  * Created by semmel on 27.01.2018.
  */
 @Persistence(name = "SVMClassificator", type = PersistenceType.OBJECT)
-public class SVMClassificationEntity {
+public class SVMClassificationEntity implements Serializable {
     private HashMap<BodyArea, SvmPredictor> svmMotionclassifier;
 
 
