@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.Camera;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 
 import re.adjustme.de.readjustme.Bean.MotionDataBean;
 import re.adjustme.de.readjustme.Bean.PostureBean;
+import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
 import re.adjustme.de.readjustme.Frontend.DashboardDayActivity;
 import re.adjustme.de.readjustme.Bean.PersistedEntity.BackendDataEntity;
@@ -33,7 +35,11 @@ import re.adjustme.de.readjustme.Bean.PersistedEntity.UserEntity;
 import re.adjustme.de.readjustme.Persistence.GenericPersistenceProvider;
 import re.adjustme.de.readjustme.Persistence.internal.ObjectPersistor;
 import re.adjustme.de.readjustme.Predefined.Classification.BodyArea;
+import re.adjustme.de.readjustme.Predefined.Classification.BwsPosture;
+import re.adjustme.de.readjustme.Predefined.Classification.HwsPosture;
 import re.adjustme.de.readjustme.Predefined.Classification.Label;
+import re.adjustme.de.readjustme.Predefined.Classification.LwsPosture;
+import re.adjustme.de.readjustme.Predefined.Classification.ShoulderPosture;
 import re.adjustme.de.readjustme.Predefined.Sensor;
 import re.adjustme.de.readjustme.R;
 import re.adjustme.de.readjustme.Util.Calibration;
@@ -100,7 +106,7 @@ public class DataAccessService extends Service {
                             sumDuration = dur;
                         }
                         mDashboardDataEntity.getSum(bodyarea).put(lastLabel.getLabel(), sumDuration);
-                        if (dur >= lastLabel.getArea().getMaxDuration() * sendNotification) {
+                        if (dur >= lastLabel.getArea().getMaxDuration() * sendNotification && !(lastLabel.getLabel().getLabel().equals(ClassificationConfiguration.UNKNOWN_POSITION))) {
                             sendNotification(lastLabel.getArea().getAreaName(), lastLabel.getLabel().getDescription(), dur);
                             sendNotification++;
                         }
@@ -134,6 +140,24 @@ public class DataAccessService extends Service {
         mDashboardDataEntity = (DashboardDataEntity) mPersistenceProvider.load(DashboardDataEntity.class);
         if (mDashboardDataEntity == null) {
             mDashboardDataEntity = new DashboardDataEntity();
+        } else{
+            // set dummy objects for unknown posture
+            PostureBean s= new PostureBean(ShoulderPosture.UNLABELED, BodyArea.SHOULDER);
+            PostureBean h= new PostureBean(HwsPosture.UNLABELED, BodyArea.HWS);
+            PostureBean b= new PostureBean(BwsPosture.UNLABELED, BodyArea.SPINE);
+            PostureBean l= new PostureBean(LwsPosture.UNLABELED, BodyArea.LWS);
+
+            // calc duration
+            s.setDuration(s.getBegin().getTime()-mDashboardDataEntity.getlast(BodyArea.SHOULDER).getEnd().getTime());
+            h.setDuration(h.getBegin().getTime()-mDashboardDataEntity.getlast(BodyArea.SHOULDER).getEnd().getTime());
+            b.setDuration(b.getBegin().getTime()-mDashboardDataEntity.getlast(BodyArea.SHOULDER).getEnd().getTime());
+            l.setDuration(l.getBegin().getTime()-mDashboardDataEntity.getlast(BodyArea.SHOULDER).getEnd().getTime());
+
+            // add to dashboard
+            mDashboardDataEntity.addLabelData(s);
+            mDashboardDataEntity.addLabelData(h);
+            mDashboardDataEntity.addLabelData(b);
+            mDashboardDataEntity.addLabelData(l);
         }
         mUser = (UserEntity) mPersistenceProvider.load(UserEntity.class);
         if(mUser ==null){

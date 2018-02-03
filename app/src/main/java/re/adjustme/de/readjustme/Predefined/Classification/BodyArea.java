@@ -11,10 +11,10 @@ import re.adjustme.de.readjustme.Predefined.Sensor;
  */
 
 public enum BodyArea {
-    SHOULDER("Schultern", ShoulderPosture.values(), 600000L, new Sensor[]{Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK, Sensor.SENSOR_FRONT, Sensor.SENSOR_LOWER_BACK}),
-    SPINE("Brustwirbelsäule", BwsPosture.values(), 600000L, new Sensor[]{Sensor.SENSOR_LOWER_BACK, Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK}),
-    HWS("Halswirbelsäule", HwsPosture.values(), 600000L, new Sensor[]{Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK, Sensor.SENSOR_LOWER_BACK}),
-    LWS("Lendenwirbelsäule", LwsPosture.values(), 6000000L, new Sensor[]{Sensor.SENSOR_LOWER_BACK, Sensor.SENSOR_UPPER_BACK, Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER});
+    SHOULDER("Schultern", ShoulderPosture.values(), 600000L, new Sensor[]{Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK, Sensor.SENSOR_FRONT}),
+    SPINE("Brustwirbelsäule", BwsPosture.values(), 600000L, new Sensor[]{ Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK}),
+    HWS("Halswirbelsäule", HwsPosture.values(), 600000L, new Sensor[]{Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER, Sensor.SENSOR_UPPER_BACK}),
+    LWS("Lendenwirbelsäule", LwsPosture.values(), 6000000L, new Sensor[]{ Sensor.SENSOR_UPPER_BACK, Sensor.SENSOR_FRONT, Sensor.SENSOR_LEFT_SHOULDER, Sensor.SENSOR_RIGHT_SHOULDER});
 
     private String areaName;
     private Label[] label;

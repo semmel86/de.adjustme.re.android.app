@@ -22,6 +22,7 @@ import java.util.TimeZone;
 
 import re.adjustme.de.readjustme.Bean.PostureBean;
 import re.adjustme.de.readjustme.Bean.PersistedEntity.DashboardDataEntity;
+import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
 import re.adjustme.de.readjustme.Frontend.Component.ChartMarkerView;
 import re.adjustme.de.readjustme.Frontend.Component.TimelineBarChartRenderer;
 import re.adjustme.de.readjustme.Frontend.Component.TimelineBarChartValueFormatter;
@@ -92,9 +93,13 @@ public class TimelineActivity extends GenericBaseActivity {
         for (PostureBean l : adjustedTimelineHelper) {
             entries.add(new BarEntry(xAxisCounter, l.getDuration(), l));
 
+
             //add color
             long duration = l.getDuration();
-            if (duration > 3600000) {
+            if(l.getLabel().getLabel().equals(ClassificationConfiguration.UNKNOWN_POSITION)){
+                // unknown
+                colors.add(ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null));
+            } else if (duration > 3600000) {
                 // >60min
                 colors.add(ResourcesCompat.getColor(getResources(), R.color.colorError, null));
             } else if (duration > 600000) {

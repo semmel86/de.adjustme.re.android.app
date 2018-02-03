@@ -238,14 +238,4 @@ private class EvalThread extends Thread {
     }
 }
 
-/**
- * Class used for the client Binder.  Because we know this service always
- * runs in the same process as its clients, we don't need to deal with IPC.
- */
-public class EvaluationBackgroundServiceBinder extends Binder {
-    EvaluationBackgroundService getService() {
-        // Return this instance of LocalService so clients can call public methods
-        return EvaluationBackgroundService.this;
-    }
-}
 }
