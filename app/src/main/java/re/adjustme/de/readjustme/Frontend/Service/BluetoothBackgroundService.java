@@ -30,7 +30,7 @@ import java.util.UUID;
 import re.adjustme.de.readjustme.Bean.MotionDataBean;
 import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
 import re.adjustme.de.readjustme.Configuration.PersistenceConfiguration;
-import re.adjustme.de.readjustme.Predefined.HardwareFailures;
+import re.adjustme.de.readjustme.Predefined.HardwareCode;
 
 import static android.content.ContentValues.TAG;
 
@@ -247,7 +247,7 @@ public class BluetoothBackgroundService extends Service {
                 // init Object
 
                 try {
-                    if (data[0].equalsIgnoreCase(BluetoothConfiguration.SENSOR_STATUS_OK)) {
+                    if (Integer.valueOf(data[0])==HardwareCode.SENSOR_STATUS_OK.getCode()) {
                         md.setBegin(new Timestamp(System.currentTimeMillis()));
                         md.setSensor(Integer.valueOf(data[1]));
                         md.setX(Integer.valueOf(data[2]));
@@ -257,11 +257,11 @@ public class BluetoothBackgroundService extends Service {
 
                         md = null;
 
-                        if (Integer.valueOf(data[0]) == HardwareFailures.INITIATION_FAILURE.getCode()) {
-                            Log.i("Info", "Hardware-Failure: " + HardwareFailures.getFailure(Integer.valueOf(data[0])).getMessage() + " " + Integer.valueOf(data[1]));
-                        } else {
-                            Log.i("Info", "Hardware-Failure: " + HardwareFailures.getFailure(Integer.valueOf(data[0])).getMessage());
-                        }
+                        /*if (Integer.valueOf(data[0]) == HardwareCode.INITIATION_FAILURE.getCode()) {*/
+                            Log.i("Info", "Hardware-Failure: " + HardwareCode.getFailure(Integer.valueOf(data[0])).getMessage() + " " + Integer.valueOf(data[1]));
+                      /*  } else {
+                            Log.i("Info", "Hardware-Failure: " + HardwareCode.getFailure(Integer.valueOf(data[0])).getMessage());
+                      }*/
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

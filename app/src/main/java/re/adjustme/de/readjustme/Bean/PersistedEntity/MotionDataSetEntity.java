@@ -1,5 +1,7 @@
 package re.adjustme.de.readjustme.Bean.PersistedEntity;
 
+import android.util.Log;
+
 import org.json.JSONObject;
 
 import java.io.Serializable;
@@ -22,7 +24,7 @@ import re.adjustme.de.readjustme.Util.Distance;
  * <p>
  * Created by semmel on 03.12.2017.
  */
-@Persistence(name = "MotionDataSetEntity", type = PersistenceType.BACKEND)
+@Persistence(name = "MotionDataSetEntity", type = PersistenceType.FILE)
 public class MotionDataSetEntity implements Serializable {
     private final static String sep = " ";
     private final static String pair = ":";
@@ -49,7 +51,12 @@ public class MotionDataSetEntity implements Serializable {
         motionDataBeanSet[md.getSensor().getSensorNumber() - 1] = md;
         // save z before adjusting
         zValuesBeforAdjustment[md.getSensor().getSensorNumber()-1]=md.getZ();
-
+        StringBuilder s= new StringBuilder();
+        for(int i=0;i<5;i++){
+            s.append(zValuesBeforAdjustment[i]);
+            s.append(",");
+        }
+        Log.i("zAdjustment",s.toString());
         // calc z_
         int z_=0;
         for(int i=0;i<5;i++){

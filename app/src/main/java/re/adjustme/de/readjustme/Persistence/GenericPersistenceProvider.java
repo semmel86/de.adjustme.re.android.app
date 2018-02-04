@@ -78,7 +78,7 @@ public class GenericPersistenceProvider {
                     try {
                         o = mTextFilePersistor.getMotionDataSetDtos();
                     } catch (Exception e) {
-                        Log.e("ClassCast", "Cannot save object to csv", e);
+                        Log.e("ClassCast", "Cannot load csv", e);
                     }
                     break;
                 case OBJECT:

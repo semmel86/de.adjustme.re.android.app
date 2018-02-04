@@ -16,11 +16,11 @@ import re.adjustme.de.readjustme.Predefined.Sensor;
 public class MotionDataTextFilePersistor extends TextFilePersistor {
 
     public void saveMotionSet(MotionDataSetEntity m) {
-        this.save(m, "fullMotionDataSet.csv");
+        this.save(m, "FullMotionDataSet.csv");
     }
 
     public List<MotionDataSetEntity> getMotionDataSetDtos() {
-        final List<String> motions = this.loadFullLines("fullMotionDataSet.csv");
+        final List<String> motions = this.loadFullLines("FullMotionDataSet.csv");
         final List<MotionDataSetEntity> list = new ArrayList<>();
 
         for (final String s : motions) {
