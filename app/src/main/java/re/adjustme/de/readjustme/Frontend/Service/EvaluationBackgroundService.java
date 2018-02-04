@@ -105,7 +105,7 @@ public class EvaluationBackgroundService extends Service {
         // load svm
         mSVMClassificationEntity = (SVMClassificationEntity) mPersistenceProvider.load(SVMClassificationEntity.class);
         if (mSVMClassificationEntity == null || mSVMClassificationEntity.getSvmMotionclassifier().isEmpty()) {
-            unzipClassificator("SvmClassificator.md");
+            unzipClassificator("SVMClassificator.md");
             unzipClassificator("FullMotionDataSet.csv");
             mSVMClassificationEntity = (SVMClassificationEntity) mPersistenceProvider.load(SVMClassificationEntity.class);
         }
