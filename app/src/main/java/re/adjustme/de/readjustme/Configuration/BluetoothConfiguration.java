@@ -29,7 +29,6 @@ public class BluetoothConfiguration {
     // Parsing
     public static final String MESSAGE_LINE_SEPERATOR = "\r\n";
     public static final String MESSAGE_SEPARATOR = " ";
-    public static final String SENSOR_STATUS_OK = "100";
 
     // global App permissions
     public static final String[] REQUESTED_PERMISSIONS =
@@ -43,5 +42,5 @@ public class BluetoothConfiguration {
     // Bluetooth connection can be established as Server or Client
     // false is default
     public static boolean SERVER_MODE = false;
-    public static long CONNECTION_TIMEOUT =60000L; // 60000L = 1Min
+    public static long CONNECTION_TIMEOUT =15000L;// 15000L = 15 seconds
 }
