@@ -7,7 +7,7 @@ package re.adjustme.de.readjustme.Util;
  * Created by semmel on 20.01.2018.
  */
 
-public class Distance {
+public abstract class Distance {
 
     // get the Distance of a Point (x,y,z) to a second point(x2,y2,z2)
     public static double getEuclideanDistance(int x1, int x2, int y1, int y2, int z1, int z2) {

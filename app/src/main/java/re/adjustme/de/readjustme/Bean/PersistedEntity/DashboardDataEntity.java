@@ -20,7 +20,10 @@ import re.adjustme.de.readjustme.Predefined.PersistenceType;
 /**
  * Wrapper for the Dashboard shown data.
  * <p>
- * Created by semmel on 06.01.2018.
+ * Created on 06.01.2018.
+ * @author Sebastian Selmke
+ * @version 1.0
+ * @since 1.0
  */
 @Persistence(name = "DashboardDataEntity", type = PersistenceType.OBJECT)
 public class DashboardDataEntity implements Serializable {

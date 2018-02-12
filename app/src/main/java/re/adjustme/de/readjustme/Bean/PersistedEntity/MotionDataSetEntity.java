@@ -22,7 +22,10 @@ import re.adjustme.de.readjustme.Util.Distance;
 /**
  * Transfer object for Motion data.
  * <p>
- * Created by semmel on 03.12.2017.
+ * Created on 03.12.2017.
+ * @author Sebastian Selmke
+ * @version 1.0
+ * @since 1.0
  */
 @Persistence(name = "MotionDataSetEntity", type = PersistenceType.FILE)
 public class MotionDataSetEntity implements Serializable {

@@ -4,7 +4,7 @@ package re.adjustme.de.readjustme.Util;
  * Created by semmel on 28.01.2018.
  */
 
-public class Calibration {
+public abstract class Calibration {
 
     public static int calibrate(int x, int x_){
         int result=0;

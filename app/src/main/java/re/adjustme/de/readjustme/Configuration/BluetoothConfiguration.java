@@ -11,7 +11,7 @@ import java.util.UUID;
  * Created by Semmel on 10.11.2017.
  */
 
-public class BluetoothConfiguration {
+public abstract class BluetoothConfiguration {
 
     /*
         The UUID for SPP Service needed to connect to the hc-05/06 device

@@ -8,7 +8,7 @@ import re.adjustme.de.readjustme.Prediction.internal.svm_parameter;
  * Created by Semmel on 10.11.2017.
  */
 
-public class ClassificationConfiguration {
+public abstract class ClassificationConfiguration {
     /*
     // General settings for classification
     */

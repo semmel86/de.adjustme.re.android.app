@@ -6,7 +6,7 @@ import java.io.File;
  * Created by Semmel on 18.11.2017.
  */
 
-public class PersistenceConfiguration {
+public abstract class PersistenceConfiguration {
 
     public final static boolean MODE_DEVELOPMENT = true;
 

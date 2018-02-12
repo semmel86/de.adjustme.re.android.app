@@ -49,7 +49,7 @@
             android:name="re.adjustme.de.readjustme.Frontend.Service.BluetoothBackgroundService"
             android:exported="false" />
         <service
-            android:name=".Frontend.Service.EvaluationBackgroundService"
+            android:name=".Frontend.Service.ClassificationBackgroundService"
             android:exported="false" />
 
     </application>

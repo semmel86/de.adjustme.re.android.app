@@ -9,7 +9,10 @@ import re.adjustme.de.readjustme.Predefined.Sensor;
 
 /**
  * Entity for persisting the calibration settings
- * Created by semmel on 27.01.2018.
+ * Created on 27.01.2018.
+ * @author Sebastian Selmke
+ * @version 1.0
+ * @since 1.0
  */
 @Persistence(name = "CalibrationDataEntity", type = PersistenceType.OBJECT)
 public class CalibrationDataEntity {

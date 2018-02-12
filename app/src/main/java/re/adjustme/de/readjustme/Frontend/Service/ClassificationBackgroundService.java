@@ -36,7 +36,7 @@ import re.adjustme.de.readjustme.Prediction.SvmPredictor;
  * Created by semmel on 03.12.2017.
  */
 
-public class EvaluationBackgroundService extends Service {
+public class ClassificationBackgroundService extends Service {
 
     // Contains a specific Classifier for each Area
     SVMClassificationEntity mSVMClassificationEntity;

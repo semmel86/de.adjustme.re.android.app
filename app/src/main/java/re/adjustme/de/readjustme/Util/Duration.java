@@ -4,7 +4,7 @@ package re.adjustme.de.readjustme.Util;
  * Created by Stefan on 21.01.2018.
  */
 
-public class Duration {
+public abstract class Duration {
     public static String millisToDuration(long millis) {
         long second = (millis / 1000) % 60;
         long minute = (millis / (1000 * 60)) % 60;

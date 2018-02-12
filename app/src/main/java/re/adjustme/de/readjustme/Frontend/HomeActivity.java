@@ -29,7 +29,7 @@ import android.widget.Toast;
 
 import re.adjustme.de.readjustme.Configuration.BluetoothConfiguration;
 import re.adjustme.de.readjustme.Frontend.Service.BluetoothBackgroundService;
-import re.adjustme.de.readjustme.Frontend.Service.EvaluationBackgroundService;
+import re.adjustme.de.readjustme.Frontend.Service.ClassificationBackgroundService;
 import re.adjustme.de.readjustme.R;
 
 public class HomeActivity extends GenericBaseActivity {
@@ -205,7 +205,7 @@ public class HomeActivity extends GenericBaseActivity {
         mDataAccessService.setTryStarting(true);
         try {
             Intent intent = new Intent(this, BluetoothBackgroundService.class);
-            Intent intent2 = new Intent(this, EvaluationBackgroundService.class);
+            Intent intent2 = new Intent(this, ClassificationBackgroundService.class);
             InitThread init = new InitThread(intent, intent2);
             init.start();
             Toast.makeText(getApplicationContext(), "Start Services", Toast.LENGTH_LONG).show();
@@ -214,18 +214,6 @@ public class HomeActivity extends GenericBaseActivity {
             Toast.makeText(getApplicationContext(), "Cannot start Services", Toast.LENGTH_LONG).show();
         }
     }
-
-    @Deprecated
-    public void StartEvalService(View v) {
-        try {
-            Intent intent = new Intent(this, EvaluationBackgroundService.class);
-            startService(intent);
-            Toast.makeText(getApplicationContext(), "started Evaluation", Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "already started", Toast.LENGTH_LONG).show();
-        }
-    }
-
 
     // set current posture as (0,0,0) for each sensor
     public void calibrate(View v) {
@@ -275,7 +263,7 @@ public class HomeActivity extends GenericBaseActivity {
             Intent intent = new Intent(this, BluetoothBackgroundService.class);
             stopService(intent);
             // stop Evaluation
-            Intent intent2 = new Intent(this, EvaluationBackgroundService.class);
+            Intent intent2 = new Intent(this, ClassificationBackgroundService.class);
             stopService(intent2);
 
             Toast.makeText(getApplicationContext(), "stopped", Toast.LENGTH_LONG).show();
@@ -283,17 +271,6 @@ public class HomeActivity extends GenericBaseActivity {
             Toast.makeText(getApplicationContext(), "already stopped", Toast.LENGTH_LONG).show();
         }
         mDataAccessService.setIsRunning(false);
-    }
-
-    @Deprecated
-    public void stopEvalService(View v) {
-        try {
-            Intent intent = new Intent(this, EvaluationBackgroundService.class);
-            stopService(intent);
-            Toast.makeText(getApplicationContext(), "stopped", Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "already stopped", Toast.LENGTH_LONG).show();
-        }
     }
 
     @Override

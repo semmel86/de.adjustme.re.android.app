@@ -11,97 +11,196 @@ import re.adjustme.de.readjustme.Predefined.Sensor;
 
 /**
  * Class represent the Data for one specific Sensor from the Shirt.
- * <p>
- * Created by Semmel on 18.11.2017.
+ *
+ * Created  on 18.11.2017.
+ * @author Sebastian Selmke
+ * @version 1.0
+ * @since 1.0
+ *
  */
 public class MotionDataBean implements Serializable, Comparable {
 
+    /**
+     *  The sensor from which the data originate.
+     * @see Sensor
+    **/
     private Sensor sensor = Sensor.SENSOR_FRONT;
 
+    /**
+     *  The value of the X-axis.
+     **/
     private int x;
-
+    /**
+     *  The value of the Y-axis.
+     **/
     private int y;
-
+    /**
+     *  The value of the Z-axis.
+     **/
     private int z;
-
+    /**
+     *  The initialization time of this object.
+     **/
     private Timestamp begin = new Timestamp(new Date().getTime());
 
+    /**
+     *  The duration until a new Motion was measured.
+     *  Depends on Epsilon settings of the sensor.
+     **/
     private long duration = 0;
+
+    /**
+     *  An optional label, used for training.
+     **/
     private String label;
+    /**
+     *  Boolean in position, used for training.
+     **/
     private Boolean inLabeledPosition;
 
-    public MotionDataBean() {
-        super();
-    }
-
+    /**
+     * Getter for inLabeledPosition.
+     * @return inLabeledPosition
+     */
     public Boolean getInLabeledPosition() {
         return inLabeledPosition;
     }
 
+    /**
+     * Setter for inLabeledPosition.
+     * @param inLabeledPosition
+     */
     public void setInLabeledPosition(Boolean inLabeledPosition) {
         this.inLabeledPosition = inLabeledPosition;
     }
 
+    /**
+     *  Getter for label.
+     * @return String label
+     */
     public String getLabel() {
         return label;
     }
 
+    /**
+     * Setter for label
+     * @param label
+     */
     public void setLabel(String label) {
         this.label = label;
     }
 
+    /**
+     * Getter for sensor.
+     * @return Sensor
+     */
     public Sensor getSensor() {
         return this.sensor;
     }
 
+    /**
+     * Set Sensor by number.
+     *
+     * @param i
+     */
     public void setSensor(int i) {
         this.sensor = Sensor.getSensor(i);
     }
 
+    /**
+     * Setter for Sensor.
+     * @param sensor
+     */
     public void setSensor(Sensor sensor) {
         this.sensor = sensor;
     }
 
+    /**
+     * Getter for x.
+     * @return x
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * Setter for x.
+     * @param x
+     */
     public void setX(int x) {
         this.x = x;
     }
 
+    /**
+     * Getter for y.
+     * @return y
+     */
     public int getY() {
         return y;
     }
 
+    /**
+     * Setter for y.
+     * @param y
+     */
     public void setY(int y) {
         this.y = y;
     }
 
+    /**
+     * Getter for z.
+     * @return z
+     */
     public int getZ() {
         return z;
     }
 
+    /**
+     * Setter for z.
+     * @param z
+     */
     public void setZ(int z) {
         this.z = z;
     }
 
+    /**
+     * Getter for begin.
+     * @return Timestamp begin
+     */
     public Timestamp getBegin() {
         return begin;
     }
 
+    /**
+     * Setter for begin.
+     * @param begin
+     */
     public void setBegin(Timestamp begin) {
         this.begin = begin;
     }
 
+    /**
+     * Getter for duration
+     * @return long duration
+     */
     public long getDuration() {
         return duration;
     }
 
+    /**
+     * Setter for duration.
+     * @param duration
+     */
     public void setDuration(long duration) {
         this.duration = duration;
     }
 
+    /**
+     * Customized toString() method.
+     * Returns the MotionData for this sensor as CSV.
+     * CSV Seperator Configured in PersitenceConfiguration.
+     * @see PersistenceConfiguration
+     */
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -128,6 +227,20 @@ public class MotionDataBean implements Serializable, Comparable {
         return s.toString();
     }
 
+    /**
+     *
+     * Customized implementation of compareTo().
+     * </br>
+     * Compare two MotionDataBean objects by its x,y,z values.
+     * Return 1, if the difference is bigger/smaller than the pre-configured epsilon
+     * </br>
+     * Return -1 ,if the given object is not a MotionDataBean.
+     * </br>
+     * Returns 0 if equal
+     *
+     * @param o
+     * @return int
+     */
     @Override
     public int compareTo(@NonNull Object o) {
         MotionDataBean m = null;

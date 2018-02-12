@@ -9,7 +9,10 @@ import re.adjustme.de.readjustme.Predefined.PersistenceType;
 import re.adjustme.de.readjustme.Prediction.SvmPredictor;
 
 /**
- * Created by semmel on 27.01.2018.
+ * Created  on 27.01.2018.
+ * @author Sebastian Selmke
+ * @version 1.0
+ * @since 1.0
  */
 @Persistence(name = "SVMClassificator", type = PersistenceType.OBJECT)
 public class SVMClassificationEntity implements Serializable {
