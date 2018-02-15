@@ -141,9 +141,9 @@ public class svm_train {
 
     public svm_model train(List<MotionDataSetEntity> motionDataSetEntities, BodyArea area) {
         this.read_problem(motionDataSetEntities, area);
-        if (this.cross_validation != 0) {
+//        if (this.cross_validation != 0) {
             this.do_cross_validation();
-        } else {
+//        } else {
             this.model = svm.svm_train(this.prob, this.param);
 //            try{
 //                svm.svm_save_model(this.model_file_name, this.model);
@@ -152,7 +152,7 @@ public class svm_train {
 //                // TODO Auto-generated catch block
 //                e.printStackTrace();
 //            }
-        }
+//        }
         return this.model;
     }
 
@@ -187,6 +187,7 @@ public class svm_train {
         final svm_print_interface print_func = null; // default printing to stdout
 
         this.param = ClassificationConfiguration.getSVMParams();
+        this.nr_fold=ClassificationConfiguration.NR_FOLD;
         // default values
 //        this.param.svm_type = svm_parameter.C_SVC;
 //        this.param.kernel_type = svm_parameter.POLY;

@@ -23,23 +23,24 @@ public abstract class ClassificationConfiguration {
     */
     // Svm featuers
     public static final boolean RAW_VALUES = true;
-    public static final boolean DISTANCE_VALUES = true;
+    public static final boolean DISTANCE_VALUES = false;
 
     // maximum allowed difference for calculation of the rotation vector
     public static final int CROSS_VALIDATION = 0;
+    public static final int NR_FOLD = 30;
 
     // default values for SVM training
     public final static svm_parameter getSVMParams() {
         svm_parameter param = new svm_parameter();
 
         param.svm_type = svm_parameter.C_SVC; // C_SVC & NU_SVC
-        param.kernel_type = svm_parameter.LINEAR; // Linear, Poly, RBF, Sigmoid
-        param.degree = 3;
-        param.gamma = 0; // 1/num_features
+        param.kernel_type = svm_parameter.RBF; // Linear, Poly, RBF, Sigmoid
+        param.degree = 1;
+        param.gamma = 0.0001; // 1/num_features
         param.coef0 = 0;
         param.nu = 0.5;
-        param.cache_size = 100;
-        param.C = 1;
+        param.cache_size = 500;
+        param.C = 500;
         param.eps = 1e-3;
         param.p = 0.1;
         param.shrinking = 1;

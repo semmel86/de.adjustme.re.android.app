@@ -10,13 +10,13 @@ import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
 
 public enum BwsPosture implements Label {
     A("A", "neutrale Haltung", "1"),
-    H("H", "nach rechts gedreht", "29"),
-    J("J", "nach links gedreht", "30"),
+//    H("H", "nach rechts gedreht", "29"),
+//    J("J", "nach links gedreht", "30"),
     K("K", "nach rechts gebeugt", "31"),
     L("L", "nach links gebeugt", "32"),
-    M("M", "gestreckt", "33"),
+//    M("M", "gestreckt", "33"),
     N("N", "vorgebeugt", "34"), //
-    //    O("O", "Rotation rechts & Lateralflexion rechts", "35"),
+//        O("O", "Rotation rechts & Lateralflexion rechts", "35"),
 //    P("P", "Rotation links & Lateralflexion rechts", "36"),
 //    Q("Q", "Rotation rechts & Lateralflexion links", "37"),
 //    R("R", "Rotation links & Lateralflexion links", "38"),

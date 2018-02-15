@@ -8,7 +8,7 @@ import java.io.File;
 
 public abstract class PersistenceConfiguration {
 
-    public final static boolean MODE_DEVELOPMENT = true;
+    public final static boolean MODE_DEVELOPMENT = false;
 
     // DEFINES THE MINIMAL DURATION FOR A POSTURE, ALL SMALLER Postures where dismissed
     public static final long MIN_POSTURE_DURATION = 5000L;

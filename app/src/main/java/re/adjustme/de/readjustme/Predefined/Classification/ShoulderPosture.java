@@ -10,18 +10,18 @@ import re.adjustme.de.readjustme.Configuration.ClassificationConfiguration;
 
 public enum ShoulderPosture implements Label {
     A("A", "neutrale Haltung", "1"),
-    AK("AK", "links vorgezogen", "2"), // je eine Schulterseite ausserhalb d. neutr. pos
-    AL("AL", "rechts vorgezogen", "3"),
+//    AK("AK", "links vorgezogen", "2"), // je eine Schulterseite ausserhalb d. neutr. pos
+//    AL("AL", "rechts vorgezogen", "3"),
     AM("AM", "links & rechts vorgezogen", "4"),
-    AN("AN", "links zurückgezogen", "5"),
-    AO("AO", "rechts zurückgezogen", "6"),
-    AP("AP", "links & rechts zurückgezogen", "7"),
-    AQ("AQ", "links hochgezogen", "8"),
-    AR("AR", "rechts hochgezogen", "9"),
+//    AN("AN", "links zurückgezogen", "5"),
+//    AO("AO", "rechts zurückgezogen", "6"),
+//    AP("AP", "links & rechts zurückgezogen", "7"),
+//    AQ("AQ", "links hochgezogen", "8"),
+//    AR("AR", "rechts hochgezogen", "9"),
     AS("AS", "links & rechts hochgezogen", "10"),
-    AT("AT", "links runtergezogen", "11"),
-    AU("AU", "rechts runtergezogen", "12"),
-    AV("AV", "links & rechts runtergezogen", "13"),
+//    AT("AT", "links runtergezogen", "11"),
+//    AU("AU", "rechts runtergezogen", "12"),
+//    AV("AV", "links & rechts runtergezogen", "13"),
 
 //    AW("AW", "Anteversion links & Elevation links", "14"),
 //    AX("AX", "Anteversion rechts & Elevation rechts", "15"),
@@ -35,11 +35,11 @@ public enum ShoulderPosture implements Label {
 //    AAH("AAH", "Retroversion links & Depression links", "23"),
 //    AAI("AAI", "Retroversion rechts & Depression rechts", "24"),
 
-    AAJ("AAJ", "links vorgezogen & rechts zurückgezogen", "25"), // ab hier Diagonalen über beide Schultern
-    AAK("AAK", "rechts vorgezogen & links zurückgezogen", "26"),
-    //
-    AAL("AAL", "links hochgezogen & rechts runtergezogen", "27"),
-    AAM("AAM", "rechts hochgezogen & links runtergezogen", "28"),
+//    AAJ("AAJ", "links vorgezogen & rechts zurückgezogen", "25"), // ab hier Diagonalen über beide Schultern
+//    AAK("AAK", "rechts vorgezogen & links zurückgezogen", "26"),
+//    //
+//    AAL("AAL", "links hochgezogen & rechts runtergezogen", "27"),
+//    AAM("AAM", "rechts hochgezogen & links runtergezogen", "28"),
     UNLABELED(ClassificationConfiguration.UNKNOWN_POSITION, "unbekannte Haltung", "0");
 
 
